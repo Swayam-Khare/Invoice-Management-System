@@ -6,10 +6,9 @@ module.exports = (connectDB, DataTypes) => {
         id: {
           type: DataTypes.INTEGER,
           primaryKey: true,
-          allowNull: true,
+          allowNull: false,
           unique:true,
-          autoIncrement: true,
-          autoIncrement: { initialValue: 10000 }, // Initialize auto-increment with 100
+          autoIncrement: true
         },
         shopName: {
           type: DataTypes.STRING,
