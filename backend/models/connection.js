@@ -35,6 +35,4 @@ const check = async () => {
   }
 };
 
-check();
-
 module.exports = { db, check };
