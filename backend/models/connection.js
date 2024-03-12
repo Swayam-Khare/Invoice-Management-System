@@ -24,7 +24,8 @@ db.sequelize = sequelize;
 // Add your model here:
 // Ex - db.<ModelName> = require('<model-path>')(sequilize, DataTypes);
 
-db.Product = require('./productModel')(sequelize, DataTypes)
+db.Product = require("./productModel")(sequelize, DataTypes);
+db.Invoice = require("./invoiceModel")(sequelize, DataTypes);
 
 const check = async () => {
   try {
