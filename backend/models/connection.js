@@ -19,6 +19,7 @@ const sequelize = new Sequelize(database, user, password, {
 const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
+// db.Vendor = require('./vendorModel')(sequelize, DataTypes);
 
 // Create separate file for each model schema.
 // Add your model here:
