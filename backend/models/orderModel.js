@@ -1,5 +1,5 @@
-module.exports = (sequelize, DataTypes) => {
-  const Order = sequelize.define(
+module.exports = (connectDB, DataTypes) => {
+  const Order = connectDB.define(
     "Order",
     {
       // Model attributes are defined here

@@ -1,5 +1,5 @@
-module.exports = (sequelize, DataTypes) => {
-    const Vendor = sequelize.define(
+module.exports = (connectDB, DataTypes) => {
+    const Vendor = connectDB.define(
       "Vendor",
       {
         // Model attributes are defined here
@@ -58,7 +58,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       {
         // Other model options go here
-        tableName: "admin",
+        tableName: "vendor",
         timestamps: false,
         hooks: {
           beforeCreate: async (vendor) => {

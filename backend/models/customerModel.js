@@ -1,5 +1,5 @@
-module.exports = (sequelize, DataTypes) => {
-    const Customer = sequelize.define(
+module.exports = (connectDB, DataTypes) => {
+    const Customer = connectDB.define(
       "Customer",
       {
         // Schema attributes
@@ -34,19 +34,16 @@ module.exports = (sequelize, DataTypes) => {
             msg: "Contact must have exactly 10 digits",
           },
         },
-
-      {
+      },
         // Other model options go here
         {
             // options
             modelName: 'Customer',
             tableName: 'customer',
             timestamps: false
-          }
-      },
-    },
-    );
+        }
+  );
   
     return Customer;
-  };
+};
   
