@@ -6,7 +6,7 @@ const connection = require("./models/connection");
 // connection to database
 connection.check();
 
-const port = process.env.PORT;
+const port = process.env.PORT || 8000;
 app.listen(port, () => {
   console.log(`server is listening on ${port}`);
 });
