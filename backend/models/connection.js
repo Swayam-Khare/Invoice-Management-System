@@ -28,6 +28,7 @@ db.sequelize = sequelize;
 db.Product = require("./productModel")(sequelize, DataTypes);
 db.Invoice = require("./invoiceModel")(sequelize, DataTypes);
 db.Order = require("./orderModel")(sequelize, DataTypes);
+db.Customer = require("./customerModel")(sequelize, DataTypes);
 
 const check = async () => {
   try {
