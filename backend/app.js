@@ -2,7 +2,12 @@ const express = require("express");
 const cors = require("cors");
 
 
+const globalErrorHandler = require("./utils/globalErrorHandler");
+const orderRouter = require('./routes/orderRoute')
+
+
 const authRouter = require('./routes/authRoute');
+
 
 
 const app = express();
@@ -17,6 +22,9 @@ const invoiceRouter = require ('./routes/invoiceRoute');
 const globalErrorHandler = require("./utils/globalErrorHandler");
 
 // app.use("/api/v1", taskRoute);
+app.use('/api/v1/orders', orderRouter)
+
+
 
 
 app.use('/api/v1/auth', authRouter);
