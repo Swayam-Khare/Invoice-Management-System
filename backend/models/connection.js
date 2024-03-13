@@ -34,22 +34,22 @@ db.Vendor = require("./vendorModel")(connectDB, DataTypes);
 db.VendorProduct = require("./vendorProductModel")(connectDB, DataTypes);
 db.VendorCustomer = require("./vendorCustomerModel")(connectDB, DataTypes);
 
-// =============Admin-Invoice (: One to many)============================
+// =============Vendor-Invoice (: One to many)============================
 
 db.Vendor.hasMany(db.Invoice);
 db.Invoice.belongsTo(db.Vendor);
 
-// ==============Admin-products (: Many to many)=========================
+// ==============Vendor-Product (: Many to many)=========================
 
 db.Vendor.belongsToMany(db.Product, { through: db.VendorProduct });
 db.Product.belongsToMany(db.Vendor, { through: db.VendorProduct });
 
-// ==============Admin-Client (: Many to many)=========================
+// ==============Vendor-Customer (: Many to many)=========================
 
 db.Vendor.belongsToMany(db.Customer, { through: db.VendorCustomer });
 db.Customer.belongsToMany(db.Vendor, { through: db.VendorCustomer });
 
-// ==============Client-Address (: One to one)=========================
+// ==============Customer-Address (: One to one)=========================
 
 db.Customer.hasOne(db.Address);
 db.Address.belongsTo(db.Customer);
@@ -59,7 +59,7 @@ db.Address.belongsTo(db.Customer);
 db.Invoice.hasOne(db.Order);
 db.Order.belongsTo(db.Invoice);
 
-// ==============Client-Invoice (: One to many)=========================
+// ==============Customer-Invoice (: One to many)=========================
 
 db.Customer.hasMany(db.Invoice);
 db.Invoice.belongsTo(db.Customer);
