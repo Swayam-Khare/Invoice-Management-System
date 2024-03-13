@@ -33,6 +33,7 @@ db.Address = require("./addressModel")(connectDB, DataTypes);
 db.Vendor = require("./vendorModel")(connectDB, DataTypes);
 db.VendorProduct = require("./vendorProductModel")(connectDB, DataTypes);
 db.VendorCustomer = require("./vendorCustomerModel")(connectDB, DataTypes);
+db.Admin = require('./adminModel')(connectDB,DataTypes);
 
 // =============Vendor-Invoice (: One to many)============================
 
@@ -51,8 +52,25 @@ db.Customer.belongsToMany(db.Vendor, { through: db.VendorCustomer });
 
 // ==============Customer-Address (: One to one)=========================
 
-db.Customer.hasOne(db.Address);
-db.Address.belongsTo(db.Customer);
+db.Customer.hasOne(db.Address, {
+  foreignKey: "roleId",
+  constraints: false,
+  scope: {
+    role: "customer",
+  },
+});
+db.Address.belongsTo(db.Customer, { foreignKey: "roleId", constraints: false });
+
+// ============== Vendor-Address (: One to one)=========================
+
+db.Vendor.hasOne(db.Address, {
+  foreignKey: "roleId",
+  constraints: false,
+  scope: {
+    role: "vendor",
+  },
+});
+db.Address.belongsTo(db.Vendor, { foreignKey: "roleId", constraints: false });
 
 // ==============Invoice-Order (: One to one)=========================
 

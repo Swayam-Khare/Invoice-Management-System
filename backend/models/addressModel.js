@@ -38,6 +38,10 @@ module.exports = (connectDB, DataTypes)=>{
                   msg: "Role must be either 'vendor' or 'customer'"
                 }
             }
+        },
+        roleId:{
+            type:DataTypes.INTEGER
+
         }
 
     },{
