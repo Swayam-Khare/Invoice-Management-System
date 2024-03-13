@@ -23,7 +23,7 @@ module.exports = (connectDB, DataTypes) => {
     {
       // Other model options go here
       modelName: "VendorCustomer",
-      tableName: "vendorcustomer",
+      tableName: "vendorCustomer",
       timestamps: false,
     }
   );
