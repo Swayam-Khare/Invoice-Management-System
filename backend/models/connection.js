@@ -31,6 +31,38 @@ db.Order = require("./orderModel")(connectDB, DataTypes);
 db.Customer = require("./customerModel")(connectDB, DataTypes);
 db.Address = require("./addressModel")(connectDB, DataTypes);
 db.Vendor = require("./vendorModel")(connectDB, DataTypes);
+db.AdminProduct = require("./AdminProductModel")(connectDB, DataTypes);
+db.VendorCustomer = require("./VendorCustomerModel")(connectDB, DataTypes);
+
+// =============Admin-Invoice (: One to many)============================
+
+db.Vendor.hasMany(db.Invoice);
+db.Invoice.belongsTo(db.Vendor);
+
+// ==============Admin-products (: Many to many)=========================
+
+db.Vendor.belongsToMany(db.Product, { through: db.AdminProduct });
+db.Product.belongsToMany(db.Vendor, { through: db.AdminProduct });
+
+// ==============Admin-Client (: Many to many)=========================
+
+db.Vendor.belongsToMany(db.Customer, { through: db.VendorCustomer });
+db.Customer.belongsToMany(db.Vendor, { through: db.VendorCustomer });
+
+// ==============Client-Address (: One to one)=========================
+
+db.Customer.hasOne(db.Address);
+db.Address.belongsTo(db.Customer);
+
+// ==============Invoice-Order (: One to one)=========================
+
+db.Invoice.hasOne(db.Order);
+db.Order.belongsTo(db.Invoice);
+
+// ==============Client-Invoice (: One to many)=========================
+
+db.Customer.hasMany(db.Invoice);
+db.Invoice.belongsTo(db.Customer);
 
 const check = async () => {
   try {
