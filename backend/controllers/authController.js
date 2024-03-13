@@ -15,18 +15,17 @@ const signToken = id => {
 
 
 
-// ===============================================================================================
+// ===========================================SIGNUP==================================================== //
+
 exports.signup = asyncErrorHandler(async (req, res, next) => {
     const { shopName, contact, email, password, confirmPassword, addressDetails } = req.body;
 
-    // // Check if the vendor with the provided email already exists
+    // Check if the vendor with the provided email already exists
     const existingVendor = await Vendor.findOne({ where: { email } });
     if (existingVendor) {
         throw new CustomError("Vendor with this email already exists", 400);
     }
 
-    // Hash the password
-    // const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create a new vendor with the provided data
     const newVendor = await Vendor.create({
@@ -37,8 +36,6 @@ exports.signup = asyncErrorHandler(async (req, res, next) => {
         confirmPassword,
     });
 
-    // Destructure address details
-    // const { addressLane1, addressLane2, landmark, pincode, state, addressContact } = addressDetails;
 
     // Create a new address associated with the new vendor
     const newAddress = await Address.create({
@@ -48,7 +45,7 @@ exports.signup = asyncErrorHandler(async (req, res, next) => {
     });
 
     // Generate JWT token
-    const token = jwt.sign({ id: newVendor.id, email: newVendor.email }, process.env.SECRET_STR, { expiresIn: process.env.LOGIN_EXPIRES });
+    const token = signToken(newVendor.id);
 
     // Return token to the client
 
@@ -62,17 +59,17 @@ exports.signup = asyncErrorHandler(async (req, res, next) => {
     });
 });
 
+// ===========================================LOGIN==================================================== //
 
 exports.login = asyncErrorHandler(async (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
 
-    //const {email,password} = req.body; object Destructuring
     if (!email || !password) {
         const error = new CustomError('Please provide email ID & Password for login in!', 400);
         return next(error);
     }
-    console.log({ email, password });
+
     //Check if vendor exists
     const vendor = await Vendor.findOne({
         where: {
