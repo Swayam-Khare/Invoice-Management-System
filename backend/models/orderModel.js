@@ -5,7 +5,8 @@ module.exports = (connectDB, DataTypes) => {
       // Model attributes are defined here
       invoiceNo: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
+        unique : true
       },
       productId: {
         type: DataTypes.ARRAY(DataTypes.INTEGER),
