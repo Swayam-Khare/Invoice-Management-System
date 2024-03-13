@@ -54,6 +54,7 @@ module.exports = (connectDB, DataTypes) => {
             },
           },
         },
+
       },
       {
         // Other model options go here

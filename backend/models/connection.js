@@ -31,35 +31,53 @@ db.Order = require("./orderModel")(connectDB, DataTypes);
 db.Customer = require("./customerModel")(connectDB, DataTypes);
 db.Address = require("./addressModel")(connectDB, DataTypes);
 db.Vendor = require("./vendorModel")(connectDB, DataTypes);
-db.AdminProduct = require("./adminProductModel")(connectDB, DataTypes);
+db.VendorProduct = require("./vendorProductModel")(connectDB, DataTypes);
 db.VendorCustomer = require("./vendorCustomerModel")(connectDB, DataTypes);
+db.Admin = require('./adminModel')(connectDB,DataTypes);
 
-// =============Admin-Invoice (: One to many)============================
+// =============Vendor-Invoice (: One to many)============================
 
 db.Vendor.hasMany(db.Invoice);
 db.Invoice.belongsTo(db.Vendor);
 
-// ==============Admin-Products (: Many to many)=========================
+// ==============Vendor-Product (: Many to many)=========================
 
-db.Vendor.belongsToMany(db.Product, { through: db.AdminProduct });
-db.Product.belongsToMany(db.Vendor, { through: db.AdminProduct });
+db.Vendor.belongsToMany(db.Product, { through: db.VendorProduct });
+db.Product.belongsToMany(db.Vendor, { through: db.VendorProduct });
 
-// ==============Admin-Clients (: Many to many)=========================
+// ==============Vendor-Customer (: Many to many)=========================
 
 db.Vendor.belongsToMany(db.Customer, { through: db.VendorCustomer });
 db.Customer.belongsToMany(db.Vendor, { through: db.VendorCustomer });
 
-// ==============Client-Address (: One to one)=========================
+// ==============Customer-Address (: One to one)=========================
 
-db.Customer.hasOne(db.Address);
-db.Address.belongsTo(db.Customer);
+db.Customer.hasOne(db.Address, {
+  foreignKey: "roleId",
+  constraints: false,
+  scope: {
+    role: "customer",
+  },
+});
+db.Address.belongsTo(db.Customer, { foreignKey: "roleId", constraints: false });
+
+// ============== Vendor-Address (: One to one)=========================
+
+db.Vendor.hasOne(db.Address, {
+  foreignKey: "roleId",
+  constraints: false,
+  scope: {
+    role: "vendor",
+  },
+});
+db.Address.belongsTo(db.Vendor, { foreignKey: "roleId", constraints: false });
 
 // ==============Invoice-Order (: One to one)=========================
 
 db.Invoice.hasOne(db.Order);
 db.Order.belongsTo(db.Invoice);
 
-// ==============Client-Invoices (: One to many)=========================
+// ==============Customer-Invoice (: One to many)=========================
 
 db.Customer.hasMany(db.Invoice);
 db.Invoice.belongsTo(db.Customer);
