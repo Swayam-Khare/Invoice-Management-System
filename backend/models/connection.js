@@ -8,7 +8,7 @@ const password = process.env.DB_PASSWORD;
 const connectDB = new Sequelize(database, user, password, {
   host: "localhost",
   dialect: "postgres",
-  logging: false,
+  logging: true,
 });
 
 // ==== TO CONNECT TO REMOTE DATABASE ====
@@ -31,8 +31,8 @@ db.Order = require("./orderModel")(connectDB, DataTypes);
 db.Customer = require("./customerModel")(connectDB, DataTypes);
 db.Address = require("./addressModel")(connectDB, DataTypes);
 db.Vendor = require("./vendorModel")(connectDB, DataTypes);
-db.AdminProduct = require("./AdminProductModel")(connectDB, DataTypes);
-db.VendorCustomer = require("./VendorCustomerModel")(connectDB, DataTypes);
+db.AdminProduct = require("./adminProductModel")(connectDB, DataTypes);
+db.VendorCustomer = require("./vendorCustomerModel")(connectDB, DataTypes);
 
 // =============Admin-Invoice (: One to many)============================
 
