@@ -28,5 +28,5 @@ module.exports = (connectDB, DataTypes) => {
     }
   );
 
-  return AdminProduct;
+  return VendorProduct;
 };
