@@ -1,9 +1,32 @@
-const { param } = require('../routes/orderRoute');
+const { db } = require("../models/connection");
+const asyncErrorHandler = require("../utils/asyncErrorHandler");
+const CustomError = require("../utils/customError");
+const Address = db.Address;
 const Order = require('../models/orderModel');
 
-exports.getOrder = async (req, res) => {
-    try{
-        const order = await Order.findById(req.params.id);
+exports.getAllOrders = asyncErrorHandler(async (req, res, next) => {
+    const orders = await Order.findAll({});
+  
+    res.status(200).json({
+      status: "success",
+      count: orders.length,
+      data: {
+        orders,
+      },
+    });
+  });
+  // find all orders --done
+
+exports.getOrder = asyncErrorHandler(async (req, res, next) => {
+        const order = await Order.findById(req.params.orderId);
+
+        if (!order) {
+            const err = new CustomError(
+              `Order with orderId ${req.params.orderId} was not found`,
+              404
+            );
+            return next(err);
+          }
 
         res.status(200).json({
             status: 'success',
@@ -11,16 +34,12 @@ exports.getOrder = async (req, res) => {
                 order
             }
         });
-    }catch(err){
-        res.status(404).json({
-            status: 'fail',
-            message: err.message
-        })
-    }
-}// get order by id func(read)
+    
+    
+})// get order by id func(read) --done
 
-exports.createOrder = async (req, res) => {
-    try{
+exports.createOrder = asyncErrorHandler(async (req, res, next) => {
+
         const order = await Order.create(req.body);
 
         res.status(201).json({
@@ -29,44 +48,50 @@ exports.createOrder = async (req, res) => {
                 order
             }
         })
-    }catch(err){
-        res.status(400).json({
-            status: 'fail',
-            message: err.message
-        })
+
+    
+})// create order func --done
+
+exports.updateOrder = asyncErrorHandler(async (req, res, next) => {
+    const orderUpdated = await Order.update(req.body, {
+      where: {
+        id: req.params.orderId,
+      },
+    });
+  
+    if (!orderUpdated) {
+      const err = new CustomError(
+        `Order with ID ${req.params.addressId} does not exist.`,
+        404
+      );
+      return next(err);
     }
-}// create order func
+  
+    res.status(200).json({
+      status: "success",
+      data: {
+        order: orderUpdated,
+      },
+    });
+  });// update order func
 
-exports.updateOrder = async (req, res) => {
-    try{
-        const updatedorder = await Order.findByIdAndUpdate(req.params.id, req.body, {new: true, runValidators: true});
-
-        res.status(200).json({
-            status: "success",
-            data: {
-                updatedorder
-            }
-        });
-    }catch(err){
-        res.status(404).json({
-            status:"fail",
-            message: err.message
-        });
+exports.deleteOrder = asyncErrorHandler(async (req, res, next) => {
+    const deletedRows = await Order.destroy({
+      where: {
+        id: req.params.orderId,
+      },
+    });
+  
+    if (deletedRows === 0) {
+      const err = new CustomError(
+        `Order with ID ${req.params.orderId} was not found`,
+        404
+      );
+      return next(err);
     }
-}// update order func
-
-exports.deleteOrder = async (req, res) => {
-    try{
-        await Order.findByIdAndDelete(req.params.id);
-
-        res.status(204).json({
-            status: 'success',
-            data: null
-        });
-    }catch(err){
-        res.status(404).json({
-            status:"fail",
-            message: err.message
-        });
-    }
-}// delete order func
+  
+    res.status(204).json({
+      status: "success",
+      data: null,
+    });
+  });
