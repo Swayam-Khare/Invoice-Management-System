@@ -1,8 +1,8 @@
 
 // MODEL NAME PRODUCT FILE CREATE BY UJWAL GUPTA, <IF YOU EDIT THIS FILE THEN REPLACE THIS WITH <EDITED BY YOUR_NAME>>
 
-module.exports = (sequelize, DataTypes) => {
-    const Product = sequelize.define('Product', {
+module.exports = (connectDB, DataTypes) => {
+    const Product = connectDB.define('Product', {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
