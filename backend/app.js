@@ -5,8 +5,9 @@ app.use(cors());
 app.use(express.json());
 // const taskRoute = require("./routes/taskrouter");
 const globalErrorHandler = require("./utils/globalErrorHandler");
+const vendorRoutes = require('./routes/vendorRoute');
 
-// app.use("/api/v1", taskRoute);
+app.use("/api/v1",vendorRoutes );
 
 app.use(globalErrorHandler);
 
