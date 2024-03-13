@@ -33,7 +33,7 @@ db.Address = require("./addressModel")(connectDB, DataTypes);
 db.Vendor = require("./vendorModel")(connectDB, DataTypes);
 db.VendorProduct = require("./vendorProductModel")(connectDB, DataTypes);
 db.VendorCustomer = require("./vendorCustomerModel")(connectDB, DataTypes);
-db.Admin = require('./adminModel')(connectDB,DataTypes);
+db.Admin = require('./adminModel')(connectDB, DataTypes);
 
 // =============Vendor-Invoice (: One to many)============================
 
