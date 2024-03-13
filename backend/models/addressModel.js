@@ -31,7 +31,13 @@ module.exports = (connectDB, DataTypes)=>{
         },
         role : {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: false,
+            validate: {
+                isIn: {
+                  args: [['vendor', 'customer']],
+                  msg: "Role must be either 'vendor' or 'customer'"
+                }
+            }
         }
 
     },{
