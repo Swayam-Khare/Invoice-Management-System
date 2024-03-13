@@ -1,4 +1,5 @@
 module.exports = (connectDB, DataTypes) => {
+
   const Address = connectDB.define(
     "Address",
     {

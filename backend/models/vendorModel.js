@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+
 module.exports = (connectDB, DataTypes) => {
   const Vendor = connectDB.define(
     "Vendor",
@@ -9,6 +10,7 @@ module.exports = (connectDB, DataTypes) => {
         primaryKey: true,
         allowNull: false,
         unique: true,
+
         autoIncrement: true,
       },
       name:{
@@ -30,7 +32,7 @@ module.exports = (connectDB, DataTypes) => {
           },
         },
       },
-      
+   
       password: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -51,7 +53,9 @@ module.exports = (connectDB, DataTypes) => {
             }
           },
         },
+
       },
+
     },
     {
       // Other model options go here
@@ -63,10 +67,15 @@ module.exports = (connectDB, DataTypes) => {
           const hashedPassword = await bcrypt.hash(vendor.password, 10);
           vendor.password = hashedPassword;
           vendor.confirmPassword = undefined;
-        },
+        }
       },
     }
   );
+
+  Vendor.prototype.comparePasswordInDb = async function (pswd, pswdDB) {
+    return await bcrypt.compare(pswd, pswdDB);
+  }
+
 
   return Vendor;
 };
