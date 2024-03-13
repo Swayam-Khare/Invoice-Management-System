@@ -1,4 +1,4 @@
-const bcrypt = require('bcryptjs');
+const bcrypt = require("bcrypt");
 
 module.exports = (connectDB, DataTypes) => {
   const Vendor = connectDB.define(
@@ -10,7 +10,12 @@ module.exports = (connectDB, DataTypes) => {
         primaryKey: true,
         allowNull: false,
         unique: true,
-        autoIncrement: true
+
+        autoIncrement: true,
+      },
+      name:{
+        type:DataTypes.STRING,
+        allowNull:false,
       },
       shopName: {
         type: DataTypes.STRING,
@@ -27,16 +32,7 @@ module.exports = (connectDB, DataTypes) => {
           },
         },
       },
-      contact: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        validate: {
-          len: {
-            args: [10, 10],
-            msg: "Contact must have exactly 10 digits",
-          }
-        },
-      },
+   
       password: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -49,7 +45,7 @@ module.exports = (connectDB, DataTypes) => {
       },
       confirmPassword: {
         type: DataTypes.VIRTUAL,
-        allowNull: true,
+        allowNull: false,
         validate: {
           isConfirmed(value) {
             if (value !== this.password) {
@@ -57,6 +53,7 @@ module.exports = (connectDB, DataTypes) => {
             }
           },
         },
+
       },
 
     },

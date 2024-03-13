@@ -10,6 +10,7 @@ const connectDB = new Sequelize(database, user, password, {
   dialect: "postgres",
   logging: true
   // logging: false
+
 });
 
 // ==== TO CONNECT TO REMOTE DATABASE ====
@@ -87,8 +88,7 @@ const check = async () => {
   try {
     await connectDB.authenticate();
     console.log("Connection has been established successfully.");
-    await db.connectDB.sync({ force: true });
-    // await db.connectDB.sync({ force: false });
+    await db.connectDB.sync({ force: false });
     console.log("All models were synchronized successfully.");
   } catch (error) {
     console.error("Unable to connect to the database:", error);
