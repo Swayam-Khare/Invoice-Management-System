@@ -2,8 +2,8 @@ const Vendor = require("./vendorModel");
 const Product = require("./productModel");
 
 module.exports = (connectDB, DataTypes) => {
-  const AdminProduct = connectDB.define(
-    "AdminProduct",
+  const VendorProduct = connectDB.define(
+    "VendorProduct",
     {
       VendorId: {
         type: DataTypes.INTEGER,
@@ -22,8 +22,8 @@ module.exports = (connectDB, DataTypes) => {
     },
     {
       // Other model options go here
-      modelName: "AdminProduct",
-      tableName: "adminproduct",
+      modelName: "VendorProduct",
+      tableName: "vendorproduct",
       timestamps: false,
     }
   );
