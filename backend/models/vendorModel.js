@@ -55,16 +55,6 @@ module.exports = (connectDB, DataTypes) => {
           },
         },
 
-        role : {
-          type: DataTypes.STRING,
-          allowNull: false,
-          validate: {
-              isIn: {
-                args: [['vendor', 'admin']],
-                msg: "Role must be either 'vendor' or 'admin'"
-              }
-          }
-      }
       },
       {
         // Other model options go here
