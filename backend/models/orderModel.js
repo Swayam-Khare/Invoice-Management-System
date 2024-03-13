@@ -5,15 +5,32 @@ module.exports = (connectDB, DataTypes) => {
       // Model attributes are defined here
       invoiceNo: {
         type: DataTypes.INTEGER,
-        allowNull: false
+
+        unique: true,
+        allowNull: false,
+        validate: {
+          notNull: {
+            msg: 'Please enter your invoice number'
+          }
+        }
       },
       productId: {
         type: DataTypes.ARRAY(DataTypes.INTEGER),
-        allowNull: false
+        allowNull: false,
+        validate: {
+          notNull: {
+            msg: 'Please enter product id'
+          }
+        }
       },
       quantity: {
         type: DataTypes.ARRAY(DataTypes.INTEGER),
-        allowNull: false
+        allowNull: false,
+        validate: {
+          notNull: {
+            msg: 'Please enter quantity'
+          }
+        }
       },
     },
     {
