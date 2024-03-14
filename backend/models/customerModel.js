@@ -16,7 +16,7 @@ module.exports = (connectDB, DataTypes) => {
         },
         lastName: {
           type: DataTypes.STRING(100),
-          allowNull: false,
+          allowNull: true,
         },
         
         email: {
