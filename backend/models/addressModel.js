@@ -1,23 +1,25 @@
-module.exports = (connectDB, DataTypes)=>{
+module.exports = (connectDB, DataTypes) => {
     const Address = connectDB.define('Address', {
-        address_lane1 : {
+        address_lane1: {
             type: DataTypes.STRING
         },
-        address_lane2 : {
+        address_lane2: {
             type: DataTypes.STRING
         },
-        landmark : {
+        landmark: {
             type: DataTypes.STRING
         },
-        pincode : {
+        pincode: {
             type: DataTypes.STRING,
             allowNull: false,
             validate: {
-                args: [6, 6],
-                msg: "Pincode must have exactly 6 digits"
+                len: {
+                    args: [6, 6],
+                    msg: "Pincode must have exactly 6 digits"
+                }
             }
         },
-        state : {
+        state: {
             type: DataTypes.STRING,
             allowNull: false
         },
@@ -25,26 +27,28 @@ module.exports = (connectDB, DataTypes)=>{
             type: DataTypes.STRING,
             allowNull: false,
             validate: {
-              args: [10, 10],
-              msg: "Contact must have exactly 10 digits",
+                len: {
+                    args: [10, 10],
+                    msg: "Contact must have exactly 10 digits",
+                }
             },
         },
-        role : {
+        role: {
             type: DataTypes.STRING,
             allowNull: false,
             validate: {
                 isIn: {
-                  args: [['vendor', 'customer']],
-                  msg: "Role must be either 'vendor' or 'customer'"
+                    args: [['vendor', 'customer']],
+                    msg: "Role must be either 'vendor' or 'customer'"
                 }
             }
         },
-        roleId:{
-            type:DataTypes.INTEGER
+        roleId: {
+            type: DataTypes.INTEGER
 
         }
 
-    },{
+    }, {
         modelName: 'Address',
         tableName: 'address',
         timestamps: false

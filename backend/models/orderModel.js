@@ -9,7 +9,7 @@ module.exports = (connectDB, DataTypes) => {
         allowNull: false,
         validate: {
           notNull: {
-            msg: 'Please enter your invoice number'
+            msg: 'Please enter your invoice number'  
           }
         }
       },
