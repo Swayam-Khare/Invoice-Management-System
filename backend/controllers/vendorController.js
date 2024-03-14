@@ -1,10 +1,10 @@
-const { where } = require("sequelize");
 const { db } = require("../models/connection");
 const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const CustomError = require("../utils/customError");
+const signToken = require("../utils/signToken");
+
 const Vendor = db.Vendor;
 const Address = db.Address;
-const signToken = require("../utils/signToken");
 
 // ------------- CREATE A VENDOR --------------
 
