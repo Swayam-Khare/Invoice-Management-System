@@ -3,14 +3,20 @@ module.exports = (connectDB, DataTypes) => {
     "Order",
     {
       // Model attributes are defined here
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        unique: true,
+        allowNull: false,
+        autoIncrement: true,
+      },
       invoiceNo: {
         type: DataTypes.INTEGER,
-
         unique: true,
         allowNull: false,
         validate: {
           notNull: {
-            msg: 'Please enter your invoice number'  
+            msg: 'Please enter your invoice number!'
           }
         }
       },
@@ -19,7 +25,7 @@ module.exports = (connectDB, DataTypes) => {
         allowNull: false,
         validate: {
           notNull: {
-            msg: 'Please enter product id'
+            msg: 'Please enter product id!'
           }
         }
       },
@@ -28,7 +34,7 @@ module.exports = (connectDB, DataTypes) => {
         allowNull: false,
         validate: {
           notNull: {
-            msg: 'Please enter quantity'
+            msg: 'Please enter quantity!'
           }
         }
       },

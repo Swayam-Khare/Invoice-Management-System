@@ -1,6 +1,7 @@
 const { db } = require("../models/connection");
 const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const CustomError = require("../utils/customError");
+
 const Address = db.Address;
 
 // Create Address

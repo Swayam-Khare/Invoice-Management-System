@@ -1,16 +1,10 @@
 const db = require("./../models/connection");
 const asyncErrorHandler = require("./../utils/asyncErrorHandler");
-const jwt = require("jsonwebtoken");
-const signToken = require("../utils/signToken")
 const CustomError = require("./../utils/customError");
+const signToken = require("../utils/signToken")
+const jwt = require("jsonwebtoken");
 
 const Vendor = db.db.Vendor;
-
-// const signToken = (id) => {
-//   return jwt.sign({ id }, process.env.SECRET_STR, {
-//     expiresIn: process.env.LOGIN_EXPIRES,
-//   });
-// };
 
 // ===========================================SIGNUP==================================================== //
 
@@ -37,7 +31,6 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
     const error = new CustomError("Incorrect email or password", 400);
     return next(error);
   }
-
   const token = signToken(vendor.id);
 
   res.status(200).json({
@@ -62,7 +55,6 @@ exports.protect = asyncErrorHandler(async (req, res, next) => {
   const { email, password } = req.body;
 
   // Find the vendor by token id
-
   const vendor = await Vendor.findByPk(decodedToken.id);
 
   if (!vendor) {

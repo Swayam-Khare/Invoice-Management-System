@@ -1,6 +1,6 @@
 const { db } = require("../models/connection");
-const CustomError = require("../utils/customError");
 const asyncErrorHandler = require("../utils/asyncErrorHandler");
+const CustomError = require("../utils/customError");
 
 const Customer = db.Customer;
 const Address = db.Address;
@@ -42,6 +42,7 @@ exports.createCustomer = asyncErrorHandler(async (req, res, next) => {
             roleId,
         });
     }
+
     res.status(201).json({
         status: "Success",
         data: {
@@ -52,7 +53,6 @@ exports.createCustomer = asyncErrorHandler(async (req, res, next) => {
 });
 
 // ------------- GET ALL CUSTOMERS --------------
-
 
 exports.getAllCustomers = asyncErrorHandler(async (req, res, next) => {
     const customers = await Customer.findAll({
@@ -82,7 +82,6 @@ exports.getAllCustomers = asyncErrorHandler(async (req, res, next) => {
     });
 });
 
-
 // ------------- GET CUSTOMER BY ID --------------
 
 exports.getCustomer = asyncErrorHandler(async (req, res, next) => {
@@ -106,17 +105,13 @@ exports.getCustomer = asyncErrorHandler(async (req, res, next) => {
             id: req.params.id,
         },
     });
+
     if (!req.params.id || !customer) {
         if (!req.params.id) {
-            const error = new CustomError("please give id in parameters", 400);
-            return next(error);
+            return next(new CustomError("Please provide id in parameters!", 400));
         }
         if (!customer) {
-            const error = new CustomError(
-                "Customer for the given id does not exist",
-                404
-            );
-            return next(error);
+            return next(new CustomError(`Customer with the id(${req.params.id}) does not exist!`, 400));
         }
     }
 
@@ -128,24 +123,17 @@ exports.getCustomer = asyncErrorHandler(async (req, res, next) => {
     });
 });
 
-
 // ------------- DELETE CUSTOMER --------------
-
 
 exports.deleteCustomer = asyncErrorHandler(async (req, res, next) => {
     const customer = await Customer.findByPk(req.params.id)
 
     if (!req.params.id || !customer) {
         if (!req.params.id) {
-            const error = new CustomError("Please give id in parameters", 400);
-            return next(error);
+            return next(new CustomError("Please provide id in parameters!", 400));
         }
         if (!customer) {
-            const error = new CustomError(
-                "Customer for the given id does not exist",
-                404
-            );
-            return next(error);
+            return next(new CustomError(`Customer with the id(${req.params.id}) does not exist!`, 400));
         }
     }
 
@@ -165,19 +153,16 @@ exports.updateCustomer = asyncErrorHandler(async (req, res, next) => {
 
     if (!req.params.id || !customer) {
         if (!req.params.id) {
-            const error = new CustomError("please give id in parameters", 400);
-            return next(error);
+            return next(new CustomError("Please provide id in parameters!", 400));
         }
         if (!customer) {
-            const error = new CustomError(
-                "Customer for the given id does not exist",
-                404
-            );
-            return next(error);
+            return next(new CustomError(`Customer with the id(${req.params.id}) does not exist!`, 400));
         }
     }
+
     const {
-        name,
+        firstName,
+        lastName,
         email,
         contact,
         address_lane1,
@@ -198,14 +183,14 @@ exports.updateCustomer = asyncErrorHandler(async (req, res, next) => {
 
     if (role) {
         const error = new CustomError(
-            "you can not update role using this end point",
+            "You can't update role using this end point!",
             400
         );
         return next(error);
     };
 
     const updateCustomer = await Customer.update(
-        { name, email },
+        { firstName, lastName, email, contact },
         { where: { id: req.params.id } }
     );
 
@@ -238,8 +223,6 @@ exports.updateCustomer = asyncErrorHandler(async (req, res, next) => {
     res.status(200).json({
         status: "Success",
         data: {
-            //   updateCustomer,
-            //   updateCustomerAddress,
             updatedCustomer,
         },
     });
