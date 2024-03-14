@@ -2,12 +2,20 @@ const { db }= require('../models/connection.js')
 const asyncErrorHandler = require('../utils/asyncErrorHandler.js')
 const CustomError = require('../utils/customError.js')
 const Product =  db.Product
+const Vendor =  db.Vendor
 
 
 // CREATE OPERATION
 exports.addProduct = asyncErrorHandler(
     async (req, res, next) => {
         const product = await Product.create(req.body)
+
+        // THIS WILL FETCH THE VENDOR FROM THE REQUEST
+        const vendor = await Vendor.findByPk(req.vendorId)
+
+        // THIS METHOD IS DIRECTLY PROVIDED BY SEQUELIZE WHICH WILL MAKE AN ENTRY IN THROUGH TABLE
+        await vendor.addProduct(product)
+
         res.status(201).json({
             status: 'Success',
             data: {
@@ -80,15 +88,19 @@ exports.updateProduct = asyncErrorHandler(
 // DELETE PRODUCT
 exports.deleteProduct = asyncErrorHandler(
     async (req, res, next) => {
-        const deletedProduct = await Product.destroy({
-            where: {
-                id: req.params.productId
-            }
-        })
-        if(!deletedProduct){
+        const product = await Product.findByPk(req.params.productId)
+        const vendor = await Vendor.findByPk(req.vendorId)
+
+        if(!product){
             const error = new CustomError(`Product with ID '${req.params.productId}' is not found`, 404)
             return next(error)
         }
+
+        // THIS METHOD IS DIRECTLY PROVIDED BY SEQUELIZE WHICH WILL REMOVE AN ENTRY IN THROUGH TABLE
+        await vendor.removeProduct(product)
+
+        await product.destroy()
+
         res.status(204).json({
             status: 'Success',
             data: null

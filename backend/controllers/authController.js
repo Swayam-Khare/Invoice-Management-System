@@ -52,7 +52,7 @@ exports.protect = asyncErrorHandler(async (req, res, next) => {
   // Verify the token
   const decodedToken = jwt.verify(testToken.split(" ")[1], process.env.SECRET_STR);
 
-  const { email, password } = req.body;
+  // const { email, password } = req.body;
 
   // Find the vendor by token id
   const vendor = await Vendor.findByPk(decodedToken.id);
