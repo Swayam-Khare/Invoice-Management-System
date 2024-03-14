@@ -10,10 +10,15 @@ module.exports = (connectDB, DataTypes) => {
           allowNull:false,
           autoIncrement: true,
         },
-        name: {
+        firstName: {
           type: DataTypes.STRING(100),
           allowNull: false,
         },
+        lastName: {
+          type: DataTypes.STRING(100),
+          allowNull: true,
+        },
+        
         email: {
           type: DataTypes.STRING(100),
           allowNull: false,
@@ -25,14 +30,14 @@ module.exports = (connectDB, DataTypes) => {
             },
           },
         },
-        // contact: {
-        //   type: DataTypes.BIGINT,
-        //   allowNull: false,
-        //   validate: {
-        //     args: [10, 10],
-        //     msg: "Contact must have exactly 10 digits",
-        //   },
-        // },
+        contact: {
+        type: DataTypes.BIGINT,
+        allowNull: false,
+        validate: {
+        args: [10, 10],
+        msg: "Contact must have exactly 10 digits",
+        },
+        },
       },
         // Other model options go here
         {
