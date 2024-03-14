@@ -10,7 +10,7 @@ exports.addProduct = asyncErrorHandler(
     async (req, res, next) => {
         const product = await Product.create(req.body)
 
-        // THIS WILL FETCH THE VENDOR ID FROM THE REQUEST
+        // THIS WILL FETCH THE VENDOR FROM THE REQUEST
         const vendor = await Vendor.findByPk(req.vendorId)
 
         // THIS METHOD IS DIRECTLY PROVIDED BY SEQUELIZE WHICH WILL MAKE AN ENTRY IN THROUGH TABLE
