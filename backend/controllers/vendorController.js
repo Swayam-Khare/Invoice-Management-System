@@ -9,9 +9,10 @@ const signToken = require("../utils/signToken");
 // ------------- CREATE A VENDOR --------------
 
 exports.createVendor = asyncErrorHandler(async (req, res, next) => {
-  const { name, shopName, email, contact, password, confirmPassword, address_lane1, address_lane2, landmark, pincode, state, role } = req.body;
+  const { firstName, lastName, shopName, email, contact, password, confirmPassword, address_lane1, address_lane2, landmark, pincode, state, role } = req.body;
   const vendor = await Vendor.create({
-    name,
+    firstName,
+    lastName,
     shopName,
     email,
     password,
