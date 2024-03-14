@@ -3,16 +3,12 @@ const addressController = require("./../controllers/addressController");
 
 const router = express.Router();
 
-router
-  .route("/")
-  .get(addressController.getAddresses)
-  .post(addressController.addAddress);
+router.route("/").get(authController.protect, addressController.getAddresses).post(authController.protect, addressController.addAddress);
 
 router
   .route("/:addressId")
-  .get(addressController.getAddress)
-  .patch(addressController.updateAddress)
-  .delete(addressController.deleteAddress);
+  .get(authController.protect, addressController.getAddress)
+  .patch(authController.protect, addressController.updateAddress)
+  .delete(authController.protect, addressController.deleteAddress);
 
-router.route("/:role/:roleId")
-  .get(addressController.getAddressByRole);
+router.route("/:role/:roleId").get(authController.protect, addressController.getAddressByRole);
