@@ -8,9 +8,8 @@ const password = process.env.DB_PASSWORD;
 const connectDB = new Sequelize(database, user, password, {
   host: "localhost",
   dialect: "postgres",
-  logging: true
+  logging: true,
   // logging: false
-
 });
 
 // ==== TO CONNECT TO REMOTE DATABASE ====
@@ -35,9 +34,9 @@ db.Address = require("./addressModel")(connectDB, DataTypes);
 db.Vendor = require("./vendorModel")(connectDB, DataTypes);
 db.VendorProduct = require("./vendorProductModel")(connectDB, DataTypes);
 db.VendorCustomer = require("./vendorCustomerModel")(connectDB, DataTypes);
-db.Admin = require('./adminModel')(connectDB, DataTypes);
+db.Admin = require("./adminModel")(connectDB, DataTypes);
 
-// =============Vendor-Invoice (: One to many)============================  
+// =============Vendor-Invoice (: One to many)============================
 
 db.Vendor.hasMany(db.Invoice);
 db.Invoice.belongsTo(db.Vendor);
@@ -60,7 +59,7 @@ db.Customer.hasOne(db.Address, {
   scope: {
     role: "customer",
   },
-  as:"Address Details"
+  as: "Address Details",
 });
 db.Address.belongsTo(db.Customer, { foreignKey: "roleId", constraints: false });
 
@@ -72,7 +71,7 @@ db.Vendor.hasOne(db.Address, {
   scope: {
     role: "vendor",
   },
-  as:"Address Details"
+  as: "Address Details",
 });
 db.Address.belongsTo(db.Vendor, { foreignKey: "roleId", constraints: false });
 

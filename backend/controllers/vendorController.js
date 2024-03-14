@@ -4,24 +4,12 @@ const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const CustomError = require("../utils/customError");
 const Vendor = db.Vendor;
 const Address = db.Address;
+const signToken = require("../utils/signToken");
 
 // ------------- CREATE A VENDOR --------------
 
 exports.createVendor = asyncErrorHandler(async (req, res, next) => {
-  const {
-    name,
-    shopName,
-    email,
-    contact,
-    password,
-    confirmPassword,
-    address_lane1,
-    address_lane2,
-    landmark,
-    pincode,
-    state,
-    role,
-  } = req.body;
+  const { name, shopName, email, contact, password, confirmPassword, address_lane1, address_lane2, landmark, pincode, state, role } = req.body;
   const vendor = await Vendor.create({
     name,
     shopName,
@@ -43,11 +31,13 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
       roleId,
     });
   }
+  const token = signToken(vendor.id);
   res.status(201).json({
     status: "success",
     data: {
       vendor,
       vendorAddress,
+      token,
     },
   });
 });
@@ -96,10 +86,7 @@ exports.getASpecificVendor = asyncErrorHandler(async (req, res, next) => {
       return next(error);
     }
     if (!vendor) {
-      const error = new CustomError(
-        "Vendor for the given id does not exist",
-        404
-      );
+      const error = new CustomError("Vendor for the given id does not exist", 404);
       return next(error);
     }
   }
@@ -133,10 +120,7 @@ exports.deleteVendor = asyncErrorHandler(async (req, res, next) => {
       return next(error);
     }
     if (!vendor) {
-      const error = new CustomError(
-        "Vendor for the given id does not exist",
-        404
-      );
+      const error = new CustomError("Vendor for the given id does not exist", 404);
       return next(error);
     }
   }
@@ -171,46 +155,21 @@ exports.updateVendor = asyncErrorHandler(async (req, res, next) => {
       return next(error);
     }
     if (!vendor) {
-      const error = new CustomError(
-        "Vendor for the given id does not exist",
-        404
-      );
+      const error = new CustomError("Vendor for the given id does not exist", 404);
       return next(error);
     }
   }
-  const {
-    name,
-    shopName,
-    email,
-    contact,
-    password,
-    confirmPassword,
-    address_lane1,
-    address_lane2,
-    landmark,
-    pincode,
-    state,
-    role,
-  } = req.body;
+  const { name, shopName, email, contact, password, confirmPassword, address_lane1, address_lane2, landmark, pincode, state, role } = req.body;
 
   if (password || confirmPassword) {
-    const error = new CustomError(
-      "you can not update password using this end point",
-      400
-    );
+    const error = new CustomError("you can not update password using this end point", 400);
     return next(error);
   }
   if (role) {
-    const error = new CustomError(
-      "you can not update role using this end point",
-      400
-    );
+    const error = new CustomError("you can not update role using this end point", 400);
     return next(error);
   }
-  const updateVendor = await Vendor.update(
-    { name, shopName, email },
-    { where: { id } }
-  );
+  const updateVendor = await Vendor.update({ name, shopName, email }, { where: { id } });
   const updateVendorAddress = await Address.update(
     { address_lane1, address_lane2, landmark, pincode, state, contact },
     { where: { role: "vendor", roleId: id } }
