@@ -1,5 +1,5 @@
 module.exports = (connectDB, DataTypes) => {
-
+  
   const Address = connectDB.define(
     "Address",
     {
@@ -58,3 +58,4 @@ module.exports = (connectDB, DataTypes) => {
   );
   return Address;
 };
+
