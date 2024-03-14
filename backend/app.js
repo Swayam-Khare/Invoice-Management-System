@@ -17,12 +17,12 @@ app.use(express.json());
 // ========================Invoice Router ====================
 
 // USE ROUTES HERE
-app.use("/api/v1", vendorRoutes);
+app.use("/api/v1/customers", customerRouter);
+app.use("/api/v1", vendorRouter);
 app.use("/api/v1/orders", orderRouter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/invoices", invoiceRouter);
 app.use("/api/products", productRouter);
-app.use("/api/customer", customerRouter);
 
 // ERROR HANDLER MUST BE DEFINED LAST
 app.use(globalErrorHandler);

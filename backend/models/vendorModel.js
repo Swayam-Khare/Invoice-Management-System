@@ -13,9 +13,12 @@ module.exports = (connectDB, DataTypes) => {
 
         autoIncrement: true,
       },
-      name:{
+      firstName:{
         type:DataTypes.STRING,
         allowNull:false,
+      },
+      lastName:{
+        type:DataTypes.STRING,        
       },
       shopName: {
         type: DataTypes.STRING,

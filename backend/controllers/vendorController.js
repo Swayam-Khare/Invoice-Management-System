@@ -49,6 +49,7 @@ exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
     include: [
       {
         model: Address,
+        as:'Address Details'
         // attributes: [],
       },
     ],
@@ -72,6 +73,7 @@ exports.getASpecificVendor = asyncErrorHandler(async (req, res, next) => {
     include: [
       {
         model: Address,
+        as:"Address Details",
         // attributes: [],
       },
     ],
@@ -106,6 +108,7 @@ exports.deleteVendor = asyncErrorHandler(async (req, res, next) => {
     include: [
       {
         model: Address,
+        as:"Address Details",
         // attributes: [],
       },
     ],
@@ -142,6 +145,7 @@ exports.updateVendor = asyncErrorHandler(async (req, res, next) => {
     include: [
       {
         model: Address,
+        as:"Address Details",
       },
     ],
 
@@ -178,6 +182,7 @@ exports.updateVendor = asyncErrorHandler(async (req, res, next) => {
     include: [
       {
         model: Address,
+        as:"Address Details",
       },
     ],
     where: {

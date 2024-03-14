@@ -1,6 +1,6 @@
 const { db } = require("../models/connection");
 
-const asyncErrorHandler = require('./../utils/asyncErrorHandler');
+const asyncErrorHandler = require('../utils/asyncErrorHandler');
 const CustomError = require('../utils/customError');
 const Invoice = db.Invoice;
 
