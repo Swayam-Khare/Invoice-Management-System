@@ -17,11 +17,11 @@ app.use(express.json());
 
 // USE ROUTES HERE
 app.use("/api/v1/customers", customerRouter);
-app.use("/api/v1",vendorRouter );
+app.use("/api/v1/vendors",vendorRouter );
 app.use('/api/v1/orders', orderRouter)
 app.use('/api/v1/auth', authRouter);
 app.use("/api/v1/invoices", invoiceRouter );
-app.use('/api/products', productRouter)
+app.use('/api/v1/products', productRouter)
 
 
 // ERROR HANDLER MUST BE DEFINED LAST
