@@ -9,12 +9,16 @@ module.exports = (connectDB, DataTypes) => {
           unique:true,
           allowNull:false,
           autoIncrement: true,
-          autoIncrement: { initialValue: 0 },
         },
-        name: {
+        firstName: {
           type: DataTypes.STRING(100),
           allowNull: false,
         },
+        lastName: {
+          type: DataTypes.STRING(100),
+          allowNull: true,
+        },
+        
         email: {
           type: DataTypes.STRING(100),
           allowNull: false,
@@ -27,12 +31,12 @@ module.exports = (connectDB, DataTypes) => {
           },
         },
         contact: {
-          type: DataTypes.BIGINT,
-          allowNull: false,
-          validate: {
-            args: [10, 10],
-            msg: "Contact must have exactly 10 digits",
-          },
+        type: DataTypes.BIGINT,
+        allowNull: false,
+        validate: {
+        args: [10, 10],
+        msg: "Contact must have exactly 10 digits",
+        },
         },
       },
         // Other model options go here
