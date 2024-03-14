@@ -7,7 +7,7 @@ const productRouter = require("./routes/productRoute");
 const orderRouter = require("./routes/orderRoute");
 const authRouter = require("./routes/authRoute");
 const invoiceRouter = require("./routes/invoiceRoute");
-const vendorRoutes = require("./routes/vendorRoute");
+const vendorRouter = require("./routes/vendorRoute");
 
 // USE MODULES HERE
 const app = express();
@@ -18,11 +18,11 @@ app.use(express.json());
 
 // USE ROUTES HERE
 app.use("/api/v1/customers", customerRouter);
-app.use("/api/v1", vendorRouter);
+app.use("/api/v1/vendors", vendorRouter);
 app.use("/api/v1/orders", orderRouter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/invoices", invoiceRouter);
-app.use("/api/products", productRouter);
+app.use("/api/v1/products", productRouter);
 
 // ERROR HANDLER MUST BE DEFINED LAST
 app.use(globalErrorHandler);
