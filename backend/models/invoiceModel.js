@@ -1,67 +1,91 @@
 module.exports = (connectDB, DataTypes) => {
-  const Invoice = connectDB.define("Invoice", {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-      allowNull: false,  
-    },
+  const Invoice = connectDB.define(
+    "Invoice",
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false,
+      },
 
-    due_date: {
-      type: DataTypes.DATE,
-      allowNull: false,
-    },
+      invoice_id: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          len: {
+            args: [4, 4],
+            msg: "Invoice id length must be 4 letters only",
+          },
+        },
+      },
 
-    purchase_date: {
-      type: DataTypes.DATE,
-      allowNull: false,
-    },
+      invoice_no: {
+        type: DataTypes.BIGINT,
+        allowNull: false,
+      },
 
-    tax: {
-      type: DataTypes.DECIMAL(10, 2),
-      allowNull: false,
-    },
+      transaction_no: {
+        type: DataTypes.BIGINT,
+        allowNull: true,
+      },
 
-    delivery_charge: {
-      type: DataTypes.DECIMAL(10, 2),
-      allowNull: false,
-    },
+      due_date: {
+        type: DataTypes.DATE,
+        allowNull: false,
+      },
 
-    status: {
-      type: DataTypes.STRING,
-      defaultValue: "due",
-    },
+      purchase_date: {
+        type: DataTypes.DATE,
+        allowNull: false,
+      },
 
-    subtotal: {
-      type: DataTypes.DECIMAL(10, 2),
-      allowNull: false,
-    },
+      tax: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+      },
 
-    total: {
-      type: DataTypes.DECIMAL(10, 2),
-      allowNull: false,
-    },
+      delivery_charge: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+      },
 
-    penalty: {
-      type: DataTypes.DECIMAL(10, 2),
-      defaultValue: 0.0,
-    },
+      status: {
+        type: DataTypes.STRING,
+        defaultValue: "due",
+      },
 
-    notes: {
-      type: DataTypes.TEXT,
-      allowNull: true
-    },
+      subtotal: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+      },
 
-    discount: {
-      type: DataTypes.DECIMAL(10, 2),
-      allowNull: false
-    },
-  }, {
+      total: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+      },
 
-    modelName: 'Invoice',
-    tableName: 'invoice',
-    timestamps: false
-  });
+      penalty: {
+        type: DataTypes.DECIMAL(10, 2),
+        defaultValue: 0.0,
+      },
+
+      notes: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
+
+      discount: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+      },
+    },
+    {
+      modelName: "Invoice",
+      tableName: "invoice",
+      timestamps: false,
+    }
+  );
 
   return Invoice;
 };

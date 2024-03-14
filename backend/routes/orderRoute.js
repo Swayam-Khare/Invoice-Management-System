@@ -8,7 +8,7 @@ router.route('/')
     .post(orderController.createOrder)
 
 
-router.route('/:id')
+router.route('/:orderId')
     .get(orderController.getOrder)
     .patch(orderController.updateOrder)
     .delete(orderController.deleteOrder)
