@@ -8,7 +8,9 @@ const password = process.env.DB_PASSWORD;
 const connectDB = new Sequelize(database, user, password, {
   host: "localhost",
   dialect: "postgres",
-  logging: false,
+  logging: true
+  // logging: false
+
 });
 
 // ==== TO CONNECT TO REMOTE DATABASE ====
@@ -33,7 +35,7 @@ db.Address = require("./addressModel")(connectDB, DataTypes);
 db.Vendor = require("./vendorModel")(connectDB, DataTypes);
 db.VendorProduct = require("./vendorProductModel")(connectDB, DataTypes);
 db.VendorCustomer = require("./vendorCustomerModel")(connectDB, DataTypes);
-db.Admin = require('./adminModel')(connectDB,DataTypes);
+db.Admin = require('./adminModel')(connectDB, DataTypes);
 
 // =============Vendor-Invoice (: One to many)============================  
 
@@ -88,7 +90,7 @@ const check = async () => {
   try {
     await connectDB.authenticate();
     console.log("Connection has been established successfully.");
-    await db.connectDB.sync({ force: true });
+    await db.connectDB.sync({ force: false });
     console.log("All models were synchronized successfully.");
   } catch (error) {
     console.error("Unable to connect to the database:", error);
