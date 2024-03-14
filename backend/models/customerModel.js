@@ -1,53 +1,53 @@
 module.exports = (connectDB, DataTypes) => {
-    const Customer = connectDB.define(
-      "Customer",
-      {
-        // Schema attributes
-        id: {
-          type: DataTypes.INTEGER,
-          primaryKey: true,
-          unique:true,
-          allowNull:false,
-          autoIncrement: true,
-        },
-        firstName: {
-          type: DataTypes.STRING(100),
-          allowNull: false,
-        },
-        lastName: {
-          type: DataTypes.STRING(100),
-          allowNull: true,
-        },
-        
-        email: {
-          type: DataTypes.STRING(100),
-          allowNull: false,
-          unique: true,
-          validate: {
-            isEmail: {
-              args: true,
-              msg: "Please enter a valid email address!",
-            },
+  const Customer = connectDB.define(
+    "Customer",
+    {
+      // Schema attributes
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        unique: true,
+        allowNull: false,
+        autoIncrement: true,
+      },
+      firstName: {
+        type: DataTypes.STRING(100),
+        allowNull: false,
+      },
+      lastName: {
+        type: DataTypes.STRING(100),
+        allowNull: true,
+      },
+      email: {
+        type: DataTypes.STRING(100),
+        allowNull: false,
+        unique: true,
+        validate: {
+          isEmail: {
+            args: true,
+            msg: "Please enter a valid email address!",
           },
         },
-        contact: {
+      },
+      contact: {
         type: DataTypes.BIGINT,
         allowNull: false,
         validate: {
-        args: [10, 10],
-        msg: "Contact must have exactly 10 digits",
-        },
+          len: {
+            args: [10, 10],
+            msg: "Contact must have exactly 10 digits",
+          }
         },
       },
-        // Other model options go here
-        {
-            // options
-            modelName: 'Customer',
-            tableName: 'customer',
-            timestamps: false
-        }
+    },
+    // Other model options go here
+    {
+      // options
+      modelName: 'Customer',
+      tableName: 'customer',
+      timestamps: false
+    }
   );
-  
-    return Customer;
+
+  return Customer;
 };
-  

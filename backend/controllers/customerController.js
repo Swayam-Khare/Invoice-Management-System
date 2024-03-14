@@ -9,7 +9,8 @@ const Address = db.Address;
 
 exports.createCustomer = asyncErrorHandler(async (req, res, next) => {
     const {
-        name,
+        firstName,
+        lastName,
         email,
         contact,
         address_lane1,
@@ -21,8 +22,10 @@ exports.createCustomer = asyncErrorHandler(async (req, res, next) => {
     } = req.body;
 
     const customer = await Customer.create({
-        name,
+        firstName,
+        lastName,
         email,
+        contact,
     });
 
     let customerAddress = null;
@@ -56,7 +59,7 @@ exports.getAllCustomers = asyncErrorHandler(async (req, res, next) => {
         include: [
             {
                 model: Address,
-                as:"Address Details",
+                as: "Address Details",
                 attributes: [
                     "address_lane1",
                     "address_lane2",
@@ -67,7 +70,7 @@ exports.getAllCustomers = asyncErrorHandler(async (req, res, next) => {
                 ],
             },
         ],
-        attributes: ["id", "name", "email"],
+        attributes: ["id", "firstName", "lastName", "email", "contact"],
     });
 
     res.status(200).json({
@@ -87,7 +90,7 @@ exports.getCustomer = asyncErrorHandler(async (req, res, next) => {
         include: [
             {
                 model: Address,
-                as:"Address Details",
+                as: "Address Details",
                 attributes: [
                     "address_lane1",
                     "address_lane2",
@@ -98,7 +101,7 @@ exports.getCustomer = asyncErrorHandler(async (req, res, next) => {
                 ],
             },
         ],
-        attributes: ["id", "name", "email"],
+        attributes: ["id", "firstName", "lastName", "email", "contact"],
         where: {
             id: req.params.id,
         },
@@ -215,7 +218,7 @@ exports.updateCustomer = asyncErrorHandler(async (req, res, next) => {
         include: [
             {
                 model: Address,
-                as:"Address Details",
+                as: "Address Details",
                 attributes: [
                     "address_lane1",
                     "address_lane2",
@@ -226,6 +229,7 @@ exports.updateCustomer = asyncErrorHandler(async (req, res, next) => {
                 ],
             },
         ],
+        attributes: ["id", "firstName", "lastName", "email", "contact"],
         where: {
             id: req.params.id,
         },

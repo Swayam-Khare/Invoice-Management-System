@@ -14,8 +14,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ========================Invoice Router ====================
-
 // USE ROUTES HERE
 app.use("/api/v1/customers", customerRouter);
 app.use("/api/v1/vendors", vendorRouter);

@@ -1,15 +1,16 @@
 const db = require("./../models/connection");
 const asyncErrorHandler = require("./../utils/asyncErrorHandler");
 const jwt = require("jsonwebtoken");
+const signToken = require("../utils/signToken")
 const CustomError = require("./../utils/customError");
 
 const Vendor = db.db.Vendor;
 
-const signToken = (id) => {
-  return jwt.sign({ id }, process.env.SECRET_STR, {
-    expiresIn: process.env.LOGIN_EXPIRES,
-  });
-};
+// const signToken = (id) => {
+//   return jwt.sign({ id }, process.env.SECRET_STR, {
+//     expiresIn: process.env.LOGIN_EXPIRES,
+//   });
+// };
 
 // ===========================================SIGNUP==================================================== //
 
