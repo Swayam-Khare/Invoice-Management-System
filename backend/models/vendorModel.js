@@ -1,4 +1,4 @@
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 module.exports = (connectDB, DataTypes) => {
   const Vendor = connectDB.define(
@@ -13,12 +13,12 @@ module.exports = (connectDB, DataTypes) => {
 
         autoIncrement: true,
       },
-      firstName:{
-        type:DataTypes.STRING,
-        allowNull:false,
+      firstName: {
+        type: DataTypes.STRING,
+        allowNull: false,
       },
-      lastName:{
-        type:DataTypes.STRING,        
+      lastName: {
+        type: DataTypes.STRING,
       },
       shopName: {
         type: DataTypes.STRING,
@@ -35,7 +35,7 @@ module.exports = (connectDB, DataTypes) => {
           },
         },
       },
-   
+
       password: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -75,6 +75,7 @@ module.exports = (connectDB, DataTypes) => {
     }
   );
 
+  // Instance function to compare password in database
   Vendor.prototype.comparePasswordInDb = async function (pswd, pswdDB) {
     return await bcrypt.compare(pswd, pswdDB);
   }
