@@ -34,8 +34,7 @@ module.exports = (connectDB, DataTypes) => {
             msg: "Please enter a valid email address!",
           },
         },
-      },
-   
+      },  
       password: {
         type: DataTypes.STRING,
         allowNull: false,
