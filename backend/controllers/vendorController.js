@@ -48,34 +48,36 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
   // }
 
   // ---------- CREATE WITH ASSOCIATIONS --------------
-  const vendor = await Vendor.create({
-    firstName,
-    lastName,
-    shopName,
-    email,
-    password,
-    confirmPassword,
-    Address_Details: {
-      address_lane1,
-      address_lane2,
-      landmark,
-      pincode,
-      state,
-      contact,
-      role,
-      // roleId,
+  const vendor = await Vendor.create(
+    {
+      firstName,
+      lastName,
+      shopName,
+      email,
+      password,
+      confirmPassword,
+      Address_Details: {
+        address_lane1,
+        address_lane2,
+        landmark,
+        pincode,
+        state,
+        contact,
+        role,
+        // roleId,
+      },
     },
-  },{
-    include:[db.vendorsAddress]
-  });
-  const token = signToken(vendor.id);
-  // to prenent showind password in responses 
+    {
+      include: [db.vendorsAddress],
+    }
+  );
+
+  // to prenent showind password in responses
   vendor.password = undefined;
   res.status(201).json({
     status: "success",
     data: {
       vendor,
-      token,
     },
   });
 });
