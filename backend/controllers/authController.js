@@ -1,8 +1,9 @@
 const db = require("./../models/connection");
 const asyncErrorHandler = require("./../utils/asyncErrorHandler");
 const CustomError = require("./../utils/customError");
-const signToken = require("../utils/signToken")
+const signToken = require("../utils/signToken");
 const jwt = require("jsonwebtoken");
+const util = require("util");
 
 const Vendor = db.db.Vendor;
 
@@ -50,7 +51,9 @@ exports.protect = asyncErrorHandler(async (req, res, next) => {
   }
 
   // Verify the token
-  const decodedToken = jwt.verify(testToken.split(" ")[1], process.env.SECRET_STR);
+  const verifyToken = util.promisify(jwt.verify);
+  // const decodedToken = await util.promisify(jwt.verify)(testToken.split(" ")[1], process.env.SECRET_STR);
+  const decodedToken = await verifyToken(testToken.split(" ")[1], process.env.SECRET_STR);
 
   // const { email, password } = req.body;
 
@@ -63,7 +66,7 @@ exports.protect = asyncErrorHandler(async (req, res, next) => {
   }
 
   // Attach vendor ID to request object
-  req.vendorId = decodedToken.id;
+  req.vendor = vendor;
 
   // Compare passwords
   //   const isPasswordValid = await bcrypt.compare(password, Vendor.password);

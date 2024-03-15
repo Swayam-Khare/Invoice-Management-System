@@ -9,7 +9,8 @@ const Address = db.Address;
 // ------------- CREATE A VENDOR --------------
 
 exports.createVendor = asyncErrorHandler(async (req, res, next) => {
-  const { firstName, lastName, shopName, email, contact, password, confirmPassword, address_lane1, address_lane2, landmark, pincode, state, role } = req.body;
+  const { firstName, lastName, shopName, email, contact, password, confirmPassword, address_lane1, address_lane2, landmark, pincode, state, role } =
+    req.body;
   const vendor = await Vendor.create({
     firstName,
     lastName,
@@ -50,11 +51,11 @@ exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
     include: [
       {
         model: Address,
-        as:'Address Details'
+        as: "Address Details",
         // attributes: [],
       },
     ],
-    attributes: ["id", "name", "shopName", "email"],
+    attributes: ["id", "firstName", "shopName", "email"],
   });
 
   res.status(200).json({
@@ -74,11 +75,11 @@ exports.getASpecificVendor = asyncErrorHandler(async (req, res, next) => {
     include: [
       {
         model: Address,
-        as:"Address Details",
+        as: "Address Details",
         // attributes: [],
       },
     ],
-    attributes: ["id", "name", "shopName", "email"],
+    attributes: ["id", "firstName", "shopName", "email"],
     where: {
       id,
     },
@@ -109,7 +110,7 @@ exports.deleteVendor = asyncErrorHandler(async (req, res, next) => {
     include: [
       {
         model: Address,
-        as:"Address Details",
+        as: "Address Details",
         // attributes: [],
       },
     ],
@@ -146,7 +147,7 @@ exports.updateVendor = asyncErrorHandler(async (req, res, next) => {
     include: [
       {
         model: Address,
-        as:"Address Details",
+        as: "Address Details",
       },
     ],
 
@@ -164,7 +165,7 @@ exports.updateVendor = asyncErrorHandler(async (req, res, next) => {
       return next(error);
     }
   }
-  const { name, shopName, email, contact, password, confirmPassword, address_lane1, address_lane2, landmark, pincode, state, role } = req.body;
+  const { firstName, shopName, email, contact, password, confirmPassword, address_lane1, address_lane2, landmark, pincode, state, role } = req.body;
 
   if (password || confirmPassword) {
     const error = new CustomError("you can not update password using this end point", 400);
@@ -174,7 +175,7 @@ exports.updateVendor = asyncErrorHandler(async (req, res, next) => {
     const error = new CustomError("you can not update role using this end point", 400);
     return next(error);
   }
-  const updateVendor = await Vendor.update({ name, shopName, email }, { where: { id } });
+  const updateVendor = await Vendor.update({ firstName, shopName, email }, { where: { id } });
   const updateVendorAddress = await Address.update(
     { address_lane1, address_lane2, landmark, pincode, state, contact },
     { where: { role: "vendor", roleId: id } }
@@ -183,7 +184,7 @@ exports.updateVendor = asyncErrorHandler(async (req, res, next) => {
     include: [
       {
         model: Address,
-        as:"Address Details",
+        as: "Address Details",
       },
     ],
     where: {

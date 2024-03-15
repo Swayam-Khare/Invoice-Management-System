@@ -3,9 +3,9 @@ const productController = require("../controllers/productController");
 const authController = require("../controllers/authController");
 
 const router = express.Router();
-const authctrl = require("../controllers/authController");
+// const authctrl = require("../controllers/authController");
 
-router.route("/").get(authController.protect, productController.readProducts).post(authctrl.protect, productController.addProduct);
+router.route("/").get(authController.protect, productController.readProducts).post(authController.protect, productController.addProduct);
 
 router
   .route("/:productId")
