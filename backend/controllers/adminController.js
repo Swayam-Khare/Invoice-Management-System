@@ -17,7 +17,7 @@ exports.updateAdmin = asyncErrorHandler(async (req, res, next) => {
     const admin = await Admin.findByPk(req.params.id);
     if (!admin) {
         const error = new CustomError(
-            "Vendor for the given id does not exist",
+            "admin for the given id does not exist",
             404
         );
         return next(error);
