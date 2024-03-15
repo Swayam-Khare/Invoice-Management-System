@@ -1,5 +1,5 @@
-const bcrypt = require('bcryptjs');
 
+const bcrypt = require('bcryptjs');
 
 module.exports = (connectDB, DataTypes) => {
   const Admin = connectDB.define(
@@ -11,7 +11,7 @@ module.exports = (connectDB, DataTypes) => {
         primaryKey: true,
         allowNull: false,
         unique: true,
-        autoIncrement: true
+        autoIncrement: true,
       },
       name: {
         type: DataTypes.STRING,
@@ -38,6 +38,18 @@ module.exports = (connectDB, DataTypes) => {
           },
         },
       },
+      confirmPassword: {
+        type: DataTypes.VIRTUAL,
+        allowNull: false,
+        validate: {
+          isConfirmed(value) {
+            if (value !== this.password) {
+              throw new Error("Password and confirm password does not match");
+            }
+          },
+        },
+      }
+
     },
     {
       // Other model options go here
@@ -60,3 +72,4 @@ module.exports = (connectDB, DataTypes) => {
 
   return Admin;
 }
+

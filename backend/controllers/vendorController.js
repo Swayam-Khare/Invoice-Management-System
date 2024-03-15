@@ -244,29 +244,35 @@ exports.updateVendor = asyncErrorHandler(async (req, res, next) => {
   }
   const updateVendor = await Vendor.update(
     { firstName, lastName, shopName, email },
-    { where: { id } }
+    {
+      where: { id },
+      returning: true,
+      plain: true
+    }
   );
+
+  // console.log(updateVendor[1].dataValues);
+  // to prevent showing password in response.
+  updateVendor[1].dataValues.password = undefined;
+
+
+
   const updateVendorAddress = await Address.update(
     { address_lane1, address_lane2, landmark, pincode, state, contact },
-    { where: { role: "vendor", roleId: id } }
+    {
+      where: { role: "vendor", roleId: id },
+      returning: true,
+      plain: true
+    }
   );
-  const updatedVendor = await Vendor.findByPk(id, {
-    include: [
-      {
-        model: Address,
-        as: "Address_Details",
-      },
-    ],
-    where: {
-      id,
-    },
-  });
+
   res.status(200).json({
     status: "success",
     data: {
-      //   updateVendor,
-      //   updateVendorAddress,
-      updatedVendor,
+      
+      updatedVendor: updateVendor[1].dataValues,
+      updatedVendorAddress: updateVendorAddress[1].dataValues,
+     
     },
   });
 });
