@@ -98,7 +98,7 @@ exports.protect = asyncErrorHandler(async (req, res, next) => {
   }
 
   // Attach vendor ID to request object
-  req.vendorId = decodedToken.id;
+  req.vendor = vendor;
 
   // Compare passwords
   //   const isPasswordValid = await bcrypt.compare(password, Vendor.password);
