@@ -1,7 +1,7 @@
 const db = require("./../models/connection");
 const asyncErrorHandler = require("./../utils/asyncErrorHandler");
 const CustomError = require("./../utils/customError");
-const signToken = require("../utils/signToken")
+const signToken = require("../utils/signToken");
 const jwt = require("jsonwebtoken");
 
 const Vendor = db.db.Vendor;
@@ -15,7 +15,10 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
   const password = req.body.password;
 
   if (!email || !password) {
-    const error = new CustomError("Please provide email ID & Password for login in!", 400);
+    const error = new CustomError(
+      "Please provide email ID & Password for login in!",
+      400
+    );
     return next(error);
   }
 
@@ -27,7 +30,10 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
   });
 
   //if vendor exists and password match
-  if (!vendor || !(await vendor.comparePasswordInDb(password, vendor.password))) {
+  if (
+    !vendor ||
+    !(await vendor.comparePasswordInDb(password, vendor.password))
+  ) {
     const error = new CustomError("Incorrect email or password", 400);
     return next(error);
   }
@@ -50,7 +56,10 @@ exports.protect = asyncErrorHandler(async (req, res, next) => {
   }
 
   // Verify the token
-  const decodedToken = jwt.verify(testToken.split(" ")[1], process.env.SECRET_STR);
+  const decodedToken = jwt.verify(
+    testToken.split(" ")[1],
+    process.env.SECRET_STR
+  );
 
   // const { email, password } = req.body;
 
@@ -58,7 +67,10 @@ exports.protect = asyncErrorHandler(async (req, res, next) => {
   const vendor = await Vendor.findByPk(decodedToken.id);
 
   if (!vendor) {
-    const error = new CustomError("The user with given credential does not exist.", 401);
+    const error = new CustomError(
+      "The user with given credential does not exist.",
+      401
+    );
     next(error);
   }
 
