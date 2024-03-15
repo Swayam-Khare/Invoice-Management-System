@@ -93,19 +93,42 @@ exports.readProducts = asyncErrorHandler(
 // READ PRODUCT BY ID
 exports.readProductById = asyncErrorHandler(
     async (req, res, next) => {
+        
         const product = await Product.findOne({
             where: {
                 id: req.params.productId
             }
         })
+        
         if(!product){
-            const error = new CustomError(`Product with ID '${req.params.productId}' is not found`, 404)
+            const error = new CustomError(`Product with ID '${req.params.productId}' is not available`, 404)
             return next(error)
         }
+
+        const vendorProduct = await VendorProduct.findOne({
+            where: {
+                VendorId: req.vendor.id,
+                ProductId: product.id
+            }
+        })
+
+        if(!vendorProduct){
+            const error = new CustomError(`You don't have the stock of the product with ID '${product.id}' and Name '${product.name}'`, 404)
+            return next(error)
+        }
+
+        const myProduct = {
+            name: product.name,
+            description: product.description,
+            stock: vendorProduct.stock,
+            price: vendorProduct.price,
+            discount: vendorProduct.discount
+        }
+
         res.status(200).json({
             status: 'Success',
             data: {
-                product
+                myProduct
             }
         })
     }
