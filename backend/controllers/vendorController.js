@@ -2,9 +2,12 @@ const { db } = require("../models/connection");
 const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const CustomError = require("../utils/customError");
 const signToken = require("../utils/signToken");
+const { Op } = require('sequelize')
 
 const Vendor = db.Vendor;
 const Address = db.Address;
+const Product = db.Product;
+const VendorProduct = db.VendorProduct;
 
 // ------------- CREATE A VENDOR --------------
 
@@ -129,13 +132,56 @@ exports.deleteVendor = asyncErrorHandler(async (req, res, next) => {
     }
   }
 
+  // HANDLING DELETION BETWEEN VENDOR AND VENDOR_PRODUCT
+  // FETCHING ALL THE PRODUCTS FROM VENDOR_PRODUCT TABLE ASSOCIATED WITH THAT PARTICULAR VENDOR
+  const vendorProducts = await VendorProduct.findAll({
+    where: {
+      VendorId: id,
+    }
+  })
+
+  // STORING THE PRODUCT IDS FOR DELETED VENDOR
+  const productIds = new Set();
+  for(const vendorProduct of vendorProducts){
+    productIds.add(vendorProduct.ProductId)
+  }
+
+  // DELETING THE PRODUCT RECORDS OF PARTICULAR VENDOR 
+  await VendorProduct.destroy({
+    where: {
+      VendorId: id
+    }
+  })
+
+
+  for(const productId of productIds){
+
+    // FINDING WHETHER ANY OTHER VENDOR HAS THE PRODUCT THAT IS ASSOCIATED WITH CURRENTLY DELETING VENDOR
+    const count = await VendorProduct.findAll({
+      where: {
+        ProductId: productId
+      }
+    })
+
+    // IF NO, THEN DELETE THAT PARTICULAR PRODUCT FROM PRODUCT TABLE TOO...
+    if(count === 0){
+      await Product.destroy({
+        where: {
+          id: productId
+        }
+      })
+    }
+
+  }
+
   await Vendor.destroy({ where: { id } });
   await Address.destroy({ where: { role: "vendor", roleId: id } });
 
   res.status(200).json({
     status: "success",
-    message: "vendor has been deleted successfully.",
+    message: "Vendor and associated products has been deleted successfully.",
   });
+
 });
 
 // -------------- UPDATE VENDOR -------------

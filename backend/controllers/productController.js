@@ -180,6 +180,29 @@ exports.updateProduct = asyncErrorHandler(
                 discount: updatedProduct.discount
             }
 
+            if(updatedProduct.stock === 0){
+                await VendorProduct.destroy({
+                    where: {
+                        VendorId: req.vendor.id,
+                        ProductId: req.params.productId
+                    }
+                })
+            }
+            
+            const vendorProducts = await VendorProduct.findAll({
+                where: {
+                    ProductId: req.params.productId
+                }
+            })
+    
+            if(vendorProducts.length === 0){
+                await Product.destroy({
+                    where: {
+                        id: req.params.productId
+                    }
+                })
+            }
+
             res.status(200).json({
                 status: 'Success',
                 data: {
