@@ -19,11 +19,7 @@ const connectDB = new Sequelize(database, user, password, {
 const db = {};
 db.Sequelize = Sequelize;
 db.connectDB = connectDB;
-// db.Vendor = require('./vendorModel')(sequelize, DataTypes);
 
-// Create separate file for each model schema.
-// Add your model here:
-// Ex - db.<ModelName> = require('<model-path>')(sequilize, DataTypes);
 
 db.Product = require("./productModel")(connectDB, DataTypes);
 db.Invoice = require("./invoiceModel")(connectDB, DataTypes);
@@ -64,13 +60,13 @@ db.Address.belongsTo(db.Customer, { foreignKey: "roleId", constraints: false });
 
 // ============== Vendor-Address (: One to one)=========================
 
-db.Vendor.hasOne(db.Address, {
+db.vendorsAddress =  db.Vendor.hasOne(db.Address, {
   foreignKey: "roleId",
   constraints: false,
   scope: {
     role: "vendor",
   },
-  as: "Address Details",
+  as: "Address_Details",
 });
 db.Address.belongsTo(db.Vendor, { foreignKey: "roleId", constraints: false });
 
