@@ -5,7 +5,7 @@ const signToken = require("../utils/signToken");
 
 const Vendor = db.Vendor;
 const Address = db.Address;
-// vivek
+// vivek-------------
 // ------------- CREATE A VENDOR --------------
 
 exports.createVendor = asyncErrorHandler(async (req, res, next) => {

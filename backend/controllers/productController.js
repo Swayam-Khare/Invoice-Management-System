@@ -3,7 +3,7 @@ const asyncErrorHandler = require("../utils/asyncErrorHandler.js");
 const CustomError = require("../utils/customError.js");
 const Product = db.Product;
 const VendorProduct = db.VendorProduct;
-
+// vivek
 // CREATE OPERATION
 exports.addProduct = asyncErrorHandler(async (req, res, next) => {
   let product = await Product.findOne({
