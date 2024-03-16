@@ -176,7 +176,6 @@ exports.resetPassword = asyncErrorHandler(async (req, res, next) => {
   vendor.lastPasswordChange = Date.now();
 
   await vendor.save();
-  console.log(vendor);
 
   // login the user
 
