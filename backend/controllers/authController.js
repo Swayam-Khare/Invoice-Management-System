@@ -1,14 +1,18 @@
-const db = require("./../models/connection");
+const { db } = require("./../models/connection");
 const asyncErrorHandler = require("./../utils/asyncErrorHandler");
 const CustomError = require("./../utils/customError");
 const signToken = require("../utils/signToken");
 const jwt = require("jsonwebtoken");
 const util = require("util");
+
+const Vendor = db.Vendor;
+const Admin = db.Admin;
+// vivek--------
+// ------------------LOGIN------------------ //
 const sendEmail = require("../utils/email");
 const crypto = require("crypto");
 const { Op } = require("sequelize");
 const bcrypt = require("bcrypt");
-const Vendor = db.db.Vendor;
 
 // ===========================================SIGNUP==================================================== //
 
@@ -19,33 +23,52 @@ const Vendor = db.db.Vendor;
 exports.login = asyncErrorHandler(async (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
+  const role = req.params.role;
+  var token;
 
   if (!email || !password) {
     const error = new CustomError("Please provide email ID & Password for login in!", 400);
     return next(error);
   }
 
-  //Check if vendor exists
-  const vendor = await Vendor.findOne({
-    where: {
-      email,
-    },
-  });
-  vendor.reload();
-  vendor.save();
+  if (role === "admin") {
+    //Check if admin exists
+    const admin = await Admin.findOne({
+      where: {
+        email,
+      },
+    });
 
-  //if vendor exists and password match
+    //if admin exists and password match
+    if (!admin || !(await admin.comparePasswordInDb(password, admin.password))) {
+      const error = new CustomError("Incorrect email or password", 400);
+      return next(error);
+    }
 
-  if (!vendor || !(await vendor.comparePasswordInDb(password, vendor.password))) {
-    const error = new CustomError("Incorrect email or password", 400);
+    token = signToken(admin.id, role);
+  } else if (role === "vendor") {
+    //Check if vendor exists
+    const vendor = await Vendor.findOne({
+      where: {
+        email,
+      },
+    });
+
+    //if vendor exists and password match
+    if (!vendor || !(await vendor.comparePasswordInDb(password, vendor.password))) {
+      const error = new CustomError("Incorrect email or password", 400);
+      return next(error);
+    }
+    token = signToken(vendor.id, role);
+  } else {
+    const error = new CustomError("Page not Found!", 404);
     return next(error);
   }
-  const token = signToken(vendor.id);
 
   res.status(200).json({
     status: "success",
     token,
-    vendor,
+    // vendor,
   });
 });
 
