@@ -12,29 +12,56 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
   // vivek
   const { firstName, lastName, shopName, email, contact, password, confirmPassword, address_lane1, address_lane2, landmark, pincode, state, role } =
     req.body;
-  const vendor = await Vendor.create({
-    firstName,
-    lastName,
-    shopName,
-    email,
-    password,
-    confirmPassword,
-  });
-  let vendorAddress = null;
-  if (vendor && vendor.id) {
-    const roleId = vendor.id;
-    vendorAddress = await Address.create({
-      address_lane1,
-      address_lane2,
-      landmark,
-      pincode,
-      state,
-      contact,
-      role,
-      roleId,
-    });
-  }
-  const token = signToken(vendor.id);
+  // const vendor = await Vendor.create({
+  //   firstName,
+  //   lastName,
+  //   shopName,
+  //   email,
+  //   password,
+  //   confirmPassword,
+  // });
+  // let vendorAddress = null;
+  // if (vendor && vendor.id) {
+  //   const roleId = vendor.id;
+  //   vendorAddress = await Address.create({
+  //     address_lane1,
+  //     address_lane2,
+  //     landmark,
+  //     pincode,
+  //     state,
+  //     contact,
+  //     role,
+  //     roleId,
+  //   });
+  // }
+
+  // ---------- CREATE WITH ASSOCIATIONS --------------
+  const vendor = await Vendor.create(
+    {
+      firstName,
+      lastName,
+      shopName,
+      email,
+      password,
+      confirmPassword,
+      Address_Details: {
+        address_lane1,
+        address_lane2,
+        landmark,
+        pincode,
+        state,
+        contact,
+        role,
+        // roleId,
+      },
+    },
+    {
+      include: [db.vendorsAddress],
+    }
+  );
+
+  // to prenent showind password in responses
+  vendor.password = undefined;
   res.status(201).json({
     status: "success",
     data: {
