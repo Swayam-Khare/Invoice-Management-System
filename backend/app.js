@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-// vivek
+
 const customerRouter = require("./routes/customerRoute");
 const globalErrorHandler = require("./utils/globalErrorHandler");
 const productRouter = require("./routes/productRoute");

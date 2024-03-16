@@ -64,7 +64,7 @@ db.Address.belongsTo(db.Customer, { foreignKey: "roleId", constraints: false });
 
 // ============== Vendor-Address (: One to one)=========================
 
-db.Vendor.hasOne(db.Address, {
+db.vendorsAddress = db.Vendor.hasOne(db.Address, {
   foreignKey: "roleId",
   constraints: false,
   scope: {
