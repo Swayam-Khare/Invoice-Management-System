@@ -36,7 +36,7 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
   // }
 
   // ---------- CREATE WITH ASSOCIATIONS --------------
-  const vendor = await Vendor.create(
+  const vendor = await Vendor.create( //vivek
     {
       firstName,
       lastName,
@@ -58,7 +58,7 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
     {
       include: [db.vendorsAddress],
     }
-  );
+  );  //vivek
 
   // to prenent showind password in responses
   vendor.password = undefined;
