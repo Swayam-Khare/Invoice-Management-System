@@ -1,5 +1,5 @@
 const bcrypt = require("bcryptjs");
-
+// vivek
 module.exports = (connectDB, DataTypes) => {
   const Vendor = connectDB.define(
     "Vendor",
