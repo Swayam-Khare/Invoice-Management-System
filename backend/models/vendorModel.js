@@ -1,5 +1,4 @@
-const bcrypt = require("bcrypt");
-const crypto = require("crypto");
+const bcrypt = require("bcryptjs");
 
 module.exports = (connectDB, DataTypes) => {
   const Vendor = connectDB.define(
@@ -96,6 +95,7 @@ module.exports = (connectDB, DataTypes) => {
     }
   );
 
+  // Instance function to compare password in database
   Vendor.prototype.comparePasswordInDb = async function (pswd, pswdDB) {
     return await bcrypt.compare(pswd, pswdDB);
   };

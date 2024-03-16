@@ -11,35 +11,60 @@ const Address = db.Address;
 exports.createVendor = asyncErrorHandler(async (req, res, next) => {
   const { firstName, lastName, shopName, email, contact, password, confirmPassword, address_lane1, address_lane2, landmark, pincode, state, role } =
     req.body;
-  const vendor = await Vendor.create({
-    firstName,
-    lastName,
-    shopName,
-    email,
-    password,
-    confirmPassword,
-  });
-  let vendorAddress = null;
-  if (vendor && vendor.id) {
-    const roleId = vendor.id;
-    vendorAddress = await Address.create({
-      address_lane1,
-      address_lane2,
-      landmark,
-      pincode,
-      state,
-      contact,
-      role,
-      roleId,
-    });
-  }
-  const token = signToken(vendor.id);
+  // const vendor = await Vendor.create({
+  //   firstName,
+  //   lastName,
+  //   shopName,
+  //   email,
+  //   password,
+  //   confirmPassword,
+  // });
+  // let vendorAddress = null;
+  // if (vendor && vendor.id) {
+  //   const roleId = vendor.id;
+  //   vendorAddress = await Address.create({
+  //     address_lane1,
+  //     address_lane2,
+  //     landmark,
+  //     pincode,
+  //     state,
+  //     contact,
+  //     role,
+  //     roleId,
+  //   });
+  // }
+
+  // ---------- CREATE WITH ASSOCIATIONS --------------
+  const vendor = await Vendor.create(
+    {
+      firstName,
+      lastName,
+      shopName,
+      email,
+      password,
+      confirmPassword,
+      Address_Details: {
+        address_lane1,
+        address_lane2,
+        landmark,
+        pincode,
+        state,
+        contact,
+        role,
+        // roleId,
+      },
+    },
+    {
+      include: [db.vendorsAddress],
+    }
+  );
+
+  // to prenent showind password in responses
+  vendor.password = undefined;
   res.status(201).json({
     status: "success",
     data: {
       vendor,
-      vendorAddress,
-      token,
     },
   });
 });
@@ -51,11 +76,11 @@ exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
     include: [
       {
         model: Address,
-        as: "Address Details",
+        as: "Address_Details",
         // attributes: [],
       },
     ],
-    attributes: ["id", "firstName", "shopName", "email"],
+    attributes: ["id", "firstName", "lastName", "shopName", "email"],
   });
 
   res.status(200).json({
@@ -75,11 +100,11 @@ exports.getASpecificVendor = asyncErrorHandler(async (req, res, next) => {
     include: [
       {
         model: Address,
-        as: "Address Details",
+        as: "Address_Details",
         // attributes: [],
       },
     ],
-    attributes: ["id", "firstName", "shopName", "email"],
+    attributes: ["id", "firstName", "lastName", "shopName", "email"],
     where: {
       id,
     },
@@ -110,11 +135,11 @@ exports.deleteVendor = asyncErrorHandler(async (req, res, next) => {
     include: [
       {
         model: Address,
-        as: "Address Details",
+        as: "Address_Details",
         // attributes: [],
       },
     ],
-    // attributes: ["id", "name", "shopName", "email"],
+
     where: {
       id,
     },
@@ -147,7 +172,7 @@ exports.updateVendor = asyncErrorHandler(async (req, res, next) => {
     include: [
       {
         model: Address,
-        as: "Address Details",
+        as: "Address_Details",
       },
     ],
 
@@ -165,7 +190,8 @@ exports.updateVendor = asyncErrorHandler(async (req, res, next) => {
       return next(error);
     }
   }
-  const { firstName, shopName, email, contact, password, confirmPassword, address_lane1, address_lane2, landmark, pincode, state, role } = req.body;
+  const { firstName, lastName, shopName, email, contact, password, confirmPassword, address_lane1, address_lane2, landmark, pincode, state, role } =
+    req.body;
 
   if (password || confirmPassword) {
     const error = new CustomError("you can not update password using this end point", 400);
@@ -175,28 +201,33 @@ exports.updateVendor = asyncErrorHandler(async (req, res, next) => {
     const error = new CustomError("you can not update role using this end point", 400);
     return next(error);
   }
-  const updateVendor = await Vendor.update({ firstName, shopName, email }, { where: { id } });
+  const updateVendor = await Vendor.update(
+    { firstName, lastName, shopName, email },
+    {
+      where: { id },
+      returning: true,
+      plain: true,
+    }
+  );
+
+  // console.log(updateVendor[1].dataValues);
+  // to prevent showing password in response.
+  updateVendor[1].dataValues.password = undefined;
+
   const updateVendorAddress = await Address.update(
     { address_lane1, address_lane2, landmark, pincode, state, contact },
-    { where: { role: "vendor", roleId: id } }
+    {
+      where: { role: "vendor", roleId: id },
+      returning: true,
+      plain: true,
+    }
   );
-  const updatedVendor = await Vendor.findByPk(id, {
-    include: [
-      {
-        model: Address,
-        as: "Address Details",
-      },
-    ],
-    where: {
-      id,
-    },
-  });
+
   res.status(200).json({
     status: "success",
     data: {
-      //   updateVendor,
-      //   updateVendorAddress,
-      updatedVendor,
+      updatedVendor: updateVendor[1].dataValues,
+      updatedVendorAddress: updateVendorAddress[1].dataValues,
     },
   });
 });
