@@ -3,8 +3,7 @@ const authController = require("./../controllers/authController");
 
 const router = express.Router();
 
-// Role is passed as params either (admin or vendor)
-router.route("/login/:role").post(authController.login);
+router.route("/login").post(authController.login);
 // router.route('/signup').post(authController.signup);
 
 router.route("/forgotPassword").post(authController.forgotPassword);
