@@ -200,3 +200,24 @@ exports.updateVendor = asyncErrorHandler(async (req, res, next) => {
     },
   });
 });
+
+// ============ update Vendor Password================
+exports.updatePassword = asyncErrorHandler(async (req, res, next) => {
+  try {
+    const { newPassword } = req.body;
+    const vendorId = req.vendor.id;
+
+    // Update password in the database
+    const vendor = await Vendor.findByPk(vendorId);
+    if (!vendor) {
+      throw new Error("vendor not found");
+    }
+    vendor.password = newPassword;
+    vendor.lastPasswordChange = new Date(); // Update the timestamp of the last password change
+    await user.save();
+
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (error) {
+    next(error);
+  }
+});

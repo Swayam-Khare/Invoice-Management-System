@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+const crypto = require("crypto");
 
 module.exports = (connectDB, DataTypes) => {
   const Vendor = connectDB.define(
@@ -13,12 +14,12 @@ module.exports = (connectDB, DataTypes) => {
 
         autoIncrement: true,
       },
-      firstName:{
-        type:DataTypes.STRING,
-        allowNull:false,
+      firstName: {
+        type: DataTypes.STRING,
+        allowNull: false,
       },
-      lastName:{
-        type:DataTypes.STRING,        
+      lastName: {
+        type: DataTypes.STRING,
       },
       shopName: {
         type: DataTypes.STRING,
@@ -35,7 +36,7 @@ module.exports = (connectDB, DataTypes) => {
           },
         },
       },
-   
+
       password: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -48,7 +49,7 @@ module.exports = (connectDB, DataTypes) => {
       },
       confirmPassword: {
         type: DataTypes.VIRTUAL,
-        allowNull: false,
+        allowNull: true,
         validate: {
           isConfirmed(value) {
             if (value !== this.password) {
@@ -56,9 +57,19 @@ module.exports = (connectDB, DataTypes) => {
             }
           },
         },
-
       },
-
+      lastPasswordChange: {
+        type: DataTypes.DATE,
+        allowNull: true, // Initially set to null or a default value
+      },
+      passwordResetToken: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      passwordResetTokenExpires: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
     },
     {
       // Other model options go here
@@ -66,19 +77,47 @@ module.exports = (connectDB, DataTypes) => {
       timestamps: false,
       hooks: {
         beforeCreate: async (vendor) => {
-          console.log("vendor is ", vendor);
+          // console.log("vendor is ", vendor);
           const hashedPassword = await bcrypt.hash(vendor.password, 10);
           vendor.password = hashedPassword;
           vendor.confirmPassword = undefined;
-        }
+        },
+        beforeUpdate: async (vendor) => {
+          if (vendor.changed("password")) {
+            const hashedPassword = await bcrypt.hash(vendor.password, 10);
+            vendor.password = hashedPassword;
+            vendor.lastPasswordChange = Date.now();
+          }
+        },
+        afterUpdate: async (vendor) => {
+          vendor.confirmPassword = undefined;
+        },
       },
     }
   );
 
   Vendor.prototype.comparePasswordInDb = async function (pswd, pswdDB) {
     return await bcrypt.compare(pswd, pswdDB);
-  }
+  };
 
+  Vendor.prototype.isPasswordChanged = async function (JWTTimestamp) {
+    if (this.lastPasswordChange) {
+      const passwordChangedTimestamp = parseInt(this.lastPasswordChange.getTime() / 1000, 10);
+      console.log(passwordChangedTimestamp, JWTTimestamp);
+
+      return JWTTimestamp < passwordChangedTimestamp;
+    }
+    return false;
+  };
+
+  Vendor.prototype.createResetPasswordToken = async function () {
+    const resetToken = crypto.randomBytes(32).toString("hex");
+
+    this.passwordResetToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+    this.passwordResetTokenExpires = Date.now() + 10 * 60 * 1000;
+    // console.log(resetToken, this.passwordResetToken);
+    return resetToken;
+  };
 
   return Vendor;
 };
