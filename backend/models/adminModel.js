@@ -1,5 +1,4 @@
-
-const bcrypt = require('bcryptjs');
+const bcrypt = require("bcryptjs");
 
 module.exports = (connectDB, DataTypes) => {
   const Admin = connectDB.define(
@@ -49,8 +48,7 @@ module.exports = (connectDB, DataTypes) => {
             }
           },
         },
-      }
-
+      },
     },
     {
       // Other model options go here
@@ -69,8 +67,7 @@ module.exports = (connectDB, DataTypes) => {
   // Instance function to compare password in database
   Admin.prototype.comparePasswordInDb = async function (pswd, pswdDB) {
     return await bcrypt.compare(pswd, pswdDB);
-  }
+  };
 
   return Admin;
-}
-
+};

@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-// vivek
+
 const customerRouter = require("./routes/customerRoute");
 const globalErrorHandler = require("./utils/globalErrorHandler");
 const productRouter = require("./routes/productRoute");
@@ -22,7 +22,7 @@ app.use("/api/v1/orders", orderRouter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/invoices", invoiceRouter);
 app.use("/api/v1/products", productRouter);
-app.use("/api/v1/admin",adminRouter); 
+app.use("/api/v1/admin", adminRouter);
 
 // ERROR HANDLER MUST BE DEFINED LAST
 app.use(globalErrorHandler);

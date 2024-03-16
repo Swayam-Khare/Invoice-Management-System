@@ -19,7 +19,11 @@ const connectDB = new Sequelize(database, user, password, {
 const db = {};
 db.Sequelize = Sequelize;
 db.connectDB = connectDB;
+// db.Vendor = require('./vendorModel')(sequelize, DataTypes);
 
+// Create separate file for each model schema.
+// Add your model here:
+// Ex - db.<ModelName> = require('<model-path>')(sequilize, DataTypes);
 
 db.Product = require("./productModel")(connectDB, DataTypes);
 db.Invoice = require("./invoiceModel")(connectDB, DataTypes);
@@ -59,8 +63,8 @@ db.Customer.hasOne(db.Address, {
 db.Address.belongsTo(db.Customer, { foreignKey: "roleId", constraints: false });
 
 // ============== Vendor-Address (: One to one)=========================
-// vivek
-db.vendorsAddress =  db.Vendor.hasOne(db.Address, {
+
+db.vendorsAddress = db.Vendor.hasOne(db.Address, {
   foreignKey: "roleId",
   constraints: false,
   scope: {
@@ -84,7 +88,7 @@ const check = async () => {
   try {
     await connectDB.authenticate();
     console.log("Connection has been established successfully.");
-    await db.connectDB.sync({ force: false });
+    await db.connectDB.sync({ force: true });
     console.log("All models were synchronized successfully.");
   } catch (error) {
     console.error("Unable to connect to the database:", error);
