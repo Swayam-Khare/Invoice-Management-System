@@ -70,7 +70,7 @@ db.vendorsAddress = db.Vendor.hasOne(db.Address, {
   scope: {
     role: "vendor",
   },
-  as: "Address Details",
+  as: "Address_Details",
 });
 db.Address.belongsTo(db.Vendor, { foreignKey: "roleId", constraints: false });
 

@@ -12,7 +12,6 @@ const Admin = db.Admin;
 const sendEmail = require("../utils/email");
 const crypto = require("crypto");
 const { Op } = require("sequelize");
-const bcrypt = require("bcrypt");
 
 // ===========================================SIGNUP==================================================== //
 
