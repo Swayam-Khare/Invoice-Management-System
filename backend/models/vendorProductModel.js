@@ -1,6 +1,6 @@
 const Vendor = require("./vendorModel");
 const Product = require("./productModel");
-
+// vivek---
 module.exports = (connectDB, DataTypes) => {
   const VendorProduct = connectDB.define(
     "VendorProduct",

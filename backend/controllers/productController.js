@@ -2,8 +2,8 @@ const { db } = require("../models/connection.js");
 const asyncErrorHandler = require("../utils/asyncErrorHandler.js");
 const CustomError = require("../utils/customError.js");
 const Product = db.Product;
-const Vendor = db.Vendor;
-
+const VendorProduct = db.VendorProduct;
+// vivek
 // CREATE OPERATION
 exports.addProduct = asyncErrorHandler(async (req, res, next) => {
   const product = await Product.create(req.body);
