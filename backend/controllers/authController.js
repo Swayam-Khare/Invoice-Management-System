@@ -1,42 +1,71 @@
-const db = require("./../models/connection");
+const { db } = require("./../models/connection");
 const asyncErrorHandler = require("./../utils/asyncErrorHandler");
 const CustomError = require("./../utils/customError");
-const signToken = require("../utils/signToken")
+const signToken = require("../utils/signToken");
 const jwt = require("jsonwebtoken");
 
-const Vendor = db.db.Vendor;
+const Vendor = db.Vendor;
+const Admin = db.Admin;
 
-// ===========================================SIGNUP==================================================== //
-
-// ===========================================LOGIN==================================================== //
+// ------------------LOGIN------------------ //
 
 exports.login = asyncErrorHandler(async (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
+  const role = req.params.role;
+  var token;
 
   if (!email || !password) {
-    const error = new CustomError("Please provide email ID & Password for login in!", 400);
+    const error = new CustomError(
+      "Please provide email ID & Password for login in!",
+      400
+    );
     return next(error);
   }
 
-  //Check if vendor exists
-  const vendor = await Vendor.findOne({
-    where: {
-      email,
-    },
-  });
+  if (role === 'admin') {
 
-  //if vendor exists and password match
-  if (!vendor || !(await vendor.comparePasswordInDb(password, vendor.password))) {
-    const error = new CustomError("Incorrect email or password", 400);
+    //Check if admin exists
+    const admin = await Admin.findOne({
+      where: {
+        email,
+      }
+    })
+
+    //if admin exists and password match
+    if (!admin || !(await admin.comparePasswordInDb(password, admin.password))) {
+      const error = new CustomError("Incorrect email or password", 400);
+      return next(error);
+    }
+
+    token = signToken(admin.id, role);
+
+  } else if (role === 'vendor') {
+
+    //Check if vendor exists
+    const vendor = await Vendor.findOne({
+      where: {
+        email,
+      },
+    });
+
+    //if vendor exists and password match
+    if (!vendor || !(await vendor.comparePasswordInDb(password, vendor.password))) {
+      const error = new CustomError("Incorrect email or password", 400);
+      return next(error);
+    }
+    token = signToken(vendor.id, role);
+  }
+  else {
+    const error = new CustomError("Page not Found!", 404);
     return next(error);
   }
-  const token = signToken(vendor.id);
+
 
   res.status(200).json({
     status: "success",
     token,
-    vendor,
+    // vendor,
   });
 });
 
@@ -50,7 +79,10 @@ exports.protect = asyncErrorHandler(async (req, res, next) => {
   }
 
   // Verify the token
-  const decodedToken = jwt.verify(testToken.split(" ")[1], process.env.SECRET_STR);
+  const decodedToken = jwt.verify(
+    testToken.split(" ")[1],
+    process.env.SECRET_STR
+  );
 
   // const { email, password } = req.body;
 
@@ -58,12 +90,15 @@ exports.protect = asyncErrorHandler(async (req, res, next) => {
   const vendor = await Vendor.findByPk(decodedToken.id);
 
   if (!vendor) {
-    const error = new CustomError("The user with given credential does not exist.", 401);
+    const error = new CustomError(
+      "The user with given credential does not exist.",
+      401
+    );
     next(error);
   }
 
   // Attach vendor ID to request object
-  req.vendorId = decodedToken.id;
+  req.vendor = vendor;
 
   // Compare passwords
   //   const isPasswordValid = await bcrypt.compare(password, Vendor.password);

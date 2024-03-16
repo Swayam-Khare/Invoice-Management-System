@@ -21,33 +21,31 @@ exports.createCustomer = asyncErrorHandler(async (req, res, next) => {
         role,
     } = req.body;
 
-    const customer = await Customer.create({
-        firstName,
-        lastName,
-        email,
-        contact,
-    });
-
-    let customerAddress = null;
-    if (customer && customer.id) {
-        const roleId = customer.id;
-        customerAddress = await Address.create({
-            address_lane1,
-            address_lane2,
-            landmark,
-            pincode,
-            state,
+    const customer = await Customer.create(
+        {
+            firstName,
+            lastName,
+            email,
             contact,
-            role,
-            roleId,
-        });
-    }
+            Address_Details: {
+                address_lane1,
+                address_lane2,
+                landmark,
+                pincode,
+                state,
+                contact,
+                role,
+            },
+        },
+        {
+            include: [db.customerAddress],
+        }
+    );
 
     res.status(201).json({
         status: "Success",
         data: {
-            customer,
-            customerAddress
+            customer
         },
     });
 });
@@ -56,10 +54,12 @@ exports.createCustomer = asyncErrorHandler(async (req, res, next) => {
 
 exports.getAllCustomers = asyncErrorHandler(async (req, res, next) => {
     const customers = await Customer.findAll({
+        // paranoid: false,
         include: [
             {
                 model: Address,
-                as: "Address Details",
+                // paranoid: false,
+                as: "Address_Details",
                 attributes: [
                     "address_lane1",
                     "address_lane2",
@@ -172,14 +172,6 @@ exports.updateCustomer = asyncErrorHandler(async (req, res, next) => {
         state,
         role,
     } = req.body;
-
-    // if (password || confirmPassword) {
-    //     const error = new CustomError(
-    //         "You can not update password using this end point",
-    //         400
-    //     );
-    //     return next(error);
-    // }
 
     if (role) {
         const error = new CustomError(

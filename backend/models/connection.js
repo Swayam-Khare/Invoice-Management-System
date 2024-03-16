@@ -19,11 +19,7 @@ const connectDB = new Sequelize(database, user, password, {
 const db = {};
 db.Sequelize = Sequelize;
 db.connectDB = connectDB;
-// db.Vendor = require('./vendorModel')(sequelize, DataTypes);
 
-// Create separate file for each model schema.
-// Add your model here:
-// Ex - db.<ModelName> = require('<model-path>')(sequilize, DataTypes);
 
 db.Product = require("./productModel")(connectDB, DataTypes);
 db.Invoice = require("./invoiceModel")(connectDB, DataTypes);
@@ -52,25 +48,25 @@ db.Customer.belongsToMany(db.Vendor, { through: db.VendorCustomer });
 
 // ==============Customer-Address (: One to one)=========================
 
-db.Customer.hasOne(db.Address, {
+db.customerAddress = db.Customer.hasOne(db.Address, {
   foreignKey: "roleId",
   constraints: false,
   scope: {
     role: "customer",
   },
-  as: "Address Details",
+  as: "Address_Details",
 });
 db.Address.belongsTo(db.Customer, { foreignKey: "roleId", constraints: false });
 
 // ============== Vendor-Address (: One to one)=========================
 
-db.Vendor.hasOne(db.Address, {
+db.vendorAddress = db.Vendor.hasOne(db.Address, {
   foreignKey: "roleId",
   constraints: false,
   scope: {
     role: "vendor",
   },
-  as: "Address Details",
+  as: "Address_Details",
 });
 db.Address.belongsTo(db.Vendor, { foreignKey: "roleId", constraints: false });
 
@@ -88,7 +84,7 @@ const check = async () => {
   try {
     await connectDB.authenticate();
     console.log("Connection has been established successfully.");
-    await db.connectDB.sync({ force: true });
+    await db.connectDB.sync({ force: false });
     console.log("All models were synchronized successfully.");
   } catch (error) {
     console.error("Unable to connect to the database:", error);
