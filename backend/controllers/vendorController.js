@@ -9,6 +9,7 @@ const Address = db.Address;
 // ------------- CREATE A VENDOR --------------
 
 exports.createVendor = asyncErrorHandler(async (req, res, next) => {
+  // vivek
   const { firstName, lastName, shopName, email, contact, password, confirmPassword, address_lane1, address_lane2, landmark, pincode, state, role } =
     req.body;
   // const vendor = await Vendor.create({

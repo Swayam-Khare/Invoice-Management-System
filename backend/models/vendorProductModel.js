@@ -19,15 +19,15 @@ module.exports = (connectDB, DataTypes) => {
           key: "id",
         },
       },
-      stock: {
+      stock: {//vivek
         type: DataTypes.INTEGER,
         allowNull: false
       },
-      price: {
+      price: {//vivek
         type: DataTypes.DECIMAL(10, 2),     // 10 DEFINE TOTAL NUMBER OF DIGITS(8+2) AND 2 DEFINE DIGITS AFTER DECIMAL POINT
         allowNull: false
       },
-      discount: {
+      discount: {//vivek
         type: DataTypes.DECIMAL(10, 2),     // ASSUMING DISCOUNT IS MONETARY VALUE AND NOT A PERCENTAGE
         allowNull: false
       }
