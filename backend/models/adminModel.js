@@ -38,6 +38,7 @@ module.exports = (connectDB, DataTypes) => {
           },
         },
       },
+      // adding confirm field...
       confirmPassword: {
         type: DataTypes.VIRTUAL,
         allowNull: false,
