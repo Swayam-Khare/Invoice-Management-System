@@ -12,4 +12,7 @@ router
   .delete(authController.protect, vendorController.deleteVendor)
   .patch(authController.protect, vendorController.updateVendor)
   .patch(authController.protect, vendorController.updatePassword);
+
+router.route("/updatepassword/:id").patch(authController.protect, vendorController.updatePassword);
+
 module.exports = router;
