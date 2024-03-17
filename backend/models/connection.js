@@ -1,5 +1,5 @@
 const { Sequelize, DataTypes } = require("sequelize");
-
+// vivek---
 const database = process.env.DATABASE;
 const user = process.env.DB_USER;
 const password = process.env.DB_PASSWORD;
@@ -64,13 +64,13 @@ db.Address.belongsTo(db.Customer, { foreignKey: "roleId", constraints: false });
 
 // ============== Vendor-Address (: One to one)=========================
 
-db.Vendor.hasOne(db.Address, {
+db.vendorsAddress = db.Vendor.hasOne(db.Address, {
   foreignKey: "roleId",
   constraints: false,
   scope: {
     role: "vendor",
   },
-  as: "Address Details",
+  as: "Address_Details",
 });
 db.Address.belongsTo(db.Vendor, { foreignKey: "roleId", constraints: false });
 
@@ -88,7 +88,7 @@ const check = async () => {
   try {
     await connectDB.authenticate();
     console.log("Connection has been established successfully.");
-    await db.connectDB.sync({ force: true });
+    await db.connectDB.sync({ force: false });
     console.log("All models were synchronized successfully.");
   } catch (error) {
     console.error("Unable to connect to the database:", error);

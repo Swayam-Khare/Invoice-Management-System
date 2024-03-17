@@ -12,36 +12,64 @@ const VendorProduct = db.VendorProduct;
 // ------------- CREATE A VENDOR --------------
 
 exports.createVendor = asyncErrorHandler(async (req, res, next) => {
-  const { firstName, lastName, shopName, email, contact, password, confirmPassword, address_lane1, address_lane2, landmark, pincode, state, role } = req.body;
-  const vendor = await Vendor.create({
-    firstName,
-    lastName,
-    shopName,
-    email,
-    password,
-    confirmPassword,
-  });
-  let vendorAddress = null;
-  if (vendor && vendor.id) {
-    const roleId = vendor.id;
-    vendorAddress = await Address.create({
-      address_lane1,
-      address_lane2,
-      landmark,
-      pincode,
-      state,
-      contact,
-      role,
-      roleId,
-    });
-  }
-  const token = signToken(vendor.id);
+  // vivek
+  const { firstName, lastName, shopName, email, contact, password, confirmPassword, address_lane1, address_lane2, landmark, pincode, state, role } =
+    req.body;
+  // const vendor = await Vendor.create({
+  //   firstName,
+  //   lastName,
+  //   shopName,
+  //   email,
+  //   password,
+  //   confirmPassword,
+  // });
+  // let vendorAddress = null;
+  // if (vendor && vendor.id) {
+  //   const roleId = vendor.id;
+  //   vendorAddress = await Address.create({
+  //     address_lane1,
+  //     address_lane2,
+  //     landmark,
+  //     pincode,
+  //     state,
+  //     contact,
+  //     role,
+  //     roleId,
+  //   });
+  // }
+
+  // ---------- CREATE WITH ASSOCIATIONS --------------
+  const vendor = await Vendor.create(
+    //vivek
+    {
+      firstName,
+      lastName,
+      shopName,
+      email,
+      password,
+      confirmPassword,
+      Address_Details: {
+        address_lane1,
+        address_lane2,
+        landmark,
+        pincode,
+        state,
+        contact,
+        role,
+        // roleId,
+      },
+    },
+    {
+      include: [db.vendorsAddress],
+    }
+  ); //vivek
+
+  // to prenent showind password in responses
+  vendor.password = undefined;
   res.status(201).json({
     status: "success",
     data: {
       vendor,
-      vendorAddress,
-      token,
     },
   });
 });
@@ -53,11 +81,11 @@ exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
     include: [
       {
         model: Address,
-        as:'Address Details'
+        as: "Address_Details",
         // attributes: [],
       },
     ],
-    attributes: ["id", "name", "shopName", "email"],
+    attributes: ["id", "firstName", "lastName", "shopName", "email"],
   });
 
   res.status(200).json({
@@ -77,11 +105,11 @@ exports.getASpecificVendor = asyncErrorHandler(async (req, res, next) => {
     include: [
       {
         model: Address,
-        as:"Address Details",
+        as: "Address_Details",
         // attributes: [],
       },
     ],
-    attributes: ["id", "name", "shopName", "email"],
+    attributes: ["id", "firstName", "lastName", "shopName", "email"],
     where: {
       id,
     },
@@ -112,11 +140,11 @@ exports.deleteVendor = asyncErrorHandler(async (req, res, next) => {
     include: [
       {
         model: Address,
-        as:"Address Details",
+        as: "Address_Details",
         // attributes: [],
       },
     ],
-    // attributes: ["id", "name", "shopName", "email"],
+
     where: {
       id,
     },
@@ -192,7 +220,7 @@ exports.updateVendor = asyncErrorHandler(async (req, res, next) => {
     include: [
       {
         model: Address,
-        as:"Address Details",
+        as: "Address_Details",
       },
     ],
 
@@ -210,7 +238,8 @@ exports.updateVendor = asyncErrorHandler(async (req, res, next) => {
       return next(error);
     }
   }
-  const { name, shopName, email, contact, password, confirmPassword, address_lane1, address_lane2, landmark, pincode, state, role } = req.body;
+  const { firstName, lastName, shopName, email, contact, password, confirmPassword, address_lane1, address_lane2, landmark, pincode, state, role } =
+    req.body;
 
   if (password || confirmPassword) {
     const error = new CustomError("you can not update password using this end point", 400);
@@ -220,28 +249,63 @@ exports.updateVendor = asyncErrorHandler(async (req, res, next) => {
     const error = new CustomError("you can not update role using this end point", 400);
     return next(error);
   }
-  const updateVendor = await Vendor.update({ name, shopName, email }, { where: { id } });
+  const updateVendor = await Vendor.update(
+    { firstName, lastName, shopName, email },
+    {
+      where: { id },
+      returning: true,
+      plain: true,
+    }
+  );
+
+  // console.log(updateVendor[1].dataValues);
+  // to prevent showing password in response.
+  updateVendor[1].dataValues.password = undefined;
+
   const updateVendorAddress = await Address.update(
     { address_lane1, address_lane2, landmark, pincode, state, contact },
-    { where: { role: "vendor", roleId: id } }
+    {
+      where: { role: "vendor", roleId: id },
+      returning: true,
+      plain: true,
+    }
   );
-  const updatedVendor = await Vendor.findByPk(id, {
-    include: [
-      {
-        model: Address,
-        as:"Address Details",
-      },
-    ],
-    where: {
-      id,
-    },
-  });
+
   res.status(200).json({
     status: "success",
     data: {
-      //   updateVendor,
-      //   updateVendorAddress,
-      updatedVendor,
+      updatedVendor: updateVendor[1].dataValues,
+      updatedVendorAddress: updateVendorAddress[1].dataValues,
     },
   });
+});
+
+// ============ update Vendor Password================
+exports.updatePassword = asyncErrorHandler(async (req, res, next) => {
+  try {
+    const { currentPassword, newPassword, confirmPassword } = req.body;
+    const vendor = req.vendor;
+
+    // Update password in the database
+
+    // Check if current password matches
+    const isPasswordValid = await vendor.comparePasswordInDb(currentPassword, vendor.password);
+    if (!isPasswordValid) {
+      const error = new CustomError("Current password is incorrect", 400);
+      return next(error);
+    }
+
+    if (newPassword !== confirmPassword) {
+      const error = new CustomError("New password and confirm password do not match", 400);
+      return next(error);
+    }
+
+    vendor.password = newPassword;
+    vendor.lastPasswordChange = Date.now(); // Update the timestamp of the last password change
+    await vendor.save();
+
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (error) {
+    next(error);
+  }
 });
