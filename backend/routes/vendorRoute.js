@@ -10,8 +10,7 @@ router
   .route("/:id")
   .get(vendorController.getASpecificVendor)
   .delete(authController.protect, vendorController.deleteVendor)
-  .patch(authController.protect, vendorController.updateVendor)
-  .patch(authController.protect, vendorController.updatePassword);
+  .patch(authController.protect, vendorController.updateVendor);
 
 router.route("/updatepassword/:id").patch(authController.protect, vendorController.updatePassword);
 
