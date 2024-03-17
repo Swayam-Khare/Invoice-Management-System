@@ -63,7 +63,11 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
     const error = new CustomError("Page not Found!", 404);
     return next(error);
   }
-
+  res.cookie("jwt", token, {
+    maxAge: process.env.LOGIN_EXPIRES,
+    // secure:true,
+    httpOnly: true,
+  });
   res.status(200).json({
     status: "success",
     token,
@@ -179,6 +183,13 @@ exports.resetPassword = asyncErrorHandler(async (req, res, next) => {
   // login the user
 
   const loginToken = signToken(vendor.id);
+
+  res.cookie("jwt", loginToken, {
+    maxAge: process.env.LOGIN_EXPIRES,
+    // secure:true,
+    httpOnly: true,
+  });
+
   res.status(200).json({
     status: "success",
     token: loginToken,

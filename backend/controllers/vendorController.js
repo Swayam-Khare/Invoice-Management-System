@@ -63,6 +63,15 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
 
   // to prenent showind password in responses
   vendor.password = undefined;
+
+  const token = signToken(vendor.id);
+
+  res.cookie("jwt", token, {
+    maxAge: process.env.LOGIN_EXPIRES,
+    // secure:true,
+    httpOnly: true,
+  });
+
   res.status(201).json({
     status: "success",
     data: {
