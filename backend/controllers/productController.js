@@ -1,3 +1,4 @@
+
 const { db } = require("../models/connection.js");
 const asyncErrorHandler = require("../utils/asyncErrorHandler.js");
 const CustomError = require("../utils/customError.js");
@@ -80,6 +81,7 @@ exports.readProducts = asyncErrorHandler(async (req, res, next) => {
   });
 });
 
+
 // READ PRODUCT BY ID
 exports.readProductById = asyncErrorHandler(async (req, res, next) => {
   const product = await Product.findOne({
@@ -122,59 +124,96 @@ exports.readProductById = asyncErrorHandler(async (req, res, next) => {
 });
 
 // UPDATE PRODUCT
-exports.updateProduct = asyncErrorHandler(async (req, res, next) => {
-  const { stock, price, discount } = req.body;
+exports.updateProduct = asyncErrorHandler(
+    async (req, res, next) => {
 
-  const updateData = {};
-  if (stock !== undefined) updateData.stock = stock;
-  if (price !== undefined) updateData.price = price;
-  if (discount !== undefined) updateData.discount = discount;
+        const { stock, price, discount } = req.body;
+        
+        const updateData = {};
+        if (stock !== undefined) updateData.stock = stock;
+        if (price !== undefined) updateData.price = price;
+        if (discount !== undefined) updateData.discount = discount;
 
-  const [updatedRows] = await VendorProduct.update(updateData, {
-    where: {
-      VendorId: req.vendor.id,
-      ProductId: req.params.productId,
-    },
-  });
+        const [ updatedRows ] = await VendorProduct.update(updateData, {
 
-  if (updatedRows) {
-    const updatedProduct = await VendorProduct.findOne({
-      where: {
-        VendorId: req.vendor.id,
-        ProductId: req.params.productId,
-      },
-      attributes: {
-        exclude: ["VendorId"],
-      },
-    });
+            where: {
+                VendorId: req.vendor.id,
+                ProductId: req.params.productId
+            }
 
-    const products = await Product.findOne({
-      where: {
-        id: updatedProduct.ProductId,
-      },
-    });
+        });
 
-    const product = {
-      name: products.name,
-      description: products.description,
-      stock: updatedProduct.stock,
-      price: updatedProduct.price,
-      discount: updatedProduct.discount,
-    };
+        if(updatedRows){
 
-    res.status(200).json({
-      status: "Success",
-      data: {
-        product,
-      },
-    });
-  } else {
-    res.status(404).json({
-      status: "Fail",
-      message: "No matching product found for the provided vendor and product IDs, or no new data provided for update.",
-    });
-  }
-});
+            const updatedProduct = await VendorProduct.findOne({
+                where: {
+                    VendorId: req.vendor.id,
+                    ProductId: req.params.productId
+                },
+                attributes: {
+                    exclude: [
+                        'VendorId'
+                    ] 
+                }
+            });
+
+            const products = await Product.findOne({
+                where: {
+                    id: updatedProduct.ProductId
+                }
+            })
+
+            const product = {
+                name: products.name,
+                description: products.description,
+                stock: updatedProduct.stock,
+                price: updatedProduct.price,
+                discount: updatedProduct.discount
+
+            }
+
+
+            if(updatedProduct.stock === 0){
+                await VendorProduct.destroy({
+                    where: {
+                        VendorId: req.vendor.id,
+                        ProductId: req.params.productId
+                    }
+                })
+            }
+            
+            const vendorProducts = await VendorProduct.findAll({
+                where: {
+                    ProductId: req.params.productId
+                }
+            })
+    
+            if(vendorProducts.length === 0){
+                await Product.destroy({
+                    where: {
+                        id: req.params.productId
+                    }
+                })
+
+            }
+
+            res.status(200).json({
+                status: 'Success',
+                data: {
+                    product 
+                }
+            })
+
+        }
+        else {
+            res.status(404).json({
+                status: 'Fail',
+                message: 'No matching product found for the provided vendor and product IDs, or no new data provided for update.'
+            });
+        }
+
+    }
+)
 
 // DELETE PRODUCT
 exports.deleteProduct = asyncErrorHandler(async (req, res, next) => {
@@ -198,6 +237,7 @@ exports.deleteProduct = asyncErrorHandler(async (req, res, next) => {
       },
     });
   }
+
 
   res.status(204).json({
     status: "Success",

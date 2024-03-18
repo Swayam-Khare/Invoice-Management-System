@@ -1,4 +1,6 @@
+
 const bcrypt = require("bcryptjs");
+
 
 module.exports = (connectDB, DataTypes) => {
   const Admin = connectDB.define(
@@ -10,7 +12,9 @@ module.exports = (connectDB, DataTypes) => {
         primaryKey: true,
         allowNull: false,
         unique: true,
+
         autoIncrement: true,
+
       },
       name: {
         type: DataTypes.STRING,
@@ -24,6 +28,7 @@ module.exports = (connectDB, DataTypes) => {
           isEmail: {
             args: true,
             msg: "Please enter a valid email address!",
+
           },
         },
       },
@@ -46,6 +51,7 @@ module.exports = (connectDB, DataTypes) => {
             if (value !== this.password) {
               throw new Error("Password and confirm password does not match");
             }
+
           },
         },
       },
@@ -67,7 +73,9 @@ module.exports = (connectDB, DataTypes) => {
   // Instance function to compare password in database
   Admin.prototype.comparePasswordInDb = async function (pswd, pswdDB) {
     return await bcrypt.compare(pswd, pswdDB);
+
   };
 
   return Admin;
 };
+
