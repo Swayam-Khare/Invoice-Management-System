@@ -1,7 +1,7 @@
 const { db } = require("../models/connection");
 const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const CustomError = require("../utils/customError");
-const invoice_no = require("./../utils/getInvoiceNumber");
+const getInvoice = require("./../utils/getInvoiceNumber");
 
 const Invoice = db.Invoice;
 
@@ -70,13 +70,12 @@ exports.addInvoice = asyncErrorHandler(async (req, res, next) => {
   // -------- Invoice Number created -----------------//
 
   // const Invoice = await Invoice.create(req.body);
-  const numbers = invoice_no.uniqueInvoice();
-  console.log(numbers);
+  const invoice_no = getInvoice.uniqueInvoice();
 
   res.status(201).json({
     status: "success",
     data: {
-      invoiceNo: numbers,
+      invoice_no,
     },
   });
 });

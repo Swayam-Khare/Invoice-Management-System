@@ -7,23 +7,25 @@ module.exports = (connectDB, DataTypes) => {
         primaryKey: true,
         autoIncrement: true,
         allowNull: false,
+        default: 1
       },
 
-      invoice_id: {
+      invoice_no: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
           len: {
-            args: [4, 4],
-            msg: "Invoice id length must be 4 letters only",
+            args: [12, 12],
+            msg: "Invoice id length must be 12 letters only",
           },
         },
+        unique: true
       },
 
-      invoice_no: {
-        type: DataTypes.STRING,  // needs to be string to maintain the structure of leading zeroes 
-        allowNull: false,
-      },
+      // invoice_no: {
+      //   type: DataTypes.STRING,  // needs to be string to maintain the structure of leading zeroes 
+      //   allowNull: false,
+      // },
 
       transaction_no: {
         type: DataTypes.BIGINT,
