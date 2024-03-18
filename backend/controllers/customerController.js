@@ -4,6 +4,7 @@ const CustomError = require("../utils/customError");
 
 const Customer = db.Customer;
 const Address = db.Address;
+const VendorCustomer = db.VendorCustomer;
 
 // ------------- CREATE A CUSTOMER --------------
 
@@ -21,33 +22,84 @@ exports.createCustomer = asyncErrorHandler(async (req, res, next) => {
         role,
     } = req.body;
 
-    const customer = await Customer.create(
-        {
-            firstName,
-            lastName,
-            email,
-            contact,
-            Address_Details: {
-                address_lane1,
-                address_lane2,
-                landmark,
-                pincode,
-                state,
-                contact,
-                role,
-            },
-        },
-        {
-            include: [db.customerAddress],
+    //restore customer if present in table
+    const count = await Customer.restore({
+        where: {
+            email
         }
-    );
-
-    res.status(201).json({
-        status: "Success",
-        data: {
-            customer
-        },
     });
+
+    //create new customer if no record restored
+    if (count === 0) {
+        const customer = await Customer.create(
+            {
+                firstName,
+                lastName,
+                email,
+                contact,
+                Address_Details: {
+                    address_lane1,
+                    address_lane2,
+                    landmark,
+                    pincode,
+                    state,
+                    contact,
+                    role,
+                },
+            },
+            {
+                include: [db.customerAddress],
+            }
+        );
+
+        //create new record for VendorCustomer table
+        const vendorCustomer = await VendorCustomer.create({
+            VendorId: req.vendor.id,
+            CustomerId: customer.id,
+        });
+
+        res.status(201).json({
+            status: "Success",
+            data: {
+                customer,
+                "Vendor/Customer details": vendorCustomer 
+            },
+        });
+    } else {
+        //find restored customer
+        const customer = await Customer.findOne({ where: { email } });
+
+        //restore address of already restored customer
+        await Address.restore({
+            where: {
+                role: "customer",
+                roleId: customer.id
+            }
+        });
+
+        //restore VendorCustomer table records
+        await VendorCustomer.restore({
+            where: {
+                VendorId: req.vendor.id,
+                CustomerId: customer.id
+            }
+        });
+
+        //find restored address
+        const address = await Address.findOne({ where: { roleId: customer.id } });
+
+        //find restored VendorCustomer records
+        const vendorCustomer = await VendorCustomer.findOne({where: {VendorId: req.vendor.id, CustomerId: customer.id}});
+
+        res.status(201).json({
+            status: "Success",
+            data: {
+                customer,
+                "Address Details": address,
+                "Vendor/Customer details": vendorCustomer
+            },
+        });
+    }
 });
 
 // ------------- GET ALL CUSTOMERS --------------
@@ -140,6 +192,7 @@ exports.deleteCustomer = asyncErrorHandler(async (req, res, next) => {
     await Customer.destroy({ where: { id: req.params.id } });
     await Address.destroy({ where: { role: "customer", roleId: req.params.id } });
 
+    await VendorCustomer.destroy({where: {VendorId: req.vendor.id, CustomerId: req.params.id}});
     res.status(200).json({
         status: "Success",
         message: "Customer has been deleted successfully",
