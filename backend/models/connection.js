@@ -72,12 +72,16 @@ db.Address.belongsTo(db.Vendor, { foreignKey: "roleId", constraints: false });
 
 // ==============Invoice-Order (: One to one)=========================
 
-db.Invoice.hasOne(db.Order);
-db.Order.belongsTo(db.Invoice);
+db.invoiceOrder = db.Invoice.hasOne(db.Order, {
+  foreignKey: "invoiceId",
+  constraints: false,
+  as: "Order_Details",
+});
+db.Order.belongsTo(db.Invoice, { foreignKey: "invoiceId", constraints: false });
 
 // ==============Customer-Invoice (: One to many)=========================
 
-db.Customer.hasMany(db.Invoice);
+db.customerInvoice = db.Customer.hasMany(db.Invoice);
 db.Invoice.belongsTo(db.Customer);
 
 const check = async () => {

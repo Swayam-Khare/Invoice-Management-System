@@ -2,7 +2,7 @@ const { db } = require("../models/connection");
 const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const CustomError = require("../utils/customError");
 const signToken = require("../utils/signToken");
-const { Op } = require('sequelize')
+const { Op } = require("sequelize");
 
 const Vendor = db.Vendor;
 const Address = db.Address;
@@ -11,22 +11,8 @@ const VendorProduct = db.VendorProduct;
 
 // ------------- CREATE A VENDOR --------------
 exports.createVendor = asyncErrorHandler(async (req, res, next) => {
-
-  const {
-    firstName,
-    lastName,
-    shopName,
-    email,
-    contact,
-    password,
-    confirmPassword,
-    address_lane1,
-    address_lane2,
-    landmark,
-    pincode,
-    state,
-    role,
-  } = req.body;
+  const { firstName, lastName, shopName, email, contact, password, confirmPassword, address_lane1, address_lane2, landmark, pincode, state, role } =
+    req.body;
 
   // const vendor = await Vendor.create({
   //   firstName,
@@ -56,10 +42,9 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
   // checking if vendor is soft deleted in past and if exists then restoring it.
   const count = await Vendor.restore({
     where: {
-      email
+      email,
     },
   });
-  
 
   if (count === 0) {
     const vendor = await Vendor.create(
@@ -82,11 +67,9 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
         },
       },
       {
-
         include: [db.vendorsAddress],
       }
     );
-
 
     // to prevent showing password in responses
     vendor.password = undefined;
@@ -96,19 +79,21 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
         vendor,
       },
     });
-
-  }
-  else {
+  } else {
     const vendor = await Vendor.findOne({ where: { email } });
     // restore all the associated data.
     await Address.restore({
       where: {
         role: "vendor",
-        roleId: vendor.id
+        roleId: vendor.id,
       },
     });
     // restore product
-
+    await VendorProduct.restore({
+      where: {
+        VendorId: vendor.id,
+      },
+    });
 
     // restore customer
 
@@ -116,11 +101,9 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
       status: "success",
       data: {
         vendor,
-      }
-    })
+      },
+    });
   }
-
-
 
   // const token = signToken(vendor.id);
 
@@ -129,8 +112,6 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
   //   // secure:true,
   //   httpOnly: true,
   // });
-
-
 });
 
 // ------------- GET ALL  VENDORS --------------
@@ -179,10 +160,7 @@ exports.getASpecificVendor = asyncErrorHandler(async (req, res, next) => {
       return next(error);
     }
     if (!vendor) {
-      const error = new CustomError(
-        "Vendor for the given id does not exist",
-        404
-      );
+      const error = new CustomError("Vendor for the given id does not exist", 404);
       return next(error);
     }
   }
@@ -217,10 +195,7 @@ exports.deleteVendor = asyncErrorHandler(async (req, res, next) => {
       return next(error);
     }
     if (!vendor) {
-      const error = new CustomError(
-        "Vendor for the given id does not exist",
-        404
-      );
+      const error = new CustomError("Vendor for the given id does not exist", 404);
       return next(error);
     }
   }
@@ -230,41 +205,38 @@ exports.deleteVendor = asyncErrorHandler(async (req, res, next) => {
   const vendorProducts = await VendorProduct.findAll({
     where: {
       VendorId: id,
-    }
-  })
+    },
+  });
 
   // STORING THE PRODUCT IDS FOR DELETED VENDOR
   const productIds = new Set();
   for (const vendorProduct of vendorProducts) {
-    productIds.add(vendorProduct.ProductId)
+    productIds.add(vendorProduct.ProductId);
   }
 
-  // DELETING THE PRODUCT RECORDS OF PARTICULAR VENDOR 
+  // DELETING THE PRODUCT RECORDS OF PARTICULAR VENDOR
   await VendorProduct.destroy({
     where: {
-      VendorId: id
-    }
-  })
-
+      VendorId: id,
+    },
+  });
 
   for (const productId of productIds) {
-
     // FINDING WHETHER ANY OTHER VENDOR HAS THE PRODUCT THAT IS ASSOCIATED WITH CURRENTLY DELETING VENDOR
     const count = await VendorProduct.findAll({
       where: {
-        ProductId: productId
-      }
-    })
+        ProductId: productId,
+      },
+    });
 
     // IF NO, THEN DELETE THAT PARTICULAR PRODUCT FROM PRODUCT TABLE TOO...
     if (count === 0) {
       await Product.destroy({
         where: {
-          id: productId
-        }
-      })
+          id: productId,
+        },
+      });
     }
-
   }
 
   await Vendor.destroy({ where: { id } });
@@ -274,7 +246,6 @@ exports.deleteVendor = asyncErrorHandler(async (req, res, next) => {
     status: "success",
     message: "Vendor and associated products has been deleted successfully.",
   });
-
 });
 
 // -------------- UPDATE VENDOR -------------
@@ -299,43 +270,20 @@ exports.updateVendor = asyncErrorHandler(async (req, res, next) => {
       return next(error);
     }
     if (!vendor) {
-      const error = new CustomError(
-        "Vendor for the given id does not exist",
-        404
-      );
+      const error = new CustomError("Vendor for the given id does not exist", 404);
       return next(error);
     }
   }
 
-  const {
-    firstName,
-    lastName,
-    shopName,
-    email,
-    contact,
-    password,
-    confirmPassword,
-    address_lane1,
-    address_lane2,
-    landmark,
-    pincode,
-    state,
-    role,
-  } = req.body;
-
+  const { firstName, lastName, shopName, email, contact, password, confirmPassword, address_lane1, address_lane2, landmark, pincode, state, role } =
+    req.body;
 
   if (password || confirmPassword) {
-    const error = new CustomError(
-      "you can not update password using this end point",
-      400
-    );
+    const error = new CustomError("you can not update password using this end point", 400);
     return next(error);
   }
   if (role) {
-    const error = new CustomError(
-      "you can not update role using this end point",
-      400
-    );
+    const error = new CustomError("you can not update role using this end point", 400);
     return next(error);
   }
   const updateVendor = await Vendor.update(
