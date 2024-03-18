@@ -59,11 +59,9 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
       email
     },
   });
-  // console.log(typeof (check));
-  // console.log(check)
+  
 
   if (count === 0) {
-    console.log('inside if');
     const vendor = await Vendor.create(
       {
         firstName,
@@ -90,7 +88,7 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
     );
 
 
-    // to prevent showind password in responses
+    // to prevent showing password in responses
     vendor.password = undefined;
     res.status(201).json({
       status: "success",
