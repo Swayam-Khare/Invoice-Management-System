@@ -2,7 +2,7 @@ const { db } = require("../models/connection");
 const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const CustomError = require("../utils/customError");
 const signToken = require("../utils/signToken");
-const { Op } = require('sequelize')
+const { Op } = require("sequelize");
 
 const Vendor = db.Vendor;
 const Address = db.Address;
@@ -10,11 +10,10 @@ const Product = db.Product;
 const VendorProduct = db.VendorProduct;
 
 // ------------- CREATE A VENDOR --------------
-
 exports.createVendor = asyncErrorHandler(async (req, res, next) => {
-  // vivek
   const { firstName, lastName, shopName, email, contact, password, confirmPassword, address_lane1, address_lane2, landmark, pincode, state, role } =
     req.body;
+
   // const vendor = await Vendor.create({
   //   firstName,
   //   lastName,
@@ -39,39 +38,80 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
   // }
 
   // ---------- CREATE WITH ASSOCIATIONS --------------
-  const vendor = await Vendor.create(
-    //vivek
-    {
-      firstName,
-      lastName,
-      shopName,
-      email,
-      password,
-      confirmPassword,
-      Address_Details: {
-        address_lane1,
-        address_lane2,
-        landmark,
-        pincode,
-        state,
-        contact,
-        role,
-        // roleId,
-      },
-    },
-    {
-      include: [db.vendorsAddress],
-    }
-  ); //vivek
 
-  // to prenent showind password in responses
-  vendor.password = undefined;
-  res.status(201).json({
-    status: "success",
-    data: {
-      vendor,
+  // checking if vendor is soft deleted in past and if exists then restoring it.
+  const count = await Vendor.restore({
+    where: {
+      email,
     },
   });
+
+  if (count === 0) {
+    const vendor = await Vendor.create(
+      {
+        firstName,
+        lastName,
+        shopName,
+        email,
+        password,
+        confirmPassword,
+        Address_Details: {
+          address_lane1,
+          address_lane2,
+          landmark,
+          pincode,
+          state,
+          contact,
+          role,
+          // roleId,
+        },
+      },
+      {
+        include: [db.vendorsAddress],
+      }
+    );
+
+    // to prevent showing password in responses
+    vendor.password = undefined;
+    res.status(201).json({
+      status: "success",
+      data: {
+        vendor,
+      },
+    });
+  } else {
+    const vendor = await Vendor.findOne({ where: { email } });
+    // restore all the associated data.
+    await Address.restore({
+      where: {
+        role: "vendor",
+        roleId: vendor.id,
+      },
+    });
+    // restore product
+    await VendorProduct.restore({
+      where: {
+        VendorId: vendor.id,
+      },
+    });
+
+    // restore customer
+
+    res.status(201).json({
+      status: "success",
+      data: {
+        vendor,
+      },
+    });
+  }
+
+  // const token = signToken(vendor.id);
+
+  // res.cookie("jwt", token, {
+  //   maxAge: process.env.LOGIN_EXPIRES,
+  //   // secure:true,
+  //   httpOnly: true,
+  // });
 });
 
 // ------------- GET ALL  VENDORS --------------
@@ -165,41 +205,38 @@ exports.deleteVendor = asyncErrorHandler(async (req, res, next) => {
   const vendorProducts = await VendorProduct.findAll({
     where: {
       VendorId: id,
-    }
-  })
+    },
+  });
 
   // STORING THE PRODUCT IDS FOR DELETED VENDOR
   const productIds = new Set();
-  for(const vendorProduct of vendorProducts){
-    productIds.add(vendorProduct.ProductId)
+  for (const vendorProduct of vendorProducts) {
+    productIds.add(vendorProduct.ProductId);
   }
 
-  // DELETING THE PRODUCT RECORDS OF PARTICULAR VENDOR 
+  // DELETING THE PRODUCT RECORDS OF PARTICULAR VENDOR
   await VendorProduct.destroy({
     where: {
-      VendorId: id
-    }
-  })
+      VendorId: id,
+    },
+  });
 
-
-  for(const productId of productIds){
-
+  for (const productId of productIds) {
     // FINDING WHETHER ANY OTHER VENDOR HAS THE PRODUCT THAT IS ASSOCIATED WITH CURRENTLY DELETING VENDOR
     const count = await VendorProduct.findAll({
       where: {
-        ProductId: productId
-      }
-    })
+        ProductId: productId,
+      },
+    });
 
     // IF NO, THEN DELETE THAT PARTICULAR PRODUCT FROM PRODUCT TABLE TOO...
-    if(count === 0){
+    if (count === 0) {
       await Product.destroy({
         where: {
-          id: productId
-        }
-      })
+          id: productId,
+        },
+      });
     }
-
   }
 
   await Vendor.destroy({ where: { id } });
@@ -209,7 +246,6 @@ exports.deleteVendor = asyncErrorHandler(async (req, res, next) => {
     status: "success",
     message: "Vendor and associated products has been deleted successfully.",
   });
-
 });
 
 // -------------- UPDATE VENDOR -------------
@@ -238,6 +274,7 @@ exports.updateVendor = asyncErrorHandler(async (req, res, next) => {
       return next(error);
     }
   }
+
   const { firstName, lastName, shopName, email, contact, password, confirmPassword, address_lane1, address_lane2, landmark, pincode, state, role } =
     req.body;
 
@@ -251,6 +288,7 @@ exports.updateVendor = asyncErrorHandler(async (req, res, next) => {
   }
   const updateVendor = await Vendor.update(
     { firstName, lastName, shopName, email },
+
     {
       where: { id },
       returning: true,
@@ -270,7 +308,6 @@ exports.updateVendor = asyncErrorHandler(async (req, res, next) => {
       plain: true,
     }
   );
-
   res.status(200).json({
     status: "success",
     data: {

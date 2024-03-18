@@ -1,5 +1,5 @@
 const { Sequelize, DataTypes } = require("sequelize");
-// vivek---
+
 const database = process.env.DATABASE;
 const user = process.env.DB_USER;
 const password = process.env.DB_PASSWORD;
@@ -19,11 +19,7 @@ const connectDB = new Sequelize(database, user, password, {
 const db = {};
 db.Sequelize = Sequelize;
 db.connectDB = connectDB;
-// db.Vendor = require('./vendorModel')(sequelize, DataTypes);
 
-// Create separate file for each model schema.
-// Add your model here:
-// Ex - db.<ModelName> = require('<model-path>')(sequilize, DataTypes);
 
 db.Product = require("./productModel")(connectDB, DataTypes);
 db.Invoice = require("./invoiceModel")(connectDB, DataTypes);
@@ -52,13 +48,13 @@ db.Customer.belongsToMany(db.Vendor, { through: db.VendorCustomer });
 
 // ==============Customer-Address (: One to one)=========================
 
-db.Customer.hasOne(db.Address, {
+db.customerAddress = db.Customer.hasOne(db.Address, {
   foreignKey: "roleId",
   constraints: false,
   scope: {
     role: "customer",
   },
-  as: "Address Details",
+  as: "Address_Details",
 });
 db.Address.belongsTo(db.Customer, { foreignKey: "roleId", constraints: false });
 
@@ -76,12 +72,16 @@ db.Address.belongsTo(db.Vendor, { foreignKey: "roleId", constraints: false });
 
 // ==============Invoice-Order (: One to one)=========================
 
-db.Invoice.hasOne(db.Order);
-db.Order.belongsTo(db.Invoice);
+db.invoiceOrder = db.Invoice.hasOne(db.Order, {
+  foreignKey: "invoiceId",
+  constraints: false,
+  as: "Order_Details",
+});
+db.Order.belongsTo(db.Invoice, { foreignKey: "invoiceId", constraints: false });
 
 // ==============Customer-Invoice (: One to many)=========================
 
-db.Customer.hasMany(db.Invoice);
+db.customerInvoice = db.Customer.hasMany(db.Invoice);
 db.Invoice.belongsTo(db.Customer);
 
 const check = async () => {
