@@ -28,7 +28,7 @@ module.exports = (connectDB, DataTypes) => {
       // },
 
       transaction_no: {
-        type: DataTypes.BIGINT,
+        type: DataTypes.STRING,
         allowNull: true,
       },
 

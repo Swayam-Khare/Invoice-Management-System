@@ -2,6 +2,7 @@ const { db } = require("../models/connection");
 const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const CustomError = require("../utils/customError");
 const getInvoice = require("./../utils/getInvoiceNumber");
+const getTransaction = require("./../utils/getTransactionId");
 
 const Invoice = db.Invoice;
 
@@ -45,12 +46,13 @@ exports.getInvoice = asyncErrorHandler(async (req, res, next) => {
 // ================= FOR CREATING A NEW INVOICE ===============
 
 exports.addInvoice = asyncErrorHandler(async (req, res, next) => {
-
   const {
+    // invoice_no,
     customer_details,
+    Address_Details,
     due_date,
     purchase_date,
-    transaction_no,
+    // transaction_no,
     tax,
     delivery_charge,
     status,
@@ -59,20 +61,89 @@ exports.addInvoice = asyncErrorHandler(async (req, res, next) => {
     penalty,
     notes,
     discount,
-    order_details
+    order_details,
   } = req.body;
 
   const vendor = req.vendor;
 
-  // ------------- CREATING INVOICE NUMBER ------------- //
 
 
   // -------- Invoice Number created -----------------//
 
-  // const Invoice = await Invoice.create(req.body);
+  let transaction_no;
   const invoice_no = getInvoice.uniqueInvoice();
 
-  res.status(201).json({
+  // Generating unique transaction Id for paid bills
+  if (status.toLowerCase() === "paid") {
+    transaction_no = getTransaction.uniqueTransaction();
+  } else {
+    transaction_no = null;
+  }
+
+  try {
+    const result = await db.connectDB.transaction(async (t) => {
+
+      const existingCustomer = await db.Customer.findOne({
+        where: {
+          email: customer_details.email
+        }
+      });
+
+      let customer;
+
+      if (!existingCustomer) {
+        customer = await db.Customer.create({
+          firstName: customer_details.firstName,
+          lastName: customer_details.lastName,
+          email: customer_details.email,
+          contact: customer_details.contact,
+          Address_Details,
+
+        }, {
+          include: [db.customerAddress],
+          transaction: t
+        });
+      }
+      else {
+        customer = { id: existingCustomer.id }
+      }
+
+
+
+
+
+      const invoice = await db.Invoice.create({
+        invoice_no,
+        transaction_no,
+        due_date,
+        purchase_date,
+        tax,
+        delivery_charge,
+        status,
+        subtotal,
+        total,
+        penalty,
+        notes,
+        discount,
+        VendorId: req.vendor.id,
+        CustomerId: customer.id,
+        Order_Details: {
+          invoiceNo: invoice_no,
+          productId: order_details.productId,
+          quantity: order_details.quantity
+        }
+      }, {
+        include: [db.invoiceOrder],
+        transaction: t
+      })
+
+    });
+  } catch (err) {
+    const error = new CustomError(err.message, 400);
+    next(error);
+  }
+
+  return res.status(201).json({
     status: "success",
     data: {
       invoice_no,
@@ -80,12 +151,22 @@ exports.addInvoice = asyncErrorHandler(async (req, res, next) => {
   });
 });
 
-// =============== FOR UPDATING THE INVOICE OF THE GIVEN ID ===========
+// =============== FOR UPDATING STATUS THE INVOICE OF THE GIVEN ID ===========
 
 exports.updateInvoice = asyncErrorHandler(async (req, res, next) => {
-  const [updatedInvoice] = await Invoice.update(req.body, {
+
+  const status = req.body.status;
+  let transaction_no;
+  if (status.toLowerCase() === 'paid') {
+    transaction_no = getTransaction.uniqueTransaction();
+  } else {
+    transaction_no = null;
+  }
+
+  const updatedInvoice = await Invoice.update({ status: req.body.status, transaction_no }, {
     where: {
       id: req.params.invoice_id,
+      VendorId: req.vendor.id,
     },
   });
 

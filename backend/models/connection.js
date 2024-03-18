@@ -52,13 +52,13 @@ db.Customer.belongsToMany(db.Vendor, { through: db.VendorCustomer });
 
 // ==============Customer-Address (: One to one)=========================
 
-db.Customer.hasOne(db.Address, {
+db.customerAddress = db.Customer.hasOne(db.Address, {
   foreignKey: "roleId",
   constraints: false,
   scope: {
     role: "customer",
   },
-  as: "Address Details",
+  as: "Address_Details",
 });
 db.Address.belongsTo(db.Customer, { foreignKey: "roleId", constraints: false });
 
@@ -76,19 +76,23 @@ db.Address.belongsTo(db.Vendor, { foreignKey: "roleId", constraints: false });
 
 // ==============Invoice-Order (: One to one)=========================
 
-db.Invoice.hasOne(db.Order);
-db.Order.belongsTo(db.Invoice);
+db.invoiceOrder = db.Invoice.hasOne(db.Order, {
+  foreignKey: "invoiceId",
+  constraints: false,
+  as: "Order_Details",
+});
+db.Order.belongsTo(db.Invoice, { foreignKey: "invoiceId", constraints: false });
 
 // ==============Customer-Invoice (: One to many)=========================
 
-db.Customer.hasMany(db.Invoice);
+db.customerInvoice = db.Customer.hasMany(db.Invoice);
 db.Invoice.belongsTo(db.Customer);
 
 const check = async () => {
   try {
     await connectDB.authenticate();
     console.log("Connection has been established successfully.");
-    await db.connectDB.sync({ force: false });
+    await db.connectDB.sync({ force: true });
     console.log("All models were synchronized successfully.");
   } catch (error) {
     console.error("Unable to connect to the database:", error);

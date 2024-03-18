@@ -11,7 +11,7 @@ module.exports = (connectDB, DataTypes) => {
         autoIncrement: true,
       },
       invoiceNo: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         unique: true,
         allowNull: false,
         validate: {
