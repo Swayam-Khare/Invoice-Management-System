@@ -70,6 +70,11 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
     return next(error);
   }
 
+  res.cookie("jwt", token, {
+    maxAge: process.env.LOGIN_EXPIRES,
+    // secure:true,
+    httpOnly: true,
+  });
 
   res.status(200).json({
     status: "success",
@@ -185,6 +190,13 @@ exports.resetPassword = asyncErrorHandler(async (req, res, next) => {
   // login the user
 
   const loginToken = signToken(vendor.id);
+
+  res.cookie("jwt", loginToken, {
+    maxAge: process.env.LOGIN_EXPIRES,
+    // secure:true,
+    httpOnly: true,
+  });
+
   res.status(200).json({
     status: "success",
     token: loginToken,
