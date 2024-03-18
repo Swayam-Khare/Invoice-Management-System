@@ -38,6 +38,28 @@ exports.addProduct = asyncErrorHandler(async (req, res, next) => {
                 }
             })
 
+            // UPDATING THE INFORMATION OF PRODUCT RELATED TO PARTICULAR VENDOR
+            const { stock, price, discount } = req.body;
+        
+            const updateData = {};
+            if (stock !== undefined) updateData.stock = stock;
+            if (price !== undefined) updateData.price = price;
+            if (discount !== undefined) updateData.discount = discount;
+
+            const [ updatedRows ] = await VendorProduct.update(updateData, {
+                where: {
+                    VendorId: req.vendor.id,
+                    ProductId: req.params.productId
+                }
+            });
+
+            vendorProduct = await VendorProduct.findOne({
+                where: {
+                    VendorId: req.vendor.id,
+                    ProductId: req.params.productId
+                }
+            })
+
         }
         else{
 
@@ -238,6 +260,18 @@ exports.updateProduct = asyncErrorHandler(
 
 // DELETE PRODUCT
 exports.deleteProduct = asyncErrorHandler(async (req, res, next) => {
+
+    const updateData = {};
+    updateData.stock = 0;
+    updateData.price = undefined;
+    updateData.discount = undefined;
+
+    const [ updatedRows ] = await VendorProduct.update(updateData, {
+        where: {
+            ProductId: req.params.productId,
+            VendorId: req.vendor.id,
+        }
+    })
 
     await VendorProduct.destroy({
         where: {
