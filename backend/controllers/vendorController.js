@@ -40,7 +40,7 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
 
   // ---------- CREATE WITH ASSOCIATIONS --------------
   const vendor = await Vendor.create(
-    //vivek
+
     {
       firstName,
       lastName,
@@ -62,9 +62,9 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
     {
       include: [db.vendorsAddress],
     }
-  ); //vivek
+  );
 
-  // to prenent showind password in responses
+  // to prevent showing password in responses
   vendor.password = undefined;
   res.status(201).json({
     status: "success",
@@ -170,7 +170,7 @@ exports.deleteVendor = asyncErrorHandler(async (req, res, next) => {
 
   // STORING THE PRODUCT IDS FOR DELETED VENDOR
   const productIds = new Set();
-  for(const vendorProduct of vendorProducts){
+  for (const vendorProduct of vendorProducts) {
     productIds.add(vendorProduct.ProductId)
   }
 
@@ -182,7 +182,7 @@ exports.deleteVendor = asyncErrorHandler(async (req, res, next) => {
   })
 
 
-  for(const productId of productIds){
+  for (const productId of productIds) {
 
     // FINDING WHETHER ANY OTHER VENDOR HAS THE PRODUCT THAT IS ASSOCIATED WITH CURRENTLY DELETING VENDOR
     const count = await VendorProduct.findAll({
@@ -192,7 +192,7 @@ exports.deleteVendor = asyncErrorHandler(async (req, res, next) => {
     })
 
     // IF NO, THEN DELETE THAT PARTICULAR PRODUCT FROM PRODUCT TABLE TOO...
-    if(count === 0){
+    if (count === 0) {
       await Product.destroy({
         where: {
           id: productId

@@ -21,7 +21,7 @@ module.exports = (connectDB, DataTypes) => {
       },
 
       invoice_no: {
-        type: DataTypes.BIGINT,
+        type: DataTypes.STRING,  // needs to be string to maintain the structure of leading zeroes 
         allowNull: false,
       },
 
