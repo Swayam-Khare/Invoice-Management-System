@@ -3,122 +3,195 @@ const asyncErrorHandler = require("../utils/asyncErrorHandler.js");
 const CustomError = require("../utils/customError.js");
 const Product = db.Product;
 const VendorProduct = db.VendorProduct;
-// vivek
+
 // CREATE OPERATION
 exports.addProduct = asyncErrorHandler(async (req, res, next) => {
-  let product = await Product.findOne({
-    where: {
-      name: req.body.name,
-    },
-  });
 
-  if (!product) {
-    product = await Product.create({
-      name: req.body.name,
-      description: req.body.description,
+    let product, vendorProduct
+
+    product =  await Product.findOne({
+        where: {
+            name: req.body.name,
+        },
     });
-  }
 
-  const vendorProduct = await VendorProduct.create({
-    VendorId: req.vendor.id,
-    ProductId: product.id,
-    stock: req.body.stock,
-    price: req.body.price,
-    discount: req.body.discount,
-  });
+    // CHECK WHETHER EXISTING PRODUCT OR NOT
+    if(product) {
+        
+        // IF EXISTING THEN CHECK FOR THE ASSCOIATION
+        vendorProduct = await VendorProduct.findOne({
+            where: {
+                VendorId: req.vendor.id,
+                ProductId: product.id
+            },
+            paranoid: false
+        })
+        
+        // CHECK WHETHER PRODUCT WAS ASSOCIATED WITH THE VENDOR IN THE PAST OR NOT
+        if(vendorProduct){
 
-  res.status(201).json({
-    status: "Success",
-    data: {
-      product,
-      vendorProduct,
-    },
-  });
+            // IF PRODUCT WAS ASSOCIATED THEN RESTORE THE ENTRY
+            await VendorProduct.restore({
+                where: {
+                    VendorId: req.vendor.id,
+                    ProductId: product.id
+                }
+            })
+
+            // UPDATING THE INFORMATION OF PRODUCT RELATED TO PARTICULAR VENDOR
+            const { stock, price, discount } = req.body;
+        
+            const updateData = {};
+            if (stock !== undefined) updateData.stock = stock;
+            if (price !== undefined) updateData.price = price;
+            if (discount !== undefined) updateData.discount = discount;
+
+            const [ updatedRows ] = await VendorProduct.update(updateData, {
+                where: {
+                    VendorId: req.vendor.id,
+                    ProductId: req.params.productId
+                }
+            });
+
+            vendorProduct = await VendorProduct.findOne({
+                where: {
+                    VendorId: req.vendor.id,
+                    ProductId: req.params.productId
+                }
+            })
+
+        }
+        else{
+
+            //  CREATE THE ASSOCIATION
+            vendorProduct = await VendorProduct.create({
+                VendorId: req.vendor.id,
+                ProductId: product.id,
+                stock: req.body.stock,
+                price: req.body.price,
+                discount: req.body.discount,
+            });
+
+        }
+
+    }
+    else{
+        
+        // IF THE PRODUCT IS NEW THEN CREATE PRODUCT AND ASSOCIATION
+        product = await Product.create({
+            name: req.body.name,
+            description: req.body.description
+        })
+
+        vendorProduct = await VendorProduct.create({
+            VendorId: req.vendor.id,
+            ProductId: product.id,
+            stock: req.body.stock,
+            price: req.body.price,
+            discount: req.body.discount,
+        });
+
+    }
+
+    res.status(201).json({
+        status: "Success",
+        data: {
+            product,
+            vendorProduct,
+        },
+    });
+
 });
 
 // READ OPERATION
 exports.readProducts = asyncErrorHandler(async (req, res, next) => {
-  // FIRST FETCHING ALL THE PRODUCT ID CORRESPONDING TO VENDOR ID
-  const vendorProducts = await VendorProduct.findAll({
-    where: {
-      VendorId: req.vendor.id,
-    },
-    attributes: {
-      exclude: ["VendorId"],
-    },
-  });
+    
+    // FIRST FETCHING ALL THE PRODUCT ID CORRESPONDING TO VENDOR ID
+    const vendorProducts = await VendorProduct.findAll({
+        where: {
+        VendorId: req.vendor.id,
+        },
+        attributes: {
+            exclude: [
+                "VendorId"
+            ],
+        },
+    });
 
-  // EXTRACTING PRODUCT ID FROM VENDORPRODUCTS AND SAVING IT INTO AN ARRAY
-  const productIds = vendorProducts.map((vendorProduct) => vendorProduct.ProductId);
+    // EXTRACTING PRODUCT ID FROM VENDORPRODUCTS AND SAVING IT INTO AN ARRAY
+    const productIds = vendorProducts.map((vendorProduct) => vendorProduct.ProductId);
 
-  // FETCHING PRODUCT DETAILS CORRESPONDING TO VENDOR
-  const products = await Product.findAll({
-    where: {
-      id: productIds,
-    },
-  });
+    // FETCHING PRODUCT DETAILS CORRESPONDING TO VENDOR
+    const products = await Product.findAll({
+        where: {
+            id: productIds,
+        },
+    });
 
-  // MERGING INFORMATION OF PRODUCT AND INFO RELATED TO VENDOR IN ONE OBJECT
-  const myProducts = products.map((product) => {
-    const vendorProduct = vendorProducts.find((vp) => vp.ProductId === product.id);
-    return {
-      id: product.id,
-      name: product.name,
-      description: product.description,
-      stock: vendorProduct.stock,
-      price: vendorProduct.price,
-      discount: vendorProduct.discount,
-    };
-  });
+    // MERGING INFORMATION OF PRODUCT AND INFO RELATED TO VENDOR IN ONE OBJECT
+    const myProducts = products.map((product) => {
+        const vendorProduct = vendorProducts.find((vp) => vp.ProductId === product.id);
+        return {
+            id: product.id,
+            name: product.name,
+            description: product.description,
+            stock: vendorProduct.stock,
+            price: vendorProduct.price,
+            discount: vendorProduct.discount,
+        };
+    });
 
-  res.status(200).json({
-    status: "Success",
-    count: myProducts.length,
-    data: {
-      myProducts,
-    },
-  });
+    res.status(200).json({
+        status: "Success",
+        count: myProducts.length,
+        data: {
+            myProducts,
+        },
+    });
+
 });
 
 // READ PRODUCT BY ID
 exports.readProductById = asyncErrorHandler(async (req, res, next) => {
-  const product = await Product.findOne({
-    where: {
-      id: req.params.productId,
-    },
-  });
 
-  if (!product) {
-    const error = new CustomError(`Product with ID '${req.params.productId}' is not available`, 404);
-    return next(error);
-  }
+    const product = await Product.findOne({
+        where: {
+            id: req.params.productId,
+        },
+    });
 
-  const vendorProduct = await VendorProduct.findOne({
-    where: {
-      VendorId: req.vendor.id,
-      ProductId: product.id,
-    },
-  });
+    if (!product) {
+        const error = new CustomError(`Product with ID '${req.params.productId}' is not available`, 404);
+        return next(error);
+    }
 
-  if (!vendorProduct) {
-    const error = new CustomError(`You don't have the stock of the product with ID '${product.id}' and Name '${product.name}'`, 404);
-    return next(error);
-  }
+    const vendorProduct = await VendorProduct.findOne({
+        where: {
+            VendorId: req.vendor.id,
+            ProductId: product.id,
+        },
+    });
 
-  const myProduct = {
-    name: product.name,
-    description: product.description,
-    stock: vendorProduct.stock,
-    price: vendorProduct.price,
-    discount: vendorProduct.discount,
-  };
+    if (!vendorProduct) {
+        const error = new CustomError(`You don't have the stock of the product with ID '${product.id}' and Name '${product.name}'`, 404);
+        return next(error);
+    }
 
-  res.status(200).json({
-    status: "Success",
-    data: {
-      myProduct,
-    },
-  });
+    const myProduct = {
+        name: product.name,
+        description: product.description,
+        stock: vendorProduct.stock,
+        price: vendorProduct.price,
+        discount: vendorProduct.discount,
+    };
+
+    res.status(200).json({
+        status: "Success",
+        data: {
+            myProduct,
+        },
+    });
+
 });
 
 // UPDATE PRODUCT
@@ -166,30 +239,7 @@ exports.updateProduct = asyncErrorHandler(
                 price: updatedProduct.price,
                 discount: updatedProduct.discount
             }
-
-            if(updatedProduct.stock === 0){
-                await VendorProduct.destroy({
-                    where: {
-                        VendorId: req.vendor.id,
-                        ProductId: req.params.productId
-                    }
-                })
-            }
             
-            const vendorProducts = await VendorProduct.findAll({
-                where: {
-                    ProductId: req.params.productId
-                }
-            })
-    
-            if(vendorProducts.length === 0){
-                await Product.destroy({
-                    where: {
-                        id: req.params.productId
-                    }
-                })
-            }
-
             res.status(200).json({
                 status: 'Success',
                 data: {
@@ -210,29 +260,29 @@ exports.updateProduct = asyncErrorHandler(
 
 // DELETE PRODUCT
 exports.deleteProduct = asyncErrorHandler(async (req, res, next) => {
-  await VendorProduct.destroy({
-    where: {
-      ProductId: req.params.productId,
-      VendorId: req.vendor.id,
-    },
-  });
 
-  const vendorProducts = await VendorProduct.findAll({
-    where: {
-      ProductId: req.params.productId,
-    },
-  });
+    const updateData = {};
+    updateData.stock = 0;
+    updateData.price = undefined;
+    updateData.discount = undefined;
 
-  if (vendorProducts.length === 0) {
-    await Product.destroy({
-      where: {
-        id: req.params.productId,
-      },
+    const [ updatedRows ] = await VendorProduct.update(updateData, {
+        where: {
+            ProductId: req.params.productId,
+            VendorId: req.vendor.id,
+        }
+    })
+
+    await VendorProduct.destroy({
+        where: {
+            ProductId: req.params.productId,
+            VendorId: req.vendor.id,
+        },
     });
-  }
 
-  res.status(204).json({
-    status: "Success",
-    data: null,
-  });
+    res.status(204).json({
+        status: "Success",
+        data: null,
+    });
+    
 });

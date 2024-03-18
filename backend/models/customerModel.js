@@ -40,12 +40,13 @@ module.exports = (connectDB, DataTypes) => {
         },
       },
     },
-    // Other model options go here
     {
-      // options
+      // Other model options go here
       modelName: 'Customer',
       tableName: 'customer',
-      timestamps: false
+      paranoid: true,
+      createdAt:false,
+      updatedAt:false,
     }
   );
 

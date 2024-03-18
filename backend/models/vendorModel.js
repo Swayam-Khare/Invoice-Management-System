@@ -36,7 +36,6 @@ module.exports = (connectDB, DataTypes) => {
           },
         },
       },
-
       password: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -74,7 +73,10 @@ module.exports = (connectDB, DataTypes) => {
     {
       // Other model options go here
       tableName: "vendor",
-      timestamps: false,
+      timestamps: true,
+      updatedAt: false,
+      createdAt: false,
+      paranoid: true,
       hooks: {
         beforeCreate: async (vendor) => {
           // console.log("vendor is ", vendor);
@@ -96,6 +98,7 @@ module.exports = (connectDB, DataTypes) => {
     }
   );
 
+  // Instance function to compare password in database
   Vendor.prototype.comparePasswordInDb = async function (pswd, pswdDB) {
     return await bcrypt.compare(pswd, pswdDB);
   };

@@ -7,7 +7,7 @@ const util = require("util");
 
 const Vendor = db.Vendor;
 const Admin = db.Admin;
-// vivek--------
+
 // ------------------LOGIN------------------ //
 const sendEmail = require("../utils/email");
 const crypto = require("crypto");
@@ -26,17 +26,21 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
   var token;
 
   if (!email || !password) {
-    const error = new CustomError("Please provide email ID & Password for login in!", 400);
+    const error = new CustomError(
+      "Please provide email ID & Password for login in!",
+      400
+    );
     return next(error);
   }
-
   if (role === "admin") {
+
     //Check if admin exists
     const admin = await Admin.findOne({
       where: {
         email,
       },
     });
+
 
     //if admin exists and password match
     if (!admin || !(await admin.comparePasswordInDb(password, admin.password))) {
@@ -45,6 +49,7 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
     }
 
     token = signToken(admin.id, role);
+
   } else if (role === "vendor") {
     //Check if vendor exists
     const vendor = await Vendor.findOne({
@@ -59,10 +64,17 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
       return next(error);
     }
     token = signToken(vendor.id, role);
+
   } else {
     const error = new CustomError("Page not Found!", 404);
     return next(error);
   }
+
+  res.cookie("jwt", token, {
+    maxAge: process.env.LOGIN_EXPIRES,
+    // secure:true,
+    httpOnly: true,
+  });
 
   res.status(200).json({
     status: "success",
@@ -81,8 +93,8 @@ exports.protect = asyncErrorHandler(async (req, res, next) => {
   }
 
   // Verify the token
-  const verifyToken = util.promisify(jwt.verify);
 
+  const verifyToken = util.promisify(jwt.verify);
   const decodedToken = await verifyToken(testToken.split(" ")[1], process.env.SECRET_STR);
   console.log(decodedToken);
 
@@ -90,13 +102,12 @@ exports.protect = asyncErrorHandler(async (req, res, next) => {
   const vendor = await Vendor.findByPk(decodedToken.id, { attributes: { exclude: ["password"] } });
 
   if (!vendor) {
-    const error = new CustomError("The user with given credential does not exist.", 401);
+    const error = new CustomError(
+      "The user with given credential does not exist.",
+      401
+    );
     next(error);
   }
-
-  // if user changed password after token is issued
-  await vendor.reload();
-
   if (vendor.lastPasswordChange && new Date(decodedToken.iat * 1000) < vendor.lastPasswordChange) {
     throw new CustomError("Unauthorized - Password changed after token issuance", 401);
   }
@@ -179,6 +190,13 @@ exports.resetPassword = asyncErrorHandler(async (req, res, next) => {
   // login the user
 
   const loginToken = signToken(vendor.id);
+
+  res.cookie("jwt", loginToken, {
+    maxAge: process.env.LOGIN_EXPIRES,
+    // secure:true,
+    httpOnly: true,
+  });
+
   res.status(200).json({
     status: "success",
     token: loginToken,
