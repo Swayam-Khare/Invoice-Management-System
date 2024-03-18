@@ -73,7 +73,10 @@ module.exports = (connectDB, DataTypes) => {
     {
       // Other model options go here
       tableName: "vendor",
-      timestamps: false,
+      timestamps: true,
+      updatedAt: false,
+      createdAt: false,
+      paranoid: true,
       hooks: {
         beforeCreate: async (vendor) => {
           // console.log("vendor is ", vendor);
