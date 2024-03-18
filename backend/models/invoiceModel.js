@@ -12,7 +12,7 @@ module.exports = (connectDB, DataTypes) => {
       invoice_id: {
         type: DataTypes.STRING,
         allowNull: false,
-        validate: {
+        validate: { 
           len: {
             args: [4, 4],
             msg: "Invoice id length must be 4 letters only",
