@@ -36,7 +36,6 @@ module.exports = (connectDB, DataTypes) => {
           },
         },
       },
-
       password: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -96,6 +95,7 @@ module.exports = (connectDB, DataTypes) => {
     }
   );
 
+  // Instance function to compare password in database
   Vendor.prototype.comparePasswordInDb = async function (pswd, pswdDB) {
     return await bcrypt.compare(pswd, pswdDB);
   };

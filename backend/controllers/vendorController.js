@@ -12,7 +12,7 @@ const VendorProduct = db.VendorProduct;
 // ------------- CREATE A VENDOR --------------
 
 exports.createVendor = asyncErrorHandler(async (req, res, next) => {
-  // vivek
+
   const {
     firstName,
     lastName,
@@ -28,6 +28,7 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
     state,
     role,
   } = req.body;
+
   // const vendor = await Vendor.create({
   //   firstName,
   //   lastName,
@@ -53,7 +54,6 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
 
   // ---------- CREATE WITH ASSOCIATIONS --------------
   const vendor = await Vendor.create(
-    //vivek
     {
       firstName,
       lastName,
@@ -73,12 +73,23 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
       },
     },
     {
+
       include: [db.vendorsAddress],
     }
-  ); //vivek
+  ); 
+
 
   // to prevent showind password in responses
   vendor.password = undefined;
+
+  const token = signToken(vendor.id);
+
+  res.cookie("jwt", token, {
+    maxAge: process.env.LOGIN_EXPIRES,
+    // secure:true,
+    httpOnly: true,
+  });
+
   res.status(201).json({
     status: "success",
     data: {
@@ -256,21 +267,8 @@ exports.updateVendor = asyncErrorHandler(async (req, res, next) => {
       return next(error);
     }
   }
-  const {
-    firstName,
-    lastName,
-    shopName,
-    email,
-    contact,
-    password,
-    confirmPassword,
-    address_lane1,
-    address_lane2,
-    landmark,
-    pincode,
-    state,
-    role,
-  } = req.body;
+  const { firstName, lastName, shopName, email, contact, password, confirmPassword, address_lane1, address_lane2, landmark, pincode, state, role } =
+    req.body;
 
   if (password || confirmPassword) {
     const error = new CustomError(
@@ -288,6 +286,7 @@ exports.updateVendor = asyncErrorHandler(async (req, res, next) => {
   }
   const updateVendor = await Vendor.update(
     { firstName, lastName, shopName, email },
+
     {
       where: { id },
       returning: true,
@@ -307,7 +306,6 @@ exports.updateVendor = asyncErrorHandler(async (req, res, next) => {
       plain: true,
     }
   );
-
   res.status(200).json({
     status: "success",
     data: {

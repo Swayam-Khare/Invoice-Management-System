@@ -31,6 +31,7 @@ module.exports = (connectDB, DataTypes) => {
         type: DataTypes.DECIMAL(10, 2), // ASSUMING DISCOUNT IS MONETARY VALUE AND NOT A PERCENTAGE
         allowNull: false,
       },
+
     },
     {
       // Other model options go here
