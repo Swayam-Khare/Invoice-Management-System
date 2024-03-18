@@ -10,7 +10,6 @@ const Product = db.Product;
 const VendorProduct = db.VendorProduct;
 
 // ------------- CREATE A VENDOR --------------
-
 exports.createVendor = asyncErrorHandler(async (req, res, next) => {
 
   const {
@@ -53,49 +52,85 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
   // }
 
   // ---------- CREATE WITH ASSOCIATIONS --------------
-  const vendor = await Vendor.create(
-    {
-      firstName,
-      lastName,
-      shopName,
-      email,
-      password,
-      confirmPassword,
-      Address_Details: {
-        address_lane1,
-        address_lane2,
-        landmark,
-        pincode,
-        state,
-        contact,
-        role,
-        // roleId,
+
+  // checking if vendor is soft deleted in past and if exists then restoring it.
+  const count = await Vendor.restore({
+    where: {
+      email
+    },
+  });
+  
+
+  if (count === 0) {
+    const vendor = await Vendor.create(
+      {
+        firstName,
+        lastName,
+        shopName,
+        email,
+        password,
+        confirmPassword,
+        Address_Details: {
+          address_lane1,
+          address_lane2,
+          landmark,
+          pincode,
+          state,
+          contact,
+          role,
+          // roleId,
+        },
       },
-    },
-    {
+      {
 
-      include: [db.vendorsAddress],
-    }
-  ); 
+        include: [db.vendorsAddress],
+      }
+    );
 
 
-  // to prenent showind password in responses
-  vendor.password = undefined;
+    // to prevent showing password in responses
+    vendor.password = undefined;
+    res.status(201).json({
+      status: "success",
+      data: {
+        vendor,
+      },
+    });
 
-  const token = signToken(vendor.id);
+  }
+  else {
+    const vendor = await Vendor.findOne({ where: { email } });
+    // restore all the associated data.
+    await Address.restore({
+      where: {
+        role: "vendor",
+        roleId: vendor.id
+      },
+    });
+    // restore product
 
-  res.cookie("jwt", token, {
-    maxAge: process.env.LOGIN_EXPIRES,
-    // secure:true,
-    httpOnly: true,
-  });
 
-  res.status(201).json({
-    status: "success",
-    data: {
-      vendor,
-    },
-  });
+    // restore customer
+
+    res.status(201).json({
+      status: "success",
+      data: {
+        vendor,
+      }
+    })
+  }
+
+
+
+  // const token = signToken(vendor.id);
+
+  // res.cookie("jwt", token, {
+  //   maxAge: process.env.LOGIN_EXPIRES,
+  //   // secure:true,
+  //   httpOnly: true,
+  // });
+
+
 });
 
 // ------------- GET ALL  VENDORS --------------
@@ -200,7 +235,7 @@ exports.deleteVendor = asyncErrorHandler(async (req, res, next) => {
 
   // STORING THE PRODUCT IDS FOR DELETED VENDOR
   const productIds = new Set();
-  for(const vendorProduct of vendorProducts){
+  for (const vendorProduct of vendorProducts) {
     productIds.add(vendorProduct.ProductId)
   }
 
@@ -212,7 +247,7 @@ exports.deleteVendor = asyncErrorHandler(async (req, res, next) => {
   })
 
 
-  for(const productId of productIds){
+  for (const productId of productIds) {
 
     // FINDING WHETHER ANY OTHER VENDOR HAS THE PRODUCT THAT IS ASSOCIATED WITH CURRENTLY DELETING VENDOR
     const count = await VendorProduct.findAll({
@@ -222,7 +257,7 @@ exports.deleteVendor = asyncErrorHandler(async (req, res, next) => {
     })
 
     // IF NO, THEN DELETE THAT PARTICULAR PRODUCT FROM PRODUCT TABLE TOO...
-    if(count === 0){
+    if (count === 0) {
       await Product.destroy({
         where: {
           id: productId
