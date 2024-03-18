@@ -1,3 +1,4 @@
+
 const { db } = require("../models/connection.js");
 const asyncErrorHandler = require("../utils/asyncErrorHandler.js");
 const CustomError = require("../utils/customError.js");
@@ -80,6 +81,7 @@ exports.readProducts = asyncErrorHandler(async (req, res, next) => {
   });
 });
 
+
 // READ PRODUCT BY ID
 exports.readProductById = asyncErrorHandler(async (req, res, next) => {
   const product = await Product.findOne({
@@ -133,10 +135,12 @@ exports.updateProduct = asyncErrorHandler(
         if (discount !== undefined) updateData.discount = discount;
 
         const [ updatedRows ] = await VendorProduct.update(updateData, {
+
             where: {
                 VendorId: req.vendor.id,
                 ProductId: req.params.productId
             }
+
         });
 
         if(updatedRows){
@@ -165,7 +169,9 @@ exports.updateProduct = asyncErrorHandler(
                 stock: updatedProduct.stock,
                 price: updatedProduct.price,
                 discount: updatedProduct.discount
+
             }
+
 
             if(updatedProduct.stock === 0){
                 await VendorProduct.destroy({
@@ -188,6 +194,7 @@ exports.updateProduct = asyncErrorHandler(
                         id: req.params.productId
                     }
                 })
+
             }
 
             res.status(200).json({
@@ -230,6 +237,7 @@ exports.deleteProduct = asyncErrorHandler(async (req, res, next) => {
       },
     });
   }
+
 
   res.status(204).json({
     status: "Success",
