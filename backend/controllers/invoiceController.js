@@ -1,21 +1,20 @@
 const { db } = require("../models/connection");
-const asyncErrorHandler = require('../utils/asyncErrorHandler');
-const CustomError = require('../utils/customError');
+const asyncErrorHandler = require("../utils/asyncErrorHandler");
+const CustomError = require("../utils/customError");
+const invoice_no = require("./../utils/getInvoiceNumber");
 
 const Invoice = db.Invoice;
 
-
 // ================== FOR GETTING ALL INVOCIES ==========
 exports.getInvoices = asyncErrorHandler(async (req, res, next) => {
-
   const invoices = await Invoice.findAll({});
 
   res.status(200).json({
-    status: 'success',
+    status: "success",
     count: invoices.length,
     data: {
-      invoices
-    }
+      invoices,
+    },
   });
 });
 
@@ -47,32 +46,37 @@ exports.getInvoice = asyncErrorHandler(async (req, res, next) => {
 
 exports.addInvoice = asyncErrorHandler(async (req, res, next) => {
 
-  // ------------- CREATING INVOICE NUMBER ------------- //
+  const {
+    customer_details,
+    due_date,
+    purchase_date,
+    transaction_no,
+    tax,
+    delivery_charge,
+    status,
+    subtotal,
+    total,
+    penalty,
+    notes,
+    discount,
+    order_details
+  } = req.body;
 
-  const { customer_details } = req.body;
   const vendor = req.vendor;
 
-  // 1. creating invoice id
-  const invoice_id = '#' + vendor.firstName[0].toUpperCase() + vendor.lastName[0].toUpperCase() + customer_details.firstName[0].toUpperCase() + customer_details.lastName[0].toUpperCase()
+  // ------------- CREATING INVOICE NUMBER ------------- //
 
-  // 2. creating invoice no
-  const lastInvoiceDetails = await Invoice.findOne({
-    attributes: [[db.Sequelize.fn('MAX', db.Sequelize.col('invoice_no')), 'max_inv_no']]
-  })
 
-  const lastInvoiceNo = lastInvoiceDetails.dataValues.max_inv_no
-  const unstructured_invoice_no = String((lastInvoiceNo * 1) + 1);
-
-  const invoice_no = unstructured_invoice_no.padStart(7, '0');
   // -------- Invoice Number created -----------------//
 
   // const Invoice = await Invoice.create(req.body);
+  const numbers = invoice_no.uniqueInvoice();
+  console.log(numbers);
 
   res.status(201).json({
     status: "success",
     data: {
-      invoice_id,
-      invoice_no
+      invoiceNo: numbers,
     },
   });
 });
