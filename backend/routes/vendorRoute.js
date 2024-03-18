@@ -1,6 +1,6 @@
 const express = require("express");
 const vendorController = require("../controllers/vendorController");
-// const authController = require("../controllers/authController");
+const authController = require("../controllers/authController");
 
 const router = express.Router();
 
@@ -12,6 +12,9 @@ router
 router
   .route("/:id")
   .get(vendorController.getASpecificVendor)
-  .delete(vendorController.deleteVendor)
-  .patch(vendorController.updateVendor);
+
+  .delete(authController.protect, vendorController.deleteVendor)
+  .patch(authController.protect, vendorController.updateVendor);
+
+router.route("/updatepassword/:id").patch(authController.protect, vendorController.updatePassword);
 module.exports = router;

@@ -3,11 +3,21 @@ const asyncErrorHandler = require("./../utils/asyncErrorHandler");
 const CustomError = require("./../utils/customError");
 const signToken = require("../utils/signToken");
 const jwt = require("jsonwebtoken");
+const util = require("util");
 
 const Vendor = db.Vendor;
 const Admin = db.Admin;
 
 // ------------------LOGIN------------------ //
+const sendEmail = require("../utils/email");
+const crypto = require("crypto");
+const { Op } = require("sequelize");
+
+// ===========================================SIGNUP==================================================== //
+
+//  moved to vendor controller
+
+// ===========================================LOGIN==================================================== //
 
 exports.login = asyncErrorHandler(async (req, res, next) => {
   const email = req.body.email;
@@ -22,15 +32,15 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
     );
     return next(error);
   }
-
-  if (role === 'admin') {
+  if (role === "admin") {
 
     //Check if admin exists
     const admin = await Admin.findOne({
       where: {
         email,
-      }
-    })
+      },
+    });
+
 
     //if admin exists and password match
     if (!admin || !(await admin.comparePasswordInDb(password, admin.password))) {
@@ -40,8 +50,7 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
 
     token = signToken(admin.id, role);
 
-  } else if (role === 'vendor') {
-
+  } else if (role === "vendor") {
     //Check if vendor exists
     const vendor = await Vendor.findOne({
       where: {
@@ -55,8 +64,8 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
       return next(error);
     }
     token = signToken(vendor.id, role);
-  }
-  else {
+
+  } else {
     const error = new CustomError("Page not Found!", 404);
     return next(error);
   }
@@ -79,15 +88,13 @@ exports.protect = asyncErrorHandler(async (req, res, next) => {
   }
 
   // Verify the token
-  const decodedToken = jwt.verify(
-    testToken.split(" ")[1],
-    process.env.SECRET_STR
-  );
 
-  // const { email, password } = req.body;
+  const verifyToken = util.promisify(jwt.verify);
+  const decodedToken = await verifyToken(testToken.split(" ")[1], process.env.SECRET_STR);
+  console.log(decodedToken);
 
   // Find the vendor by token id
-  const vendor = await Vendor.findByPk(decodedToken.id);
+  const vendor = await Vendor.findByPk(decodedToken.id, { attributes: { exclude: ["password"] } });
 
   if (!vendor) {
     const error = new CustomError(
@@ -96,15 +103,12 @@ exports.protect = asyncErrorHandler(async (req, res, next) => {
     );
     next(error);
   }
+  if (vendor.lastPasswordChange && new Date(decodedToken.iat * 1000) < vendor.lastPasswordChange) {
+    throw new CustomError("Unauthorized - Password changed after token issuance", 401);
+  }
 
   // Attach vendor ID to request object
   req.vendor = vendor;
-
-  // Compare passwords
-  //   const isPasswordValid = await bcrypt.compare(password, Vendor.password);
-  //   if (!isPasswordValid) {
-  //     throw new CustomError("password is wrong !", 401);
-  //   }
 
   // Check if token version or last password change timestamp matches
   //   if (decodedToken.version !== vendor.tokenVersion || decodedToken.lastPasswordChange !== vendor.lastPasswordChange) {
@@ -114,4 +118,75 @@ exports.protect = asyncErrorHandler(async (req, res, next) => {
   // 5. allow user to access route
   //   req.vendor = vendor;
   next();
+});
+
+exports.forgotPassword = asyncErrorHandler(async (req, res, next) => {
+  // 1. GET USED BASED ON POSTED EMAIL
+  const email = req.body.email;
+
+  const vendor = await Vendor.findOne({
+    where: {
+      email,
+    },
+  });
+  if (!vendor) {
+    const error = new CustomError("The vendor with given credential does not exist.", 401);
+    next(error);
+  }
+
+  // 2. GENERATE A RANDOM RESET TOKEN
+  const resetToken = await vendor.createResetPasswordToken();
+
+  await vendor.save({ validateBeforeSave: false });
+  console.log(resetToken);
+
+  // 3. SEND THE TOKEN BACK TO USER EMAIL
+  const resetUrl = `${req.protocol}://${req.get("host")}/api/v1/auth/resetPassword/${resetToken}`;
+  const message = `we have reacived a password reset request. please use below link to reset your password.\n\n${resetUrl}\n\nThis reset password link will exoire in 10 minutes`;
+
+  try {
+    await sendEmail({
+      email: vendor.email,
+      subject: "password change request recieved",
+      message: message,
+    });
+
+    res.status(200).json({
+      status: "success",
+      message: "password reset link has been send to user email",
+    });
+  } catch (err) {
+    vendor.passwordResetToken = undefined;
+    vendor.passwordResetTokenExpires = undefined;
+    vendor.save({ validateBeforeSave: false });
+
+    return next(new CustomError("there was an error sending password reset email. please try again later.", 500));
+  }
+});
+
+exports.resetPassword = asyncErrorHandler(async (req, res, next) => {
+  const token = crypto.createHash("sha256").update(req.params.token).digest("hex");
+  const vendor = await Vendor.findOne({ where: { passwordResetToken: token, passwordResetTokenExpires: { [Op.gt]: Date.now() } } });
+
+  if (!vendor) {
+    const error = new CustomError("Token is invalid or has expired", 400);
+    next(error);
+  }
+  // reseting the user password
+
+  vendor.password = req.body.password;
+  vendor.confirmPassword = req.body.confirmPassword;
+  vendor.passwordResetToken = null;
+  vendor.passwordResetTokenExpires = null;
+  vendor.lastPasswordChange = Date.now();
+
+  await vendor.save();
+
+  // login the user
+
+  const loginToken = signToken(vendor.id);
+  res.status(200).json({
+    status: "success",
+    token: loginToken,
+  });
 });

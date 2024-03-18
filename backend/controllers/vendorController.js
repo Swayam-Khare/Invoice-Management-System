@@ -2,13 +2,17 @@ const { db } = require("../models/connection");
 const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const CustomError = require("../utils/customError");
 const signToken = require("../utils/signToken");
+const { Op } = require('sequelize')
 
 const Vendor = db.Vendor;
 const Address = db.Address;
+const Product = db.Product;
+const VendorProduct = db.VendorProduct;
 
 // ------------- CREATE A VENDOR --------------
 
 exports.createVendor = asyncErrorHandler(async (req, res, next) => {
+
   const {
     firstName,
     lastName,
@@ -24,6 +28,7 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
     state,
     role,
   } = req.body;
+
   // const vendor = await Vendor.create({
   //   firstName,
   //   lastName,
@@ -68,9 +73,11 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
       },
     },
     {
-      include: [db.vendorAddress],
+
+      include: [db.vendorsAddress],
     }
-  );
+  ); 
+
 
   // to prenent showind password in responses
   vendor.password = undefined;
@@ -174,13 +181,56 @@ exports.deleteVendor = asyncErrorHandler(async (req, res, next) => {
     }
   }
 
+  // HANDLING DELETION BETWEEN VENDOR AND VENDOR_PRODUCT
+  // FETCHING ALL THE PRODUCTS FROM VENDOR_PRODUCT TABLE ASSOCIATED WITH THAT PARTICULAR VENDOR
+  const vendorProducts = await VendorProduct.findAll({
+    where: {
+      VendorId: id,
+    }
+  })
+
+  // STORING THE PRODUCT IDS FOR DELETED VENDOR
+  const productIds = new Set();
+  for(const vendorProduct of vendorProducts){
+    productIds.add(vendorProduct.ProductId)
+  }
+
+  // DELETING THE PRODUCT RECORDS OF PARTICULAR VENDOR 
+  await VendorProduct.destroy({
+    where: {
+      VendorId: id
+    }
+  })
+
+
+  for(const productId of productIds){
+
+    // FINDING WHETHER ANY OTHER VENDOR HAS THE PRODUCT THAT IS ASSOCIATED WITH CURRENTLY DELETING VENDOR
+    const count = await VendorProduct.findAll({
+      where: {
+        ProductId: productId
+      }
+    })
+
+    // IF NO, THEN DELETE THAT PARTICULAR PRODUCT FROM PRODUCT TABLE TOO...
+    if(count === 0){
+      await Product.destroy({
+        where: {
+          id: productId
+        }
+      })
+    }
+
+  }
+
   await Vendor.destroy({ where: { id } });
   await Address.destroy({ where: { role: "vendor", roleId: id } });
 
   res.status(200).json({
     status: "success",
-    message: "vendor has been deleted successfully.",
+    message: "Vendor and associated products has been deleted successfully.",
   });
+
 });
 
 // -------------- UPDATE VENDOR -------------
@@ -212,6 +262,7 @@ exports.updateVendor = asyncErrorHandler(async (req, res, next) => {
       return next(error);
     }
   }
+
   const {
     firstName,
     lastName,
@@ -227,6 +278,7 @@ exports.updateVendor = asyncErrorHandler(async (req, res, next) => {
     state,
     role,
   } = req.body;
+
 
   if (password || confirmPassword) {
     const error = new CustomError(
@@ -244,29 +296,61 @@ exports.updateVendor = asyncErrorHandler(async (req, res, next) => {
   }
   const updateVendor = await Vendor.update(
     { firstName, lastName, shopName, email },
-    { where: { id } }
+
+    {
+      where: { id },
+      returning: true,
+      plain: true,
+    }
   );
+
+  // console.log(updateVendor[1].dataValues);
+  // to prevent showing password in response.
+  updateVendor[1].dataValues.password = undefined;
+
   const updateVendorAddress = await Address.update(
     { address_lane1, address_lane2, landmark, pincode, state, contact },
-    { where: { role: "vendor", roleId: id } }
+    {
+      where: { role: "vendor", roleId: id },
+      returning: true,
+      plain: true,
+    }
   );
-  const updatedVendor = await Vendor.findByPk(id, {
-    include: [
-      {
-        model: Address,
-        as: "Address_Details",
-      },
-    ],
-    where: {
-      id,
-    },
-  });
   res.status(200).json({
     status: "success",
     data: {
-      //   updateVendor,
-      //   updateVendorAddress,
-      updatedVendor,
+      updatedVendor: updateVendor[1].dataValues,
+      updatedVendorAddress: updateVendorAddress[1].dataValues,
     },
   });
+});
+
+// ============ update Vendor Password================
+exports.updatePassword = asyncErrorHandler(async (req, res, next) => {
+  try {
+    const { currentPassword, newPassword, confirmPassword } = req.body;
+    const vendor = req.vendor;
+
+    // Update password in the database
+
+    // Check if current password matches
+    const isPasswordValid = await vendor.comparePasswordInDb(currentPassword, vendor.password);
+    if (!isPasswordValid) {
+      const error = new CustomError("Current password is incorrect", 400);
+      return next(error);
+    }
+
+    if (newPassword !== confirmPassword) {
+      const error = new CustomError("New password and confirm password do not match", 400);
+      return next(error);
+    }
+
+    vendor.password = newPassword;
+    vendor.lastPasswordChange = Date.now(); // Update the timestamp of the last password change
+    await vendor.save();
+
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (error) {
+    next(error);
+  }
 });
