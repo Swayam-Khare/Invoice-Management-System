@@ -40,14 +40,15 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
   // ---------- CREATE WITH ASSOCIATIONS --------------
 
   // checking if vendor is soft deleted in past and if exists then restoring it.
-  const count = await Vendor.restore({
-    where: {
-      email,
-    },
-  });
 
-  if (count === 0) {
-    const vendor = await Vendor.create(
+  const vendor = await Vendor.findOne({ where: { email }, paranoid: false });
+  let existWithDeletedAt = false;
+  if(vendor && vendor.deletedAt){
+    console.log(vendor.deletedAt)
+    existWithDeletedAt = true;
+  }
+  if (!existWithDeletedAt||!vendor) {
+    const newVendor = await Vendor.create(
       {
         firstName,
         lastName,
@@ -72,14 +73,19 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
     );
 
     // to prevent showing password in responses
-    vendor.password = undefined;
+    newVendor.password = undefined;
     res.status(201).json({
       status: "success",
       data: {
-        vendor,
+        newVendor,
       },
     });
   } else {
+    await Vendor.restore({
+      where: {
+        email,
+      },
+    });
     const vendor = await Vendor.findOne({ where: { email } });
     // restore all the associated data.
     await Address.restore({
@@ -96,7 +102,7 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
     });
 
     // restore customer
-
+    vendor.password = undefined;
     res.status(201).json({
       status: "success",
       data: {
@@ -201,43 +207,24 @@ exports.deleteVendor = asyncErrorHandler(async (req, res, next) => {
   }
 
   // HANDLING DELETION BETWEEN VENDOR AND VENDOR_PRODUCT
-  // FETCHING ALL THE PRODUCTS FROM VENDOR_PRODUCT TABLE ASSOCIATED WITH THAT PARTICULAR VENDOR
-  const vendorProducts = await VendorProduct.findAll({
+
+  // FIRST UPDATE THE DATA THAT IS MAKE STOCK=0, PRICE=DISCOUNT=UNDEFINED
+  const updateData = {};
+  updateData.stock = 0;
+  updateData.price = undefined;
+  updateData.discount = undefined;
+
+  const [updatedRows] = await VendorProduct.update(updateData, {
     where: {
       VendorId: id,
-    },
-  });
+    }
+  })
 
-  // STORING THE PRODUCT IDS FOR DELETED VENDOR
-  const productIds = new Set();
-  for (const vendorProduct of vendorProducts) {
-    productIds.add(vendorProduct.ProductId);
-  }
-
-  // DELETING THE PRODUCT RECORDS OF PARTICULAR VENDOR
   await VendorProduct.destroy({
     where: {
       VendorId: id,
     },
   });
-
-  for (const productId of productIds) {
-    // FINDING WHETHER ANY OTHER VENDOR HAS THE PRODUCT THAT IS ASSOCIATED WITH CURRENTLY DELETING VENDOR
-    const count = await VendorProduct.findAll({
-      where: {
-        ProductId: productId,
-      },
-    });
-
-    // IF NO, THEN DELETE THAT PARTICULAR PRODUCT FROM PRODUCT TABLE TOO...
-    if (count === 0) {
-      await Product.destroy({
-        where: {
-          id: productId,
-        },
-      });
-    }
-  }
 
   await Vendor.destroy({ where: { id } });
   await Address.destroy({ where: { role: "vendor", roleId: id } });
