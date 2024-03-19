@@ -49,14 +49,14 @@ exports.addProduct = asyncErrorHandler(async (req, res, next) => {
             const [ updatedRows ] = await VendorProduct.update(updateData, {
                 where: {
                     VendorId: req.vendor.id,
-                    ProductId: req.params.productId
+                    ProductId: product.id
                 }
             });
 
             vendorProduct = await VendorProduct.findOne({
                 where: {
                     VendorId: req.vendor.id,
-                    ProductId: req.params.productId
+                    ProductId: product.id
                 }
             })
 
@@ -109,7 +109,7 @@ exports.readProducts = asyncErrorHandler(async (req, res, next) => {
     // FIRST FETCHING ALL THE PRODUCT ID CORRESPONDING TO VENDOR ID
     const vendorProducts = await VendorProduct.findAll({
         where: {
-        VendorId: req.vendor.id,
+            VendorId: req.vendor.id,
         },
         attributes: {
             exclude: [
