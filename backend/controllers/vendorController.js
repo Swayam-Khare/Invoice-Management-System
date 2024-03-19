@@ -201,22 +201,22 @@ exports.deleteVendor = asyncErrorHandler(async (req, res, next) => {
   }
 
   // HANDLING DELETION BETWEEN VENDOR AND VENDOR_PRODUCT
-  
+
   // FIRST UPDATE THE DATA THAT IS MAKE STOCK=0, PRICE=DISCOUNT=UNDEFINED
   const updateData = {};
   updateData.stock = 0;
   updateData.price = undefined;
   updateData.discount = undefined;
 
-  const [ updatedRows ] = await VendorProduct.update(updateData, {
+  const [updatedRows] = await VendorProduct.update(updateData, {
     where: {
       VendorId: id,
-    }
-  })
+    },
+  });
 
   await VendorProduct.destroy({
     where: {
-        VendorId: id,
+      VendorId: id,
     },
   });
 
@@ -305,7 +305,7 @@ exports.updatePassword = asyncErrorHandler(async (req, res, next) => {
     const vendor = req.vendor;
 
     // Update password in the database
-
+   
     // Check if current password matches
     const isPasswordValid = await vendor.comparePasswordInDb(currentPassword, vendor.password);
     if (!isPasswordValid) {
