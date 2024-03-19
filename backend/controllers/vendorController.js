@@ -201,43 +201,24 @@ exports.deleteVendor = asyncErrorHandler(async (req, res, next) => {
   }
 
   // HANDLING DELETION BETWEEN VENDOR AND VENDOR_PRODUCT
-  // FETCHING ALL THE PRODUCTS FROM VENDOR_PRODUCT TABLE ASSOCIATED WITH THAT PARTICULAR VENDOR
-  const vendorProducts = await VendorProduct.findAll({
+  
+  // FIRST UPDATE THE DATA THAT IS MAKE STOCK=0, PRICE=DISCOUNT=UNDEFINED
+  const updateData = {};
+  updateData.stock = 0;
+  updateData.price = undefined;
+  updateData.discount = undefined;
+
+  const [ updatedRows ] = await VendorProduct.update(updateData, {
     where: {
       VendorId: id,
-    },
-  });
+    }
+  })
 
-  // STORING THE PRODUCT IDS FOR DELETED VENDOR
-  const productIds = new Set();
-  for (const vendorProduct of vendorProducts) {
-    productIds.add(vendorProduct.ProductId);
-  }
-
-  // DELETING THE PRODUCT RECORDS OF PARTICULAR VENDOR
   await VendorProduct.destroy({
     where: {
-      VendorId: id,
+        VendorId: id,
     },
   });
-
-  for (const productId of productIds) {
-    // FINDING WHETHER ANY OTHER VENDOR HAS THE PRODUCT THAT IS ASSOCIATED WITH CURRENTLY DELETING VENDOR
-    const count = await VendorProduct.findAll({
-      where: {
-        ProductId: productId,
-      },
-    });
-
-    // IF NO, THEN DELETE THAT PARTICULAR PRODUCT FROM PRODUCT TABLE TOO...
-    if (count === 0) {
-      await Product.destroy({
-        where: {
-          id: productId,
-        },
-      });
-    }
-  }
 
   await Vendor.destroy({ where: { id } });
   await Address.destroy({ where: { role: "vendor", roleId: id } });
