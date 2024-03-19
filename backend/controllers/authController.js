@@ -96,24 +96,51 @@ exports.protect = asyncErrorHandler(async (req, res, next) => {
 
   const verifyToken = util.promisify(jwt.verify);
   const decodedToken = await verifyToken(testToken.split(" ")[1], process.env.SECRET_STR);
+
+  req.role = decodedToken.role;
+
   // console.log(decodedToken);
+  if (decodedToken.role === 'vendor') {
 
-  // Find the vendor by token id
-  const vendor = await Vendor.findByPk(decodedToken.id, { attributes: { exclude: ["password"] } });
+    // Find the vendor by token id
+    const vendor = await Vendor.findByPk(decodedToken.id);
 
-  if (!vendor) {
-    const error = new CustomError(
-      "The user with given credential does not exist.",
-      401
-    );
-    next(error);
+    if (!vendor) {
+      const error = new CustomError(
+        "The user with given credential does not exist.",
+        401
+      );
+      next(error);
+    }
+    if (vendor.lastPasswordChange && new Date(decodedToken.iat * 1000) < vendor.lastPasswordChange) {
+      throw new CustomError("Unauthorized - Password changed after token issuance", 401);
+    }
+
+    // Attach vendor details to request object
+    req.vendor = vendor;
+
   }
-  if (vendor.lastPasswordChange && new Date(decodedToken.iat * 1000) < vendor.lastPasswordChange) {
-    throw new CustomError("Unauthorized - Password changed after token issuance", 401);
+  else if (decodedToken.role === 'admin') {
+    // Find the vendor by token id
+    const admin = await Admin.findByPk(decodedToken.id);
+
+    if (!admin) {
+      const error = new CustomError(
+        "The user with given credential does not exist.",
+        401
+      );
+      next(error);
+    }
+    if (admin.lastPasswordChange && new Date(decodedToken.iat * 1000) < admin.lastPasswordChange) {
+      throw new CustomError("Unauthorized - Password changed after token issuance", 401);
+    }
+
+    // Attach admin details to request object
+    req.admin = admin;
   }
 
-  // Attach vendor ID to request object
-  req.vendor = vendor;
+
+
 
   // Check if token version or last password change timestamp matches
   //   if (decodedToken.version !== vendor.tokenVersion || decodedToken.lastPasswordChange !== vendor.lastPasswordChange) {
@@ -202,3 +229,13 @@ exports.resetPassword = asyncErrorHandler(async (req, res, next) => {
     token: loginToken,
   });
 });
+
+exports.restrict = (role) => {
+  return (req, res, next) => {
+    if (req.role !== role) {
+      const error = new CustomError('You do not have permission to perform this action', 403);
+      next(error);
+    }
+    next();
+  }
+}
