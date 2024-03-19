@@ -96,7 +96,7 @@ exports.protect = asyncErrorHandler(async (req, res, next) => {
 
   const verifyToken = util.promisify(jwt.verify);
   const decodedToken = await verifyToken(testToken.split(" ")[1], process.env.SECRET_STR);
-  console.log(decodedToken);
+  // console.log(decodedToken);
 
   // Find the vendor by token id
   const vendor = await Vendor.findByPk(decodedToken.id, { attributes: { exclude: ["password"] } });
