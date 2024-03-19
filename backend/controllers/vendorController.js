@@ -3,13 +3,13 @@ const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const CustomError = require("../utils/customError");
 const signToken = require("../utils/signToken");
 const { Op } = require("sequelize");
-const excludeFields = require("../utils/excludeFields");
-const { calculatePagination } = require("../utils/pagination");
 
 const Vendor = db.Vendor;
 const Address = db.Address;
 const Product = db.Product;
 const VendorProduct = db.VendorProduct;
+
+const { calculatePagination } = require("../utils/pagination");
 
 // ------------- CREATE A VENDOR --------------
 exports.createVendor = asyncErrorHandler(async (req, res, next) => {
@@ -126,8 +126,9 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
 
 exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
   try {
-    const { skip = 0, page = 1, state } = req.query;
-    const limit = 5; // Number of records per page
+    const { skip = 0 } = req.query;
+    const limit = req.query.limit || 5; // Number of records per page
+    const page = req.query.page || 1;
 
     // Calculate pagination
     const { offset } = calculatePagination(page, limit, skip);
@@ -137,18 +138,18 @@ exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
     if (state) filters.state = state;
     // if (email) filters.email = email;
 
-    // Query the database
-    const { count, rows: customers } = await Vendor.findAndCountAll({
+    // Query the database with exclusion of certain fields
+    const { count, rows: vendors } = await Vendor.findAndCountAll({
       where: filters,
       limit,
       offset,
-      // ...excludeFields(["password", "createdAt", "updatedAt"]),
     });
 
     // Return the filtered results and pagination metadata
     res.status(200).json({
       success: true,
-      data: customers,
+      data: vendors,
+
       pagination: {
         totalItems: count,
         totalPages: Math.ceil(count / limit),
@@ -158,6 +159,8 @@ exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+
+  // ==============================================================
 
   const vendors = await Vendor.findAll({
     include: [
@@ -169,7 +172,6 @@ exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
     ],
     attributes: ["id", "firstName", "lastName", "shopName", "email"],
   });
-  console.log(req.query);
 
   res.status(200).json({
     status: "success",
