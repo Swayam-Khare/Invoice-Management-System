@@ -46,7 +46,7 @@ exports.updatePassword = asyncErrorHandler(async (req, res, next) => {
     // Check if current password matches
 
     const isPasswordValid = await admin.comparePasswordInDb(currentPassword, admin.password);
-    console.log(isPasswordValid);
+
     if (!isPasswordValid) {
       const error = new CustomError("Current password is incorrect", 400);
       return next(error);
