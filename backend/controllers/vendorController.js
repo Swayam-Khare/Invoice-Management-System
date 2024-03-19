@@ -3,6 +3,8 @@ const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const CustomError = require("../utils/customError");
 const signToken = require("../utils/signToken");
 const { Op } = require("sequelize");
+const excludeFields = require("../utils/excludeFields");
+const { calculatePagination } = require("../utils/pagination");
 
 const Vendor = db.Vendor;
 const Address = db.Address;
@@ -43,11 +45,11 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
 
   const vendor = await Vendor.findOne({ where: { email }, paranoid: false });
   let existWithDeletedAt = false;
-  if(vendor && vendor.deletedAt){
-    console.log(vendor.deletedAt)
+  if (vendor && vendor.deletedAt) {
+    console.log(vendor.deletedAt);
     existWithDeletedAt = true;
   }
-  if (!existWithDeletedAt||!vendor) {
+  if (!existWithDeletedAt || !vendor) {
     const newVendor = await Vendor.create(
       {
         firstName,
@@ -123,6 +125,40 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
 // ------------- GET ALL  VENDORS --------------
 
 exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
+  try {
+    const { skip = 0, page = 1, state } = req.query;
+    const limit = 5; // Number of records per page
+
+    // Calculate pagination
+    const { offset } = calculatePagination(page, limit, skip);
+
+    // Construct filtering criteria
+    const filters = {};
+    if (state) filters.state = state;
+    // if (email) filters.email = email;
+
+    // Query the database
+    const { count, rows: customers } = await Vendor.findAndCountAll({
+      where: filters,
+      limit,
+      offset,
+      // ...excludeFields(["password", "createdAt", "updatedAt"]),
+    });
+
+    // Return the filtered results and pagination metadata
+    res.status(200).json({
+      success: true,
+      data: customers,
+      pagination: {
+        totalItems: count,
+        totalPages: Math.ceil(count / limit),
+        currentPage: page,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+
   const vendors = await Vendor.findAll({
     include: [
       {
@@ -133,6 +169,7 @@ exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
     ],
     attributes: ["id", "firstName", "lastName", "shopName", "email"],
   });
+  console.log(req.query);
 
   res.status(200).json({
     status: "success",
@@ -311,7 +348,7 @@ exports.updatePassword = asyncErrorHandler(async (req, res, next) => {
     const vendor = req.vendor;
 
     // Update password in the database
-   
+
     // Check if current password matches
     const isPasswordValid = await vendor.comparePasswordInDb(currentPassword, vendor.password);
     if (!isPasswordValid) {
