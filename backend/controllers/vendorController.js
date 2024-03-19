@@ -40,14 +40,15 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
   // ---------- CREATE WITH ASSOCIATIONS --------------
 
   // checking if vendor is soft deleted in past and if exists then restoring it.
-  const count = await Vendor.restore({
-    where: {
-      email,
-    },
-  });
 
-  if (count === 0) {
-    const vendor = await Vendor.create(
+  const vendor = await Vendor.findOne({ where: { email }, paranoid: false });
+  let existWithDeletedAt = false;
+  if(vendor && vendor.deletedAt){
+    console.log(vendor.deletedAt)
+    existWithDeletedAt = true;
+  }
+  if (!existWithDeletedAt||!vendor) {
+    const newVendor = await Vendor.create(
       {
         firstName,
         lastName,
@@ -72,14 +73,19 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
     );
 
     // to prevent showing password in responses
-    vendor.password = undefined;
+    newVendor.password = undefined;
     res.status(201).json({
       status: "success",
       data: {
-        vendor,
+        newVendor,
       },
     });
   } else {
+    await Vendor.restore({
+      where: {
+        email,
+      },
+    });
     const vendor = await Vendor.findOne({ where: { email } });
     // restore all the associated data.
     await Address.restore({
@@ -96,7 +102,7 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
     });
 
     // restore customer
-
+    vendor.password = undefined;
     res.status(201).json({
       status: "success",
       data: {
