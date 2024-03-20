@@ -43,11 +43,11 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
 
   const vendor = await Vendor.findOne({ where: { email }, paranoid: false });
   let existWithDeletedAt = false;
-  if(vendor && vendor.deletedAt){
-    console.log(vendor.deletedAt)
+  if (vendor && vendor.deletedAt) {
+    console.log(vendor.deletedAt);
     existWithDeletedAt = true;
   }
-  if (!existWithDeletedAt||!vendor) {
+  if (!existWithDeletedAt || !vendor) {
     const newVendor = await Vendor.create(
       {
         firstName,
@@ -217,8 +217,8 @@ exports.deleteVendor = asyncErrorHandler(async (req, res, next) => {
   const [updatedRows] = await VendorProduct.update(updateData, {
     where: {
       VendorId: id,
-    }
-  })
+    },
+  });
 
   await VendorProduct.destroy({
     where: {
