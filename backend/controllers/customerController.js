@@ -5,47 +5,63 @@ const CustomError = require("../utils/customError");
 const Customer = db.Customer;
 const Address = db.Address;
 const VendorCustomer = db.VendorCustomer;
+const connectDB = db.connectDB;
 
 // ------------- CREATE A CUSTOMER --------------
 
 exports.createCustomer = asyncErrorHandler(async (req, res, next) => {
   const { firstName, lastName, email, contact, address_lane1, address_lane2, landmark, pincode, state, role } = req.body;
 
-  //restore customer if present in table
-  const count = await Customer.restore({
-    where: {
-      email,
-    },
-  });
+  let customer = await Customer.findOne({ where: { email }, paranoid: false });
+  let existWithDeletedAt = false;
+  if (customer && customer.deletedAt) {
+    existWithDeletedAt = true;
+  }
+
+  let vendorCustomer;
+  let address;
 
   //create new customer if no record restored
-  if (count === 0) {
-    const customer = await Customer.create(
-      {
-        firstName,
-        lastName,
-        email,
-        contact,
-        Address_Details: {
-          address_lane1,
-          address_lane2,
-          landmark,
-          pincode,
-          state,
-          contact,
-          role,
-        },
-      },
-      {
-        include: [db.customerAddress],
-      }
-    );
+  if (!existWithDeletedAt || !customer) {
+    try {
+      const result = await connectDB.transaction(async (t) => {
+        customer = await Customer.create(
+          {
+            firstName,
+            lastName,
+            email,
+            contact,
+            Address_Details: {
+              address_lane1,
+              address_lane2,
+              landmark,
+              pincode,
+              state,
+              contact,
+              role,
+            },
+          },
+          {
+            include: [db.customerAddress],
+            transaction: t,
+          }
+        );
 
-    //create new record for VendorCustomer table
-    const vendorCustomer = await VendorCustomer.create({
-      VendorId: req.vendor.id,
-      CustomerId: customer.id,
-    });
+        //create new record for VendorCustomer table
+        vendorCustomer = await VendorCustomer.create(
+          {
+            VendorId: req.vendor.id,
+            CustomerId: customer.id,
+          },
+          {
+            transaction: t,
+          }
+        );
+      });
+    } catch (err) {
+      const error = new CustomError(err.message, 400);
+      next(error);
+    }
 
     res.status(201).json({
       status: "Success",
@@ -55,30 +71,47 @@ exports.createCustomer = asyncErrorHandler(async (req, res, next) => {
       },
     });
   } else {
-    //find restored customer
-    const customer = await Customer.findOne({ where: { email } });
+    try {
+      const result = await connectDB.transaction(async (t) => {
+        //restore customer from the table
+        await Customer.restore({
+          where: {
+            email,
+          },
+          transaction: t,
+        });
 
-    //restore address of already restored customer
-    await Address.restore({
-      where: {
-        role: "customer",
-        roleId: customer.id,
-      },
-    });
+        //find restored customer
+        customer = await Customer.findOne({ where: { firstName: firstName }, transaction: t });
 
-    //restore VendorCustomer table records
-    await VendorCustomer.restore({
-      where: {
-        VendorId: req.vendor.id,
-        CustomerId: customer.id,
-      },
-    });
+        //restore address of already restored customer
+        await Address.restore({
+          where: {
+            role: "customer",
+            roleId: customer.id,
+          },
+          transaction: t,
+        });
 
-    //find restored address
-    const address = await Address.findOne({ where: { roleId: customer.id } });
+        //restore VendorCustomer table records
+        await VendorCustomer.restore({
+          where: {
+            VendorId: req.vendor.id,
+            CustomerId: customer.id,
+          },
+          transaction: t,
+        });
 
-    //find restored VendorCustomer records
-    const vendorCustomer = await VendorCustomer.findOne({ where: { VendorId: req.vendor.id, CustomerId: customer.id } });
+        //find restored address
+        address = await Address.findOne({ where: { roleId: customer.id }, transaction: t });
+
+        //find restored VendorCustomer records
+        vendorCustomer = await VendorCustomer.findOne({ where: { VendorId: req.vendor.id, CustomerId: customer.id }, transaction: t });
+      });
+    } catch (err) {
+      const error = new CustomError(err.message, 400);
+      next(error);
+    }
 
     res.status(201).json({
       status: "Success",
