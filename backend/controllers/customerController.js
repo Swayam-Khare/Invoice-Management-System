@@ -82,7 +82,7 @@ exports.createCustomer = asyncErrorHandler(async (req, res, next) => {
         });
 
         //find restored customer
-        customer = await Customer.findOne({ where: { firstName: firstName }, transaction: t });
+        customer = await Customer.findOne({ where: { email }, transaction: t });
 
         //restore address of already restored customer
         await Address.restore({
