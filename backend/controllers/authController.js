@@ -26,21 +26,16 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
   var token;
 
   if (!email || !password) {
-    const error = new CustomError(
-      "Please provide email ID & Password for login in!",
-      400
-    );
+    const error = new CustomError("Please provide email ID & Password for login in!", 400);
     return next(error);
   }
   if (role === "admin") {
-
     //Check if admin exists
     const admin = await Admin.findOne({
       where: {
         email,
       },
     });
-
 
     //if admin exists and password match
     if (!admin || !(await admin.comparePasswordInDb(password, admin.password))) {
@@ -49,7 +44,6 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
     }
 
     token = signToken(admin.id, role);
-
   } else if (role === "vendor") {
     //Check if vendor exists
     const vendor = await Vendor.findOne({
@@ -64,7 +58,6 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
       return next(error);
     }
     token = signToken(vendor.id, role);
-
   } else {
     const error = new CustomError("Page not Found!", 404);
     return next(error);
@@ -100,16 +93,12 @@ exports.protect = asyncErrorHandler(async (req, res, next) => {
   req.role = decodedToken.role;
 
   // console.log(decodedToken);
-  if (decodedToken.role === 'vendor') {
-
+  if (decodedToken.role === "vendor") {
     // Find the vendor by token id
     const vendor = await Vendor.findByPk(decodedToken.id);
 
     if (!vendor) {
-      const error = new CustomError(
-        "The user with given credential does not exist.",
-        401
-      );
+      const error = new CustomError("The user with given credential does not exist.", 401);
       next(error);
     }
     if (vendor.lastPasswordChange && new Date(decodedToken.iat * 1000) < vendor.lastPasswordChange) {
@@ -118,17 +107,12 @@ exports.protect = asyncErrorHandler(async (req, res, next) => {
 
     // Attach vendor details to request object
     req.vendor = vendor;
-
-  }
-  else if (decodedToken.role === 'admin') {
+  } else if (decodedToken.role === "admin") {
     // Find the vendor by token id
     const admin = await Admin.findByPk(decodedToken.id);
 
     if (!admin) {
-      const error = new CustomError(
-        "The user with given credential does not exist.",
-        401
-      );
+      const error = new CustomError("The user with given credential does not exist.", 401);
       next(error);
     }
     if (admin.lastPasswordChange && new Date(decodedToken.iat * 1000) < admin.lastPasswordChange) {
@@ -138,9 +122,6 @@ exports.protect = asyncErrorHandler(async (req, res, next) => {
     // Attach admin details to request object
     req.admin = admin;
   }
-
-
-
 
   // Check if token version or last password change timestamp matches
   //   if (decodedToken.version !== vendor.tokenVersion || decodedToken.lastPasswordChange !== vendor.lastPasswordChange) {
@@ -233,9 +214,9 @@ exports.resetPassword = asyncErrorHandler(async (req, res, next) => {
 exports.restrict = (role) => {
   return (req, res, next) => {
     if (req.role !== role) {
-      const error = new CustomError('You do not have permission to perform this action', 403);
+      const error = new CustomError("You do not have permission to perform this action", 403);
       next(error);
     }
     next();
-  }
-}
+  };
+};
