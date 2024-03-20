@@ -5,7 +5,7 @@ const authController = require("../controllers/authController");
 
 const router = express.Router();
 
-router.route("/").get(authController.protect, invoiceController.getInvoices).post(authController.protect, invoiceController.addInvoice);
+router.route("/").get(authController.protect, invoiceController.getInvoices).post(authController.protect, authController.restrict('vendor'), invoiceController.addInvoice);
 
 router
   .route("/:invoice_id")
