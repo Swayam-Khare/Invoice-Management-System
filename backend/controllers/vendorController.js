@@ -9,8 +9,6 @@ const Address = db.Address;
 const Product = db.Product;
 const VendorProduct = db.VendorProduct;
 
-const { calculatePagination } = require("../utils/pagination");
-
 // ------------- CREATE A VENDOR --------------
 exports.createVendor = asyncErrorHandler(async (req, res, next) => {
   const { firstName, lastName, shopName, email, contact, password, confirmPassword, address_lane1, address_lane2, landmark, pincode, state, role } =
@@ -125,43 +123,6 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
 // ------------- GET ALL  VENDORS --------------
 
 exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
-  try {
-    const { skip = 0 } = req.query;
-    const limit = req.query.limit || 5; // Number of records per page
-    const page = req.query.page || 1;
-
-    // Calculate pagination
-    const { offset } = calculatePagination(page, limit, skip);
-
-    // Construct filtering criteria
-    const filters = {};
-    if (state) filters.state = state;
-    // if (email) filters.email = email;
-
-    // Query the database with exclusion of certain fields
-    const { count, rows: vendors } = await Vendor.findAndCountAll({
-      where: filters,
-      limit,
-      offset,
-    });
-
-    // Return the filtered results and pagination metadata
-    res.status(200).json({
-      success: true,
-      data: vendors,
-
-      pagination: {
-        totalItems: count,
-        totalPages: Math.ceil(count / limit),
-        currentPage: page,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-
-  // ==============================================================
-
   const vendors = await Vendor.findAll({
     include: [
       {
