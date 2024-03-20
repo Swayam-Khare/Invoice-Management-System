@@ -23,27 +23,27 @@ exports.createCustomer = asyncErrorHandler(async (req, res, next) => {
   } = req.body;
 
   //restore customer if present in table
-  const count = await Customer.restore({
-    where: {
-      email,
-    },
-  });
+//   const count = await Customer.restore({
+//     where: {
+//       email,
+//     },
+//   });
 
   //create new customer if no record is restored
-  if (!count) {
-    const customer = await Customer.create(
-      {
-        firstName,
-        lastName,
-        email,
-        contact,
-        address_lane1,
-        address_lane2,
-        landmark,
-        pincode,
-        state,
-        role,
-    } = req.body;
+//   if (!count) {
+//     const customer = await Customer.create(
+//       {
+//         firstName,
+//         lastName,
+//         email,
+//         contact,
+//         address_lane1,
+//         address_lane2,
+//         landmark,
+//         pincode,
+//         state,
+//         role,
+//     });
 
 
     let customer = await Customer.findOne({ where: { email }, paranoid: false });
@@ -86,10 +86,11 @@ exports.createCustomer = asyncErrorHandler(async (req, res, next) => {
                 );
 
                 //create new record for VendorCustomer table
-                vendorCustomer = await VendorCustomer.create({
+                vendorCustomer = await VendorCustomer.create(
+                    {
                     VendorId: req.vendor.id,
                     CustomerId: customer.id,
-                },
+                    },
                     {
                         transaction: t
                     }
@@ -97,8 +98,7 @@ exports.createCustomer = asyncErrorHandler(async (req, res, next) => {
 
             });
         } catch (err) {
-            const error = new CustomError(err.message, 400);
-            next(error);
+            next(new CustomError(err.message, 400));
         }
 
         res.status(201).json({
@@ -152,8 +152,7 @@ exports.createCustomer = asyncErrorHandler(async (req, res, next) => {
 
             });
         } catch (err) {
-            const error = new CustomError(err.message, 400);
-            next(error);
+            next(new CustomError(err.message, 400));
         }
 
         res.status(201).json({
@@ -360,11 +359,12 @@ exports.updateCustomer = asyncErrorHandler(async (req, res, next) => {
   } = req.body;
 
   if (role) {
-    const error = new CustomError(
-      "You can't update role using this end point!",
-      400
+    return next(
+        new CustomError(
+            "You can't update role using this end point!",
+            400
+        )
     );
-    return next(error);
   }
 
   const updateCustomer = await Customer.update(
