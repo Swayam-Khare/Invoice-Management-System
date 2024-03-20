@@ -67,7 +67,7 @@ module.exports = (connectDB, DataTypes) => {
       },
       passwordResetTokenExpires: {
         type: DataTypes.DATE,
-        allowNull: true, 
+        allowNull: true,
       },
     },
     {

@@ -11,21 +11,8 @@ const VendorProduct = db.VendorProduct;
 
 // ------------- CREATE A VENDOR --------------
 exports.createVendor = asyncErrorHandler(async (req, res, next) => {
-  const {
-    firstName,
-    lastName,
-    shopName,
-    email,
-    contact,
-    password,
-    confirmPassword,
-    address_lane1,
-    address_lane2,
-    landmark,
-    pincode,
-    state,
-    role,
-  } = req.body;
+  const { firstName, lastName, shopName, email, contact, password, confirmPassword, address_lane1, address_lane2, landmark, pincode, state, role } =
+    req.body;
 
   // const vendor = await Vendor.create({
   //   firstName,
@@ -141,6 +128,7 @@ exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
       {
         model: Address,
         as: "Address_Details",
+        // attributes: [],
       },
     ],
     attributes: ["id", "firstName", "lastName", "shopName", "email"],
@@ -178,10 +166,7 @@ exports.getASpecificVendor = asyncErrorHandler(async (req, res, next) => {
       return next(error);
     }
     if (!vendor) {
-      const error = new CustomError(
-        "Vendor for the given id does not exist",
-        404
-      );
+      const error = new CustomError("Vendor for the given id does not exist", 404);
       return next(error);
     }
   }
@@ -216,10 +201,7 @@ exports.deleteVendor = asyncErrorHandler(async (req, res, next) => {
       return next(error);
     }
     if (!vendor) {
-      const error = new CustomError(
-        "Vendor for the given id does not exist",
-        404
-      );
+      const error = new CustomError("Vendor for the given id does not exist", 404);
       return next(error);
     }
   }
@@ -275,42 +257,20 @@ exports.updateVendor = asyncErrorHandler(async (req, res, next) => {
       return next(error);
     }
     if (!vendor) {
-      const error = new CustomError(
-        "Vendor for the given id does not exist",
-        404
-      );
+      const error = new CustomError("Vendor for the given id does not exist", 404);
       return next(error);
     }
   }
 
-  const {
-    firstName,
-    lastName,
-    shopName,
-    email,
-    contact,
-    password,
-    confirmPassword,
-    address_lane1,
-    address_lane2,
-    landmark,
-    pincode,
-    state,
-    role,
-  } = req.body;
+  const { firstName, lastName, shopName, email, contact, password, confirmPassword, address_lane1, address_lane2, landmark, pincode, state, role } =
+    req.body;
 
   if (password || confirmPassword) {
-    const error = new CustomError(
-      "you can not update password using this end point",
-      400
-    );
+    const error = new CustomError("you can not update password using this end point", 400);
     return next(error);
   }
   if (role) {
-    const error = new CustomError(
-      "you can not update role using this end point",
-      400
-    );
+    const error = new CustomError("you can not update role using this end point", 400);
     return next(error);
   }
   const updateVendor = await Vendor.update(
@@ -353,20 +313,14 @@ exports.updatePassword = asyncErrorHandler(async (req, res, next) => {
     // Update password in the database
 
     // Check if current password matches
-    const isPasswordValid = await vendor.comparePasswordInDb(
-      currentPassword,
-      vendor.password
-    );
+    const isPasswordValid = await vendor.comparePasswordInDb(currentPassword, vendor.password);
     if (!isPasswordValid) {
       const error = new CustomError("Current password is incorrect", 400);
       return next(error);
     }
 
     if (newPassword !== confirmPassword) {
-      const error = new CustomError(
-        "New password and confirm password do not match",
-        400
-      );
+      const error = new CustomError("New password and confirm password do not match", 400);
       return next(error);
     }
 
