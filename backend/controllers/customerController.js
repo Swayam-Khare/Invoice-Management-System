@@ -116,7 +116,7 @@ exports.createCustomer = asyncErrorHandler(async (req, res, next) => {
           include: [
             {
               model: Address,
-              as: "Address Details",
+              as: "Address_Details",
               attributes: {
                 exclude: ["deletedAt"],
               },
