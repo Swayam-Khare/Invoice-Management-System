@@ -82,7 +82,7 @@ exports.createCustomer = asyncErrorHandler(async (req, res, next) => {
         });
 
         //find restored customer
-        customer = await Customer.findOne({ where: { firstName: firstName }, transaction: t });
+        customer = await Customer.findOne({ where: { email }, transaction: t });
 
         //restore address of already restored customer
         await Address.restore({
@@ -127,24 +127,59 @@ exports.createCustomer = asyncErrorHandler(async (req, res, next) => {
 // ------------- GET ALL CUSTOMERS --------------
 
 exports.getAllCustomers = asyncErrorHandler(async (req, res, next) => {
-  const customers = await Customer.findAll({
-    // paranoid: false,
+
+    //   const customers = await Customer.findAll({
+//     // paranoid: false,
+//     include: [
+//       {
+//         model: Address,
+//         // paranoid: false,
+//         as: "Address_Details",
+//         attributes: ["address_lane1", "address_lane2", "landmark", "pincode", "state", "contact"],
+//       },
+//     ],
+//     attributes: ["id", "firstName", "lastName", "email", "contact"],
+//   });
+
+//   res.status(200).json({
+//     status: "Success",
+//     count: customers.length,
+//     data: {
+//       customers,
+//     },
+//   });
+// });
+
+// FETCHING ALL THE CUSTOMER ID CORRESPONDING TO VENDOR ID
+let vendorCustomerrecords = await VendorCustomer.findAll({
+    where: {
+      VendorId: req.vendor.id,
+    },
+  });
+
+  // EXTRACTING CUSTOMER ID FROM VENDORCUSTOMERS ARRAY AND SAVING IT INTO CUSTOMERID ARRAY
+  const customerIds = vendorCustomerrecords.map(
+    (vendorCustomerrecord) => vendorCustomerrecord.CustomerId
+  );
+
+  // FETCHING CUSTOMER DETAILS CORRESPONDING TO VENDOR
+  vendorCustomerrecords = await Customer.findAll({
+    where: {
+      id: customerIds,
+    },
     include: [
       {
         model: Address,
-        // paranoid: false,
         as: "Address_Details",
-        attributes: ["address_lane1", "address_lane2", "landmark", "pincode", "state", "contact"],
       },
     ],
-    attributes: ["id", "firstName", "lastName", "email", "contact"],
   });
 
   res.status(200).json({
     status: "Success",
-    count: customers.length,
+    count: vendorCustomerrecords.length,
     data: {
-      customers,
+      vendorCustomerrecords,
     },
   });
 });
