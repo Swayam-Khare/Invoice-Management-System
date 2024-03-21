@@ -24,10 +24,9 @@ module.exports = (connectDB, DataTypes) => {
       // Other model options go here
       modelName: "VendorCustomer",
       tableName: "vendorcustomer",
-      timestamps: true,
+      paranoid: true,
       updatedAt: false,
       createdAt: false,
-      paranoid: true,
     }
   );
 

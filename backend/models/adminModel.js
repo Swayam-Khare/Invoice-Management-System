@@ -55,6 +55,18 @@ module.exports = (connectDB, DataTypes) => {
           },
         },
       },
+      lastPasswordChange: {
+        type: DataTypes.DATE,
+        allowNull: true, // Initially set to null or a default value
+      },
+      passwordResetToken: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      passwordResetTokenExpires: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
     },
     {
       // Other model options go here
@@ -66,6 +78,16 @@ module.exports = (connectDB, DataTypes) => {
           const hashedPassword = await bcrypt.hash(admin.password, 10);
           admin.password = hashedPassword;
         },
+        beforeUpdate: async (admin) => {
+          if (admin.changed("password")) {
+            const hashedPassword = await bcrypt.hash(admin.password, 10);
+            admin.password = hashedPassword;
+            admin.lastPasswordChange = Date.now();
+          }
+        },
+        afterUpdate: async (admin) => {
+          admin.confirmPassword = undefined;
+        },
       },
     }
   );
@@ -74,6 +96,25 @@ module.exports = (connectDB, DataTypes) => {
   Admin.prototype.comparePasswordInDb = async function (pswd, pswdDB) {
     return await bcrypt.compare(pswd, pswdDB);
 
+  };
+
+  Admin.prototype.isPasswordChanged = async function (JWTTimestamp) {
+    if (this.lastPasswordChange) {
+      const passwordChangedTimestamp = parseInt(this.lastPasswordChange.getTime() / 1000, 10);
+      console.log(passwordChangedTimestamp, JWTTimestamp);
+
+      return JWTTimestamp < passwordChangedTimestamp;
+    }
+    return false;
+  };
+
+  Admin.prototype.createResetPasswordToken = async function () {
+    const resetToken = crypto.randomBytes(32).toString("hex");
+
+    this.passwordResetToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+    this.passwordResetTokenExpires = Date.now() + 10 * 60 * 1000;
+    // console.log(resetToken, this.passwordResetToken);
+    return resetToken;
   };
 
   return Admin;

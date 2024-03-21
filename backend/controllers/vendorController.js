@@ -11,8 +11,21 @@ const VendorProduct = db.VendorProduct;
 
 // ------------- CREATE A VENDOR --------------
 exports.createVendor = asyncErrorHandler(async (req, res, next) => {
-  const { firstName, lastName, shopName, email, contact, password, confirmPassword, address_lane1, address_lane2, landmark, pincode, state, role } =
-    req.body;
+  const {
+    firstName,
+    lastName,
+    shopName,
+    email,
+    contact,
+    password,
+    confirmPassword,
+    address_lane1,
+    address_lane2,
+    landmark,
+    pincode,
+    state,
+    role,
+  } = req.body;
 
   // const vendor = await Vendor.create({
   //   firstName,
@@ -40,14 +53,15 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
   // ---------- CREATE WITH ASSOCIATIONS --------------
 
   // checking if vendor is soft deleted in past and if exists then restoring it.
-  const count = await Vendor.restore({
-    where: {
-      email,
-    },
-  });
 
-  if (count === 0) {
-    const vendor = await Vendor.create(
+  const vendor = await Vendor.findOne({ where: { email }, paranoid: false });
+  let existWithDeletedAt = false;
+  if (vendor && vendor.deletedAt) {
+    console.log(vendor.deletedAt);
+    existWithDeletedAt = true;
+  }
+  if (!existWithDeletedAt || !vendor) {
+    const newVendor = await Vendor.create(
       {
         firstName,
         lastName,
@@ -72,14 +86,19 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
     );
 
     // to prevent showing password in responses
-    vendor.password = undefined;
+    newVendor.password = undefined;
     res.status(201).json({
       status: "success",
       data: {
-        vendor,
+        newVendor,
       },
     });
   } else {
+    await Vendor.restore({
+      where: {
+        email,
+      },
+    });
     const vendor = await Vendor.findOne({ where: { email } });
     // restore all the associated data.
     await Address.restore({
@@ -96,7 +115,7 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
     });
 
     // restore customer
-
+    vendor.password = undefined;
     res.status(201).json({
       status: "success",
       data: {
@@ -122,7 +141,6 @@ exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
       {
         model: Address,
         as: "Address_Details",
-        // attributes: [],
       },
     ],
     attributes: ["id", "firstName", "lastName", "shopName", "email"],
@@ -160,7 +178,10 @@ exports.getASpecificVendor = asyncErrorHandler(async (req, res, next) => {
       return next(error);
     }
     if (!vendor) {
-      const error = new CustomError("Vendor for the given id does not exist", 404);
+      const error = new CustomError(
+        "Vendor for the given id does not exist",
+        404
+      );
       return next(error);
     }
   }
@@ -195,49 +216,33 @@ exports.deleteVendor = asyncErrorHandler(async (req, res, next) => {
       return next(error);
     }
     if (!vendor) {
-      const error = new CustomError("Vendor for the given id does not exist", 404);
+      const error = new CustomError(
+        "Vendor for the given id does not exist",
+        404
+      );
       return next(error);
     }
   }
 
   // HANDLING DELETION BETWEEN VENDOR AND VENDOR_PRODUCT
-  // FETCHING ALL THE PRODUCTS FROM VENDOR_PRODUCT TABLE ASSOCIATED WITH THAT PARTICULAR VENDOR
-  const vendorProducts = await VendorProduct.findAll({
+
+  // FIRST UPDATE THE DATA THAT IS MAKE STOCK=0, PRICE=DISCOUNT=UNDEFINED
+  const updateData = {};
+  updateData.stock = 0;
+  updateData.price = undefined;
+  updateData.discount = undefined;
+
+  const [updatedRows] = await VendorProduct.update(updateData, {
     where: {
       VendorId: id,
     },
   });
 
-  // STORING THE PRODUCT IDS FOR DELETED VENDOR
-  const productIds = new Set();
-  for (const vendorProduct of vendorProducts) {
-    productIds.add(vendorProduct.ProductId);
-  }
-
-  // DELETING THE PRODUCT RECORDS OF PARTICULAR VENDOR
   await VendorProduct.destroy({
     where: {
       VendorId: id,
     },
   });
-
-  for (const productId of productIds) {
-    // FINDING WHETHER ANY OTHER VENDOR HAS THE PRODUCT THAT IS ASSOCIATED WITH CURRENTLY DELETING VENDOR
-    const count = await VendorProduct.findAll({
-      where: {
-        ProductId: productId,
-      },
-    });
-
-    // IF NO, THEN DELETE THAT PARTICULAR PRODUCT FROM PRODUCT TABLE TOO...
-    if (count === 0) {
-      await Product.destroy({
-        where: {
-          id: productId,
-        },
-      });
-    }
-  }
 
   await Vendor.destroy({ where: { id } });
   await Address.destroy({ where: { role: "vendor", roleId: id } });
@@ -270,20 +275,42 @@ exports.updateVendor = asyncErrorHandler(async (req, res, next) => {
       return next(error);
     }
     if (!vendor) {
-      const error = new CustomError("Vendor for the given id does not exist", 404);
+      const error = new CustomError(
+        "Vendor for the given id does not exist",
+        404
+      );
       return next(error);
     }
   }
 
-  const { firstName, lastName, shopName, email, contact, password, confirmPassword, address_lane1, address_lane2, landmark, pincode, state, role } =
-    req.body;
+  const {
+    firstName,
+    lastName,
+    shopName,
+    email,
+    contact,
+    password,
+    confirmPassword,
+    address_lane1,
+    address_lane2,
+    landmark,
+    pincode,
+    state,
+    role,
+  } = req.body;
 
   if (password || confirmPassword) {
-    const error = new CustomError("you can not update password using this end point", 400);
+    const error = new CustomError(
+      "you can not update password using this end point",
+      400
+    );
     return next(error);
   }
   if (role) {
-    const error = new CustomError("you can not update role using this end point", 400);
+    const error = new CustomError(
+      "you can not update role using this end point",
+      400
+    );
     return next(error);
   }
   const updateVendor = await Vendor.update(
@@ -326,14 +353,20 @@ exports.updatePassword = asyncErrorHandler(async (req, res, next) => {
     // Update password in the database
 
     // Check if current password matches
-    const isPasswordValid = await vendor.comparePasswordInDb(currentPassword, vendor.password);
+    const isPasswordValid = await vendor.comparePasswordInDb(
+      currentPassword,
+      vendor.password
+    );
     if (!isPasswordValid) {
       const error = new CustomError("Current password is incorrect", 400);
       return next(error);
     }
 
     if (newPassword !== confirmPassword) {
-      const error = new CustomError("New password and confirm password do not match", 400);
+      const error = new CustomError(
+        "New password and confirm password do not match",
+        400
+      );
       return next(error);
     }
 

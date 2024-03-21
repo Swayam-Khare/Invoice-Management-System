@@ -3,9 +3,10 @@ const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const CustomError = require("../utils/customError");
 const getInvoice = require("./../utils/getInvoiceNumber");
 const getTransaction = require("./../utils/getTransactionId");
+const { Op } = require("sequelize");
 
+const { Invoice, Customer, connectDB, invoiceOrder, customerAddress, Address } = db;
 
-const Invoice = db.Invoice;
 
 // ================== FOR GETTING ALL INVOCIES ==========
 exports.getInvoices = asyncErrorHandler(async (req, res, next) => {
@@ -82,18 +83,19 @@ exports.addInvoice = asyncErrorHandler(async (req, res, next) => {
   }
 
   try {
-    const result = await db.connectDB.transaction(async (t) => {
+    const result = await connectDB.transaction(async (t) => {
 
-      const existingCustomer = await db.Customer.findOne({
+      const existingCustomer = await Customer.findOne({
         where: {
-          email: customer_details.email,
-        }
+          email: customer_details.email
+        },
+        paranoid: false
       });
 
       let customer;
 
       if (!existingCustomer) {
-        customer = await db.Customer.create({
+        customer = await Customer.create({
           firstName: customer_details.firstName,
           lastName: customer_details.lastName,
           email: customer_details.email,
@@ -101,19 +103,33 @@ exports.addInvoice = asyncErrorHandler(async (req, res, next) => {
           Address_Details,
 
         }, {
-          include: [db.customerAddress],
+          include: [customerAddress],
           transaction: t
         });
       }
       else {
+        // check if deleted then restore
+        if (existingCustomer.deletedAt) {
+          await Customer.restore({
+            where: {
+              id: existingCustomer.id
+            },
+            transaction: t
+          });
+          await Address.restore({
+            where: {
+              [Op.and]: {
+                roleId: existingCustomer.id,
+                role: "customer"
+              }
+            },
+            transaction: t
+          })
+        }
         customer = { id: existingCustomer.id }
       }
 
-
-
-
-
-      const invoice = await db.Invoice.create({
+      const invoice = await Invoice.create({
         invoice_no,
         transaction_no,
         due_date,
@@ -134,7 +150,7 @@ exports.addInvoice = asyncErrorHandler(async (req, res, next) => {
           quantity: order_details.quantity
         }
       }, {
-        include: [db.invoiceOrder],
+        include: [invoiceOrder],
         transaction: t
       })
 
