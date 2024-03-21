@@ -4,6 +4,7 @@ const CustomError = require("../utils/customError");
 const getInvoice = require("./../utils/getInvoiceNumber");
 const getTransaction = require("./../utils/getTransactionId");
 
+
 const Invoice = db.Invoice;
 
 // ================== FOR GETTING ALL INVOCIES ==========
@@ -85,7 +86,7 @@ exports.addInvoice = asyncErrorHandler(async (req, res, next) => {
 
       const existingCustomer = await db.Customer.findOne({
         where: {
-          email: customer_details.email
+          email: customer_details.email,
         }
       });
 
