@@ -1,4 +1,5 @@
 const { db } = require("../models/connection");
+const Apifeatures = require("../utils/ApiFeatures");
 const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const CustomError = require("../utils/customError");
 const signToken = require("../utils/signToken");
@@ -134,12 +135,12 @@ exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
     attributes: ["id", "firstName", "lastName", "shopName", "email"],
   });
 
+  features = new Apifeatures(vendors, req.query).limitFields().paginate();
+
   res.status(200).json({
     status: "success",
-    count: vendors.length,
-    data: {
-      vendors,
-    },
+    count: features.array.length,
+    data: features.array,
   });
 });
 
