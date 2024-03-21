@@ -137,29 +137,23 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
 // ------------- GET ALL  VENDORS --------------
 
 exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
+  const vendors = await Vendor.findAll({
+    include: [
+      {
+        model: Address,
+        as: "Address_Details",
+      },
+    ],
+    attributes: ["id", "firstName", "lastName", "shopName", "email"],
+  });
 
-const features = new ApiFeatures(Vendor.findAll(),req.query).limitFields();
-
-
-
-
-  // const vendors = await Vendor.findAll({
-  //   include: [
-  //     {
-  //       model: Address,
-  //       as: "Address_Details",
-  //     },
-  //   ],
-  //   attributes: ["id", "firstName", "lastName", "shopName", "email"],
-  // });
-
-  // res.status(200).json({
-  //   status: "success",
-  //   count: vendors.length,
-  //   data: {
-  //     vendors,
-  //   },
-  // });
+  res.status(200).json({
+    status: "success",
+    count: vendors.length,
+    data: {
+      vendors,
+    },
+  });
 });
 
 // // ------------- GET A SPECIFIC VENDOR --------------
