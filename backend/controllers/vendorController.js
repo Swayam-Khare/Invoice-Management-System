@@ -3,7 +3,7 @@ const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const CustomError = require("../utils/customError");
 const signToken = require("../utils/signToken");
 const { Op } = require("sequelize");
-const ApiFeatures = require('../utils/apiFeatures');
+
 
 const Vendor = db.Vendor;
 const Address = db.Address;
