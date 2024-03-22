@@ -3,7 +3,6 @@ const asyncErrorHandler = require("../utils/asyncErrorHandler.js");
 const CustomError = require("../utils/customError.js");
 const Product = db.Product;
 const VendorProduct = db.VendorProduct;
-const ApiFeatures = require('../utils/apiFeatures.js')
 
 // CREATE OPERATION
 exports.addProduct = asyncErrorHandler(async (req, res, next) => {
@@ -108,27 +107,27 @@ exports.addProduct = asyncErrorHandler(async (req, res, next) => {
 exports.readProducts = asyncErrorHandler(async (req, res, next) => {
 
     // const queryOptions = { where: { VendorId: req.vendor.id } };
-    let features = new ApiFeatures().filter(req.query)
-    features.VendorId = req.vendor.id
-    const vendorProducts = await VendorProduct.findAll({
-        where: features
-    });
+    // let features = new ApiFeatures().filter(req.query)
+    // features.VendorId = req.vendor.id
+    // const vendorProducts = await VendorProduct.findAll({
+    //     where: features
+    // });
 
     // let query = VendorProduct
     // const features = new ApiFeatures(query, req.query).filter()
     // const filteredVendorProductsQuery = await features.query
     
-    // // FIRST FETCHING ALL THE PRODUCT ID CORRESPONDING TO VENDOR ID
-    // const vendorProducts = await filteredVendorProductsQuery.findAll({
-    //     where: {
-    //         VendorId: req.vendor.id,
-    //     },
-    //     attributes: {
-    //         exclude: [
-    //             "VendorId"
-    //         ],
-    //     },
-    // });
+    // FIRST FETCHING ALL THE PRODUCT ID CORRESPONDING TO VENDOR ID
+    const vendorProducts = await filteredVendorProductsQuery.findAll({
+        where: {
+            VendorId: req.vendor.id,
+        },
+        attributes: {
+            exclude: [
+                "VendorId"
+            ],
+        },
+    });
 
     if (!vendorProducts.length) {
         return res.status(404).json({
