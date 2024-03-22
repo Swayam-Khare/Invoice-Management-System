@@ -136,6 +136,7 @@ exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
   let limitFields = null;
   let offset = null;
   const limit = req.query.limit || 10;
+  let name = req.query.firstName||'';
   if (req.query.sort) {
     orderBy = apiFeatures.sorting(req.query.sort);
   }
@@ -146,6 +147,12 @@ exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
     offset = apiFeatures.paginate(req.query.page, limit, totalRows.count, next);
 
   }
+  if(req.query.firstName){
+    name = apiFeatures.search(name);
+
+  }
+ 
+
   const attributes = limitFields ? limitFields : ["id", "firstName", "lastName", "shopName", "email"];
   const vendors = await Vendor.findAll({
     include: [
@@ -156,7 +163,11 @@ exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
       },
     ],
     attributes: attributes,
-    // where:req.query, 
+    where:{
+      firstName:{
+        [Op.iLike]:name
+      }
+    },
     order: orderBy,
     limit: limit,
     offset: offset,

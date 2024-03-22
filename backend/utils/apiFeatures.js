@@ -43,3 +43,9 @@ exports.paginate = (page,limit,total,next)=>{
     return skip;
 
 }
+
+exports.search = (name)=>{
+   const search_string =`%${name}%`;
+   return search_string;
+    
+}
