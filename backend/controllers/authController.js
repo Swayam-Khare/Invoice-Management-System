@@ -101,6 +101,8 @@ exports.protect = asyncErrorHandler(async (req, res, next) => {
   // Find the vendor by token id
   const vendor = await Vendor.findByPk(decodedToken.id, { attributes: { exclude: ["password"] } });
 
+  console.log(vendor)
+
   if (!vendor) {
     const error = new CustomError(
       "The user with given credential does not exist.",

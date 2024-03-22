@@ -3,6 +3,7 @@ const asyncErrorHandler = require("../utils/asyncErrorHandler.js");
 const CustomError = require("../utils/customError.js");
 const Product = db.Product;
 const VendorProduct = db.VendorProduct;
+const ApiFeatures = require('../utils/apiFeatures.js')
 
 // CREATE OPERATION
 exports.addProduct = asyncErrorHandler(async (req, res, next) => {
@@ -105,21 +106,39 @@ exports.addProduct = asyncErrorHandler(async (req, res, next) => {
 
 // READ OPERATION
 exports.readProducts = asyncErrorHandler(async (req, res, next) => {
-    
-    // FIRST FETCHING ALL THE PRODUCT ID CORRESPONDING TO VENDOR ID
+
+    // const queryOptions = { where: { VendorId: req.vendor.id } };
+    let features = new ApiFeatures().filter(req.query)
+    features.VendorId = req.vendor.id
     const vendorProducts = await VendorProduct.findAll({
-        where: {
-            VendorId: req.vendor.id,
-        },
-        attributes: {
-            exclude: [
-                "VendorId"
-            ],
-        },
+        where: features
     });
 
+    // let query = VendorProduct
+    // const features = new ApiFeatures(query, req.query).filter()
+    // const filteredVendorProductsQuery = await features.query
+    
+    // // FIRST FETCHING ALL THE PRODUCT ID CORRESPONDING TO VENDOR ID
+    // const vendorProducts = await filteredVendorProductsQuery.findAll({
+    //     where: {
+    //         VendorId: req.vendor.id,
+    //     },
+    //     attributes: {
+    //         exclude: [
+    //             "VendorId"
+    //         ],
+    //     },
+    // });
+
+    if (!vendorProducts.length) {
+        return res.status(404).json({
+            status: 'fail',
+            message: 'No products found for this vendor with the specified filters.',
+        });
+    }
+
     // EXTRACTING PRODUCT ID FROM VENDORPRODUCTS AND SAVING IT INTO AN ARRAY
-    const productIds = vendorProducts.map((vendorProduct) => vendorProduct.ProductId);
+    const productIds = vendorProducts.map((vp) => vp.ProductId);
 
     // FETCHING PRODUCT DETAILS CORRESPONDING TO VENDOR
     const products = await Product.findAll({
@@ -150,6 +169,7 @@ exports.readProducts = asyncErrorHandler(async (req, res, next) => {
     });
 
 });
+
 
 // READ PRODUCT BY ID
 exports.readProductById = asyncErrorHandler(async (req, res, next) => {

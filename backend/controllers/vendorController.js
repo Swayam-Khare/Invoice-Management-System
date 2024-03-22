@@ -47,6 +47,7 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
   });
 
   if (count === 0) {
+    console.log('count')
     const vendor = await Vendor.create(
       {
         firstName,
