@@ -33,3 +33,39 @@ exports.updateAdmin = asyncErrorHandler(async (req, res, next) => {
     },
   });
 });
+
+// ============ update Admin Password================
+exports.updatePassword = asyncErrorHandler(async (req, res, next) => {
+  try {
+
+    const { currentPassword, newPassword, confirmPassword } = req.body;
+    const admin = req.admin;
+
+    // Update password in the database
+
+    // Check if current password matches
+
+    const isPasswordValid = await admin.comparePasswordInDb(currentPassword, admin.password);
+
+    if (!isPasswordValid) {
+      const error = new CustomError("Current password is incorrect", 400);
+      return next(error);
+    }
+
+
+    if (newPassword !== confirmPassword) {
+      const error = new CustomError("New password and confirm password do not match", 400);
+      return next(error);
+    }
+
+
+    admin.password = newPassword;
+    admin.lastPasswordChange = Date.now(); // Update the timestamp of the last password change
+    await admin.save();
+
+
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (error) {
+    next(error);
+  }
+});

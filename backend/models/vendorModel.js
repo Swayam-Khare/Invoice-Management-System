@@ -67,7 +67,7 @@ module.exports = (connectDB, DataTypes) => {
       },
       passwordResetTokenExpires: {
         type: DataTypes.DATE,
-        allowNull: true,
+        allowNull: true, 
       },
     },
     {
@@ -100,6 +100,7 @@ module.exports = (connectDB, DataTypes) => {
 
   // Instance function to compare password in database
   Vendor.prototype.comparePasswordInDb = async function (pswd, pswdDB) {
+    console.log("compare password");
     return await bcrypt.compare(pswd, pswdDB);
   };
 
