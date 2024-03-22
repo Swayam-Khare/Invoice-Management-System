@@ -3,6 +3,7 @@ const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const CustomError = require("../utils/customError");
 const signToken = require("../utils/signToken");
 const { Op } = require("sequelize");
+const apiFeatures = require('../utils/apiFeatures');
 
 
 const Vendor = db.Vendor;
@@ -124,29 +125,42 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
       },
     });
   }
-
-  // const token = signToken(vendor.id);
-
-  // res.cookie("jwt", token, {
-  //   maxAge: process.env.LOGIN_EXPIRES,
-  //   // secure:true,
-  //   httpOnly: true,
-  // });
 });
 
 // ------------- GET ALL  VENDORS --------------
 
 exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
+  // console.log(req.query)
+  const totalRows = await Vendor.findAndCountAll();
+  let orderBy = null;
+  let limitFields = null;
+  let offset = null;
+  const limit = req.query.limit || 10;
+  if (req.query.sort) {
+    orderBy = apiFeatures.sorting(req.query.sort);
+  }
+  if (req.query.fields) {
+    limitFields = apiFeatures.limitFields(req.query.fields);
+  }
+  if (req.query.page) {
+    offset = apiFeatures.paginate(req.query.page, limit, totalRows.count, next);
+
+  }
+  const attributes = limitFields ? limitFields : ["id", "firstName", "lastName", "shopName", "email"];
   const vendors = await Vendor.findAll({
     include: [
       {
         model: Address,
         as: "Address_Details",
+        // attributes: ['state', 'pincode']
       },
     ],
-    attributes: ["id", "firstName", "lastName", "shopName", "email"],
+    attributes: attributes,
+    // where:req.query, 
+    order: orderBy,
+    limit: limit,
+    offset: offset,
   });
-
   res.status(200).json({
     status: "success",
     count: vendors.length,
