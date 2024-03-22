@@ -236,7 +236,7 @@ exports.getCustomer = asyncErrorHandler(async (req, res, next) => {
 // ------------- DELETE CUSTOMER --------------
 
 exports.deleteCustomer = asyncErrorHandler(async (req, res, next) => {
-  const customer = await Customer.findByPk(req.params.id);
+  const customer = await Customer.findByPk(req.params.id)
 
   if (!req.params.id) {
     return next(new CustomError("Please provide id in parameters!", 400));
@@ -265,7 +265,7 @@ exports.deleteCustomer = asyncErrorHandler(async (req, res, next) => {
 // ------------- UPDATE CUSTOMER --------------
 
 exports.updateCustomer = asyncErrorHandler(async (req, res, next) => {
-  const customer = await Customer.findByPk(req.params.id);
+  const customer = await Customer.findByPk(req.params.id)
 
   if (!req.params.id) {
     return next(new CustomError("Please provide id in parameters!", 400));
