@@ -1,5 +1,4 @@
 const { db } = require("../models/connection");
-const Apifeatures = require("../utils/ApiFeatures");
 const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const CustomError = require("../utils/customError");
 const signToken = require("../utils/signToken");
