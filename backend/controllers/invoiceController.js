@@ -4,6 +4,8 @@ const CustomError = require("../utils/customError");
 const getInvoice = require("./../utils/getInvoiceNumber");
 const getTransaction = require("./../utils/getTransactionId");
 const { Op } = require("sequelize");
+const ApiFeatures = require('./../utils/ApiFeatures');
+
 
 const { Invoice, Customer, connectDB, invoiceOrder, customerAddress, Address } = db;
 
@@ -12,14 +14,14 @@ const { Invoice, Customer, connectDB, invoiceOrder, customerAddress, Address } =
 exports.getInvoices = asyncErrorHandler(async (req, res, next) => {
   const invoices = await Invoice.findAll({where:req.query});
 
-  res.status(200).json({
-    status: "success",
-    count: invoices.length,
-    data: {
-      invoices,
-    },
+    res.status(200).json({
+      status: "success",
+      count: invoices.length,
+      data: {
+        invoices,
+      },
+    });
   });
-});
 
 // ===================== FOR GETTING INVOICE BY ID ==========
 exports.getInvoice = asyncErrorHandler(async (req, res, next) => {
