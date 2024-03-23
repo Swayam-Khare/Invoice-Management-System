@@ -177,8 +177,10 @@ exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
   });
   res.status(200).json({
     status: "success",
-    count: features.array.length,
-    data: features.array,
+    count:vendors.length,
+    data:{
+      vendors,
+    }
   });
 });
 
