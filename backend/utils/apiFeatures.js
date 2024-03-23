@@ -13,6 +13,7 @@ exports.sorting = (sort) => {
             }
         });
     }
+    // console.log(arr);
     return arr;
 
 }
@@ -36,7 +37,7 @@ exports.paginate = (page,limit,total,next)=>{
     page = parseInt(page);
     limit = parseInt(limit);
     const skip = (page-1)*limit;
-    if(skip>total){
+    if(skip>=total){
         const error = new CustomError('Page not found!',404);
         return next(error);
     }

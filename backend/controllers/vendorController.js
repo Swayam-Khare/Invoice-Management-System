@@ -132,11 +132,12 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
 exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
   // console.log(req.query)
   const totalRows = await Vendor.findAndCountAll();
+  // console.log(totalRows.count)
   let orderBy = null;
   let limitFields = null;
   let offset = null;
   const limit = req.query.limit || 10;
-  let name = req.query.firstName||'';
+  let name = req.query.search || '%';
   if (req.query.sort) {
     orderBy = apiFeatures.sorting(req.query.sort);
   }
@@ -147,11 +148,11 @@ exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
     offset = apiFeatures.paginate(req.query.page, limit, totalRows.count, next);
 
   }
-  if(req.query.firstName){
+  if (req.query.search) {
     name = apiFeatures.search(name);
 
   }
- 
+
 
   const attributes = limitFields ? limitFields : ["id", "firstName", "lastName", "shopName", "email"];
   const vendors = await Vendor.findAll({
@@ -163,10 +164,25 @@ exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
       },
     ],
     attributes: attributes,
-    where:{
-      firstName:{
-        [Op.iLike]:name
-      }
+    where: {
+      [Op.or]: [
+        {
+          firstName: {
+            [Op.iLike]: name
+          }
+        },
+        {
+          lastName:{
+            [Op.iLike]:name
+          }
+        },
+        {
+          email:{
+            [Op.iLike]:name
+          }
+        }
+
+      ]
     },
     order: orderBy,
     limit: limit,
