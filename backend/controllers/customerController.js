@@ -33,7 +33,7 @@ exports.createCustomer = asyncErrorHandler(async (req, res, next) => {
 
   //create new customer if no record restored
   if (!existWithDeletedAt || !customer) {
-    try {
+    try { 
       const result = await connectDB.transaction(async (t) => {
         customer = await Customer.create(
           {

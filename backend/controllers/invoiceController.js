@@ -10,16 +10,16 @@ const { Invoice, Customer, connectDB, invoiceOrder, customerAddress, Address } =
 
 // ================== FOR GETTING ALL INVOCIES ==========
 exports.getInvoices = asyncErrorHandler(async (req, res, next) => {
-  const invoices = await Invoice.findAll({});
+  const invoices = await Invoice.findAll({where:req.query});
 
-  res.status(200).json({
-    status: "success",
-    count: invoices.length,
-    data: {
-      invoices,
-    },
+    res.status(200).json({
+      status: "success",
+      count: invoices.length,
+      data: {
+        invoices,
+      },
+    });
   });
-});
 
 // ===================== FOR GETTING INVOICE BY ID ==========
 exports.getInvoice = asyncErrorHandler(async (req, res, next) => {
