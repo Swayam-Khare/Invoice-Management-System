@@ -33,7 +33,7 @@ exports.createCustomer = asyncErrorHandler(async (req, res, next) => {
 
   //create new customer if no record restored
   if (!existWithDeletedAt || !customer) {
-    try {
+    try { 
       const result = await connectDB.transaction(async (t) => {
         customer = await Customer.create(
           {
@@ -236,7 +236,7 @@ exports.getCustomer = asyncErrorHandler(async (req, res, next) => {
 // ------------- DELETE CUSTOMER --------------
 
 exports.deleteCustomer = asyncErrorHandler(async (req, res, next) => {
-  const customer = await Customer.findByPk(req.params.id);
+  const customer = await Customer.findByPk(req.params.id)
 
   if (!req.params.id) {
     return next(new CustomError("Please provide id in parameters!", 400));
@@ -265,7 +265,7 @@ exports.deleteCustomer = asyncErrorHandler(async (req, res, next) => {
 // ------------- UPDATE CUSTOMER --------------
 
 exports.updateCustomer = asyncErrorHandler(async (req, res, next) => {
-  const customer = await Customer.findByPk(req.params.id);
+  const customer = await Customer.findByPk(req.params.id)
 
   if (!req.params.id) {
     return next(new CustomError("Please provide id in parameters!", 400));
