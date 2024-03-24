@@ -33,7 +33,7 @@
   </v-footer>
 </template>
 
-<script setup lang="ts">
+<script setup>
   const items = [
     {
       title: 'Vuetify Documentation',
