@@ -118,7 +118,7 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
 
 exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
   // console.log(req.query)
-  // const totalRows = await Vendor.findAndCountAll();
+  const totalRows = await Vendor.findAndCountAll();
   // console.log(totalRows.count)
   let orderBy = null;
   let limitFields = null;
