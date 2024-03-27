@@ -4,18 +4,7 @@ const authController = require("../controllers/authController");
 
 const router = express.Router();
 
-router
-  .route("/")
-  .get(
-    authController.protect,
-    authController.restrict("admin"),
-    vendorController.getAllVendors
-  )
-  .post(
-    authController.protect,
-    authController.restrict("admin"),
-    vendorController.createVendor
-  );
+router.route("/").get(authController.protect,authController.restrict("admin"), vendorController.getAllVendors).post(authController.protect,authController.restrict("admin"),vendorController.createVendor);
 
 router
   .route("/:id")

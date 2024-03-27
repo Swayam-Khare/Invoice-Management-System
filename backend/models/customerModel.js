@@ -43,7 +43,7 @@ module.exports = (connectDB, DataTypes) => {
     {
       // Other model options go here
       tableName: 'customer',
-      paranoid: true,  
+      paranoid: true,
       createdAt:false,
       updatedAt:false,
     }
