@@ -159,13 +159,13 @@ exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
           }
         },
         {
-          lastName:{
-            [Op.iLike]:name
+          lastName: {
+            [Op.iLike]: name
           }
         },
         {
-          email:{
-            [Op.iLike]:name
+          email: {
+            [Op.iLike]: name
           }
         }
 
@@ -177,8 +177,8 @@ exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
   });
   res.status(200).json({
     status: "success",
-    count:vendors.length,
-    data:{
+    count: vendors.length,
+    data: {
       vendors,
     }
   });

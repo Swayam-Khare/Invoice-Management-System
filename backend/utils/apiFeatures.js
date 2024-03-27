@@ -19,12 +19,12 @@ exports.sorting = (sort) => {
 }
 
 
-exports.limitFields = (showFields)=>{
+exports.limitFields = (showFields) => {
     const fields = showFields.split(',')
-   if(fields.includes('password')) {
-   const index = fields.indexOf('password')
-    fields.splice(index,1)
-   }
+    if (fields.includes('password')) {
+        const index = fields.indexOf('password')
+        fields.splice(index, 1)
+    }
     return fields;
 
 }
@@ -33,20 +33,20 @@ exports.limitFields = (showFields)=>{
 
 // }
 
-exports.paginate = (page,limit,total,next)=>{
+exports.paginate = (page, limit, total, next) => {
     page = parseInt(page);
     limit = parseInt(limit);
-    const skip = (page-1)*limit;
-    if(skip>=total){
-        const error = new CustomError('Page not found!',404);
+    const skip = (page - 1) * limit;
+    if (skip >= total) {
+        const error = new CustomError('Page not found!', 404);
         return next(error);
     }
     return skip;
 
 }
 
-exports.search = (name)=>{
-   const search_string =`%${name}%`;
-   return search_string;
-    
+exports.search = (name) => {
+    const search_string = `%${name}%`;
+    return search_string;
+
 }
