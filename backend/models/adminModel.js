@@ -1,6 +1,4 @@
-
 const bcrypt = require("bcryptjs");
-
 
 module.exports = (connectDB, DataTypes) => {
   const Admin = connectDB.define(
@@ -12,9 +10,7 @@ module.exports = (connectDB, DataTypes) => {
         primaryKey: true,
         allowNull: false,
         unique: true,
-
         autoIncrement: true,
-
       },
       name: {
         type: DataTypes.STRING,
@@ -28,7 +24,6 @@ module.exports = (connectDB, DataTypes) => {
           isEmail: {
             args: true,
             msg: "Please enter a valid email address!",
-
           },
         },
       },
@@ -51,13 +46,12 @@ module.exports = (connectDB, DataTypes) => {
             if (value !== this.password) {
               throw new Error("Password and confirm password does not match");
             }
-
           },
         },
       },
       lastPasswordChange: {
         type: DataTypes.DATE,
-        allowNull: true, // Initially set to null or a default value
+        allowNull: true,
       },
       passwordResetToken: {
         type: DataTypes.STRING,
@@ -74,7 +68,7 @@ module.exports = (connectDB, DataTypes) => {
       timestamps: false,
       hooks: {
         beforeCreate: async (admin) => {
-          console.log("admin is ", admin);
+          // console.log("admin is ", admin);
           const hashedPassword = await bcrypt.hash(admin.password, 10);
           admin.password = hashedPassword;
         },
@@ -82,7 +76,7 @@ module.exports = (connectDB, DataTypes) => {
           if (admin.changed("password")) {
             const hashedPassword = await bcrypt.hash(admin.password, 10);
             admin.password = hashedPassword;
-            admin.lastPasswordChange = Date.now();
+            admin.passwordChangedAt = Date.now();
           }
         },
         afterUpdate: async (admin) => {
@@ -95,14 +89,14 @@ module.exports = (connectDB, DataTypes) => {
   // Instance function to compare password in database
   Admin.prototype.comparePasswordInDb = async function (pswd, pswdDB) {
     return await bcrypt.compare(pswd, pswdDB);
-
   };
 
   Admin.prototype.isPasswordChanged = async function (JWTTimestamp) {
-    if (this.lastPasswordChange) {
-      const passwordChangedTimestamp = parseInt(this.lastPasswordChange.getTime() / 1000, 10);
-      console.log(passwordChangedTimestamp, JWTTimestamp);
-
+    if (this.passwordChangedAt) {
+      const passwordChangedTimestamp = parseInt(
+        this.passwordChangedAt.getTime() / 1000,
+        10
+      );
       return JWTTimestamp < passwordChangedTimestamp;
     }
     return false;
@@ -111,12 +105,14 @@ module.exports = (connectDB, DataTypes) => {
   Admin.prototype.createResetPasswordToken = async function () {
     const resetToken = crypto.randomBytes(32).toString("hex");
 
-    this.passwordResetToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+    this.passwordResetToken = crypto
+      .createHash("sha256")
+      .update(resetToken)
+      .digest("hex");
+
     this.passwordResetTokenExpires = Date.now() + 10 * 60 * 1000;
-    // console.log(resetToken, this.passwordResetToken);
     return resetToken;
   };
 
   return Admin;
 };
-
