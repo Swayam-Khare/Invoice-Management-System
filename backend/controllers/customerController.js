@@ -155,6 +155,7 @@ exports.createCustomer = asyncErrorHandler(async (req, res, next) => {
 // ------------- GET ALL CUSTOMERS --------------
 
 exports.getAllCustomers = asyncErrorHandler(async (req, res, next) => {
+  console.log(req.query);
   // FETCHING ALL THE CUSTOMER ID CORRESPONDING TO VENDOR ID
   let vendorCustomers = await VendorCustomer.findAll({
     where: {
@@ -168,23 +169,25 @@ exports.getAllCustomers = asyncErrorHandler(async (req, res, next) => {
   );
 
   // FETCHING CUSTOMER DETAILS CORRESPONDING TO VENDOR
-  vendorCustomers = await Customer.findAll({
-    where: {
-      id: customerIds,
-    },
-    attributes: {
-      exclude: ["deletedAt"],
-    },
-    include: [
+  vendorCustomers = await Customer.findAll(
       {
-        model: Address,
-        as: "Address_Details",
-        attributes: {
-          exclude: ["deletedAt"],
-        },
+      where: {
+        id: customerIds,
       },
-    ],
-  });
+      attributes: {
+        exclude: ["deletedAt"],
+      },
+      include: [
+        {
+          model: Address,
+          as: "Address_Details",
+          attributes: {
+            exclude: ["deletedAt"],
+          },
+        },
+      ],
+    }
+  );
 
   res.status(200).json({
     status: "Success",

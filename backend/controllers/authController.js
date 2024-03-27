@@ -4,12 +4,12 @@ const CustomError = require("./../utils/customError");
 const signToken = require("../utils/signToken");
 const jwt = require("jsonwebtoken");
 const util = require("util");
+const sendEmail = require("../utils/email");
 
 const Vendor = db.Vendor;
 const Admin = db.Admin;
 
 // ------------------LOGIN------------------ //
-const sendEmail = require("../utils/email");
 const crypto = require("crypto");
 const { Op } = require("sequelize");
 
@@ -20,15 +20,16 @@ const { Op } = require("sequelize");
 // ===========================================LOGIN==================================================== //
 
 exports.login = asyncErrorHandler(async (req, res, next) => {
-  const email = req.body.email;
-  const password = req.body.password;
+  const { email, password } = req.body;
   const role = req.params.role;
-  var token;
+  let token;
 
   if (!email || !password) {
-    const error = new CustomError("Please provide email ID & Password for login in!", 400);
-    return next(error);
+    return next(
+      CustomError("Please provide email ID & Password for login in!", 400)
+    );
   }
+
   if (role === "admin") {
     //Check if admin exists
     const admin = await Admin.findOne({
@@ -37,10 +38,11 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
       },
     });
 
-    //if admin exists and password match
-    if (!admin || !(await admin.comparePasswordInDb(password, admin.password))) {
-      const error = new CustomError("Incorrect email or password", 400);
-      return next(error);
+    //Check if password matches
+    const isMatch = await admin.comparePasswordInDb(password, admin.password);
+
+    if (!admin || !isMatch) {
+      return next(new CustomError("Incorrect email or password!", 400));
     }
 
     token = signToken(admin.id, role);
@@ -52,15 +54,16 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
       },
     });
 
-    //if vendor exists and password match
-    if (!vendor || !(await vendor.comparePasswordInDb(password, vendor.password))) {
-      const error = new CustomError("Incorrect email or password", 400);
-      return next(error);
+    //Check if password matches
+    const isMatch = await vendor.comparePasswordInDb(password, vendor.password);
+
+    if (!vendor || !isMatch) {
+      return next(new CustomError("Incorrect email or password!", 400));
     }
+
     token = signToken(vendor.id, role);
   } else {
-    const error = new CustomError("Page not Found!", 404);
-    return next(error);
+    return next(new CustomError("Page not Found!", 404));
   }
 
   res.cookie("jwt", token, {
@@ -70,133 +73,159 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
   });
 
   res.status(200).json({
-    status: "success",
+    status: "Success",
     token,
-    // vendor,
   });
 });
 
 exports.protect = asyncErrorHandler(async (req, res, next) => {
-  // 1. read the token and if it exist then it is logedin
+  // 1. Read the token and check if it exists
   const testToken = req.headers.authorization;
+  let token;
 
-  // Check if token is provided
-  if (!testToken || !testToken.startsWith("Bearer ")) {
-    throw new CustomError("Unauthorized - Token not provided", 401);
+  if (testToken && testToken.startsWith("Bearer ")) {
+    token = testToken.split(" ")[1];
+  }
+  if (!token) {
+    next(new CustomError("You are not logged in!", 401));
   }
 
-  // Verify the token
+  // 2. Validate the token
+  const decodedToken = await util.promisify(jwt.verify)(
+    token,
+    process.env.SECRET_STR
+  );
 
-  const verifyToken = util.promisify(jwt.verify);
-  const decodedToken = await verifyToken(testToken.split(" ")[1], process.env.SECRET_STR);
-
-  req.role = decodedToken.role;
-
-  // console.log(decodedToken);
   if (decodedToken.role === "vendor") {
-    // Find the vendor by token id
+    // 3. Check if the vendor exists
     const vendor = await Vendor.findByPk(decodedToken.id);
 
     if (!vendor) {
-      const error = new CustomError("The user with given credential does not exist.", 401);
+      const error = new CustomError(
+        "Vendor with the given credential does not exist!",
+        401
+      );
       next(error);
     }
-    if (vendor.lastPasswordChange && new Date(decodedToken.iat * 1000) < vendor.lastPasswordChange) {
-      throw new CustomError("Unauthorized - Password changed after token issuance", 401);
+
+    // 4.Check if the vendor changed the password after the token was issued
+    if (vendor.isPasswordChanged(decodedToken.iat)) {
+      throw new CustomError(
+          "Password has been changed recently. Please login again!",
+          401
+        );
     }
 
-    // Attach vendor details to request object
+    // 5. Attach vendor details to request object
     req.vendor = vendor;
   } else if (decodedToken.role === "admin") {
-    // Find the vendor by token id
+    // 3. Check if the admin exists
     const admin = await Admin.findByPk(decodedToken.id);
 
     if (!admin) {
-      const error = new CustomError("The user with given credential does not exist.", 401);
+      const error = new CustomError(
+        "Admin with the given credential does not exist!",
+        401
+      );
       next(error);
     }
-    if (admin.lastPasswordChange && new Date(decodedToken.iat * 1000) < admin.lastPasswordChange) {
-      throw new CustomError("Unauthorized - Password changed after token issuance", 401);
+
+    // 4. Check if the admin changed the password after the token was issued
+    if (
+      admin.passwordChangedAtasswordChange &&
+      new Date(decodedToken.iat * 1000) < admin.passwordChangedAt
+    ) {
+      throw new CustomError(
+        "Password has been changed recently. Please login again!",
+        401
+      );
     }
 
-    // Attach admin details to request object
+    // 5. Attach admin details to request object
     req.admin = admin;
   }
 
-  // Check if token version or last password change timestamp matches
-  //   if (decodedToken.version !== vendor.tokenVersion || decodedToken.lastPasswordChange !== vendor.lastPasswordChange) {
-  //     throw new CustomError("Unauthorized - Token invalid", 401);
-  //   }
-
-  // 5. allow user to access route
-  //   req.vendor = vendor;
+  req.role = decodedToken.role;
   next();
 });
 
 exports.forgotPassword = asyncErrorHandler(async (req, res, next) => {
-  // 1. GET USED BASED ON POSTED EMAIL
-  const email = req.body.email;
-
+  // 1. GET VENDOR BASED ON POSTED EMAIL
   const vendor = await Vendor.findOne({
     where: {
-      email,
+      email: req.body.email,
     },
   });
+
   if (!vendor) {
-    const error = new CustomError("The vendor with given credential does not exist.", 401);
-    next(error);
+    next(
+      new CustomError("Vendor with the given credential does not exist!", 401)
+    );
   }
 
   // 2. GENERATE A RANDOM RESET TOKEN
   const resetToken = await vendor.createResetPasswordToken();
 
   await vendor.save({ validateBeforeSave: false });
-  console.log(resetToken);
 
-  // 3. SEND THE TOKEN BACK TO USER EMAIL
-  const resetUrl = `${req.protocol}://${req.get("host")}/api/v1/auth/resetPassword/${resetToken}`;
-  const message = `we have reacived a password reset request. please use below link to reset your password.\n\n${resetUrl}\n\nThis reset password link will exoire in 10 minutes`;
+  // 3. SEND THE TOKEN BACK TO VENDOR'S EMAIL
+  const resetUrl = `${req.protocol}://${req.get(
+    "host"
+  )}/api/v1/auth/resetPassword/${resetToken}`;
+  const message = `We have recieved a password reset request. Please use below link to reset your password.\n\n${resetUrl}\n\nThis reset password link will expire in 10 minutes`;
 
   try {
     await sendEmail({
       email: vendor.email,
-      subject: "password change request recieved",
+      subject: "Password change request recieved",
       message: message,
     });
 
     res.status(200).json({
-      status: "success",
-      message: "password reset link has been send to user email",
+      status: "Success",
+      message: "Password reset link has been sent to vendor's email",
     });
   } catch (err) {
     vendor.passwordResetToken = undefined;
     vendor.passwordResetTokenExpires = undefined;
     vendor.save({ validateBeforeSave: false });
 
-    return next(new CustomError("there was an error sending password reset email. please try again later.", 500));
+    return next(
+      new CustomError(
+        "There was an error sending password reset email. Please try again later!",
+        500
+      )
+    );
   }
 });
 
 exports.resetPassword = asyncErrorHandler(async (req, res, next) => {
-  const token = crypto.createHash("sha256").update(req.params.token).digest("hex");
-  const vendor = await Vendor.findOne({ where: { passwordResetToken: token, passwordResetTokenExpires: { [Op.gt]: Date.now() } } });
+  const token = crypto
+    .createHash("sha256")
+    .update(req.params.token)
+    .digest("hex");
+
+  const vendor = await Vendor.findOne({
+    where: {
+      passwordResetToken: token,
+      passwordResetTokenExpires: { [Op.gt]: Date.now() },
+    },
+  });
 
   if (!vendor) {
-    const error = new CustomError("Token is invalid or has expired", 400);
-    next(error);
+    next(new CustomError("Token is invalid or has expired!", 400));
   }
-  // reseting the user password
 
+  // Reseting the vendor password details
   vendor.password = req.body.password;
   vendor.confirmPassword = req.body.confirmPassword;
   vendor.passwordResetToken = null;
   vendor.passwordResetTokenExpires = null;
-  vendor.lastPasswordChange = Date.now();
+  vendor.passwordChangedAt = Date.now();
 
   await vendor.save();
 
   // login the user
-
   const loginToken = signToken(vendor.id);
 
   res.cookie("jwt", loginToken, {
@@ -206,7 +235,7 @@ exports.resetPassword = asyncErrorHandler(async (req, res, next) => {
   });
 
   res.status(200).json({
-    status: "success",
+    status: "Success",
     token: loginToken,
   });
 });
@@ -214,8 +243,12 @@ exports.resetPassword = asyncErrorHandler(async (req, res, next) => {
 exports.restrict = (role) => {
   return (req, res, next) => {
     if (req.role !== role) {
-      const error = new CustomError("You do not have permission to perform this action", 403);
-      next(error);
+      next(
+        new CustomError(
+          "You do not have permission to perform this action",
+          403
+        )
+      );
     }
     next();
   };
