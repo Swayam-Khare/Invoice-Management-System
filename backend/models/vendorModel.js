@@ -69,6 +69,11 @@ module.exports = (connectDB, DataTypes) => {
         type: DataTypes.DATE,
         allowNull: true,
       },
+      status : {
+        type: DataTypes.ENUM,
+        defaultValue : 'pending',
+        values: ['approved', 'pending']
+      }
     },
     {
       // Other model options go here

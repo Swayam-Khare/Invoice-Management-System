@@ -2,6 +2,7 @@ const { db } = require("../models/connection");
 const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const CustomError = require("../utils/customError");
 const Admin = db.Admin;
+const Vendor = db.Vendor;
 
 // ------------- UPDATE ADMIN --------------
 
@@ -68,4 +69,47 @@ exports.updatePassword = asyncErrorHandler(async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+});
+
+// =============================== Approve vendor =======================
+
+exports.approveVendor = asyncErrorHandler(async (req, res, next) => {
+  const id = req.params.id;
+  const vendor = await Vendor.findByPk(id);
+  if (!id || !vendor) {
+    if (!id) {
+      const error = new CustomError("please give id in parameters", 400);
+      return next(error);
+    }
+    if (!vendor) {
+      const error = new CustomError("Vendor for the given id does not exist", 404);
+      return next(error);
+    }
+  }
+
+  const [rows, updatedVendor] = await Vendor.update(
+    { status : 'approved' },
+
+    {
+      where: { id },
+      returning: true,
+      // plain: true,
+    })
+
+    if(rows){
+      const message = `Hello ${vendor.name}! , Your request for using our application has been approved. You can login with the following credentials \n\n\n\n Email : ${vendor.email} \n Password : ${vendor.password} `
+
+    }
+
+
+    // console.log(rows , updatedVendor);
+    res.status(200).json({
+      status : "success",
+      data : {
+        message : "Status approved"
+      }
+
+      
+    })
+
 });

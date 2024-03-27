@@ -53,8 +53,9 @@ module.exports = (connectDB, DataTypes) => {
       },
 
       status: {
-        type: DataTypes.STRING,
-        defaultValue: "due",
+        type: DataTypes.ENUM,
+        defaultValue : 'due',
+        values: ['due', 'overdue', 'paid']
       },
 
       subtotal: {
