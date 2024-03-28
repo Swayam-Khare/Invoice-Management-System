@@ -1,7 +1,7 @@
 const nodemailer = require("nodemailer");
 
 const sendEmail = async (option) => {
-  // CREATING A TRANSPORTER
+  // CREATE A TRANSPORTER
   const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
     port: process.env.EMAIL_PORT,
@@ -11,9 +11,9 @@ const sendEmail = async (option) => {
     },
   });
 
-  // DEFINE EMAIL OPPTION
+  // DEFINE EMAIL OPTIONS
   const emailOptions = {
-    from: "IMS support<support@IMS.com>",
+    from: "IMS support<support@ims.com>",
     to: option.email,
     subject: option.subject,
     text: option.message,
