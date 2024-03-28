@@ -3,6 +3,8 @@ const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const CustomError = require("../utils/customError");
 const Admin = db.Admin;
 const Vendor = db.Vendor;
+const randomstring = require("randomstring");
+const sendEmail = require("../utils/email");
 
 // ------------- UPDATE ADMIN --------------
 
@@ -86,9 +88,12 @@ exports.approveVendor = asyncErrorHandler(async (req, res, next) => {
       return next(error);
     }
   }
-
+  const password = randomstring.generate(12);
+  const confirmPassword = password ;
+  console.log('New password is :' , password );
+  
   const [rows, updatedVendor] = await Vendor.update(
-    { status : 'approved' },
+    { status : 'approved' , password ,  confirmPassword},
 
     {
       where: { id },
@@ -97,19 +102,41 @@ exports.approveVendor = asyncErrorHandler(async (req, res, next) => {
     })
 
     if(rows){
-      const message = `Hello ${vendor.name}! , Your request for using our application has been approved. You can login with the following credentials \n\n\n\n Email : ${vendor.email} \n Password : ${vendor.password} `
+      const message = `Hello ${vendor.name}! , Your request for using our application has been approved. You can login with the following credentials \n\n\n\n Email : ${vendor.email} \n Password : ${password} `
 
-    }
+      try {
+        await sendEmail({
+          email: vendor.email,
+          subject: "Approval of vendor",
+          message: message,
+        });
+      }catch(err){
+        res.status(400).json({
+          status: "Fail",
+          message: err.message
+        })
+      }
+      res.status(200).json({
+        status: "Success",
+        message: "Vendor has been Approved",
+      })
+
 
 
     // console.log(rows , updatedVendor);
-    res.status(200).json({
-      status : "success",
-      data : {
-        message : "Status approved"
-      }
+    // res.status(200).json({
+    //   status : "success",
+    //   data : {
+    //     message : "Status approved"
+    //   }
 
       
-    })
+    // })
 
-});
+    } 
+    else{
+      const err = new CustomError('User not found!', 404);
+      next (err);
+    }
+  }
+);

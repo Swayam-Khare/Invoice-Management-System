@@ -88,7 +88,9 @@ module.exports = (connectDB, DataTypes) => {
           vendor.confirmPassword = undefined;
         },
         beforeUpdate: async (vendor) => {
-          if (vendor.changed("password")) {
+          console.log("Hello World");
+          if (await vendor.changed("password")) {
+            console.log("Hello World1");
             vendor.password = await bcrypt.hash(vendor.password, 10);
             vendor.passwordChangedAt = Date.now();
           }
