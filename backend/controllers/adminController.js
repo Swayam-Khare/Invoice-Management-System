@@ -88,16 +88,20 @@ exports.approveVendor = asyncErrorHandler(async (req, res, next) => {
       return next(error);
     }
   }
+  if(vendor.status === "approved") {
+    const err = new CustomError("Vendor has been already approved", 400);
+    return next(err);
+  }
   const password = randomstring.generate(12);
-  const confirmPassword = password ;
   console.log('New password is :' , password );
   
   const [rows, updatedVendor] = await Vendor.update(
-    { status : 'approved' , password ,  confirmPassword},
+    { status : 'approved' , password },
 
     {
       where: { id },
       returning: true,
+      individualHooks: true
       // plain: true,
     })
 
