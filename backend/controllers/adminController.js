@@ -93,7 +93,6 @@ exports.approveVendor = asyncErrorHandler(async (req, res, next) => {
     return next(err);
   }
   const password = randomstring.generate(12);
-  console.log('New password is :' , password );
   
   const [rows, updatedVendor] = await Vendor.update(
     { status : 'approved' , password },

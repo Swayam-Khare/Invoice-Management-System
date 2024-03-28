@@ -51,10 +51,6 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
   const confirmPassword = password ;
   const role = "vendor";
 
-  console.log(password);
-  console.log(confirmPassword);
-
-
   const vendor = await Vendor.findOne({ where: { email }, paranoid: false });
   let existWithDeletedAt = false;
   if (vendor && vendor.deletedAt) {
