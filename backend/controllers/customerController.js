@@ -5,6 +5,7 @@ const CustomError = require("../utils/customError");
 const Customer = db.Customer;
 const Address = db.Address;
 const VendorCustomer = db.VendorCustomer;
+const connectDB = db.connectDB;
 
 // ------------- CREATE A CUSTOMER --------------
 
