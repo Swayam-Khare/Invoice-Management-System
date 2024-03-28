@@ -69,6 +69,11 @@ module.exports = (connectDB, DataTypes) => {
         type: DataTypes.DATE,
         allowNull: true,
       },
+      status : {
+        type: DataTypes.ENUM,
+        defaultValue : 'pending',
+        values: ['approved', 'pending']
+      }
     },
     {
       // Other model options go here
@@ -83,7 +88,7 @@ module.exports = (connectDB, DataTypes) => {
           vendor.confirmPassword = undefined;
         },
         beforeUpdate: async (vendor) => {
-          if (vendor.changed("password")) {
+          if (await vendor.changed("password")) {
             vendor.password = await bcrypt.hash(vendor.password, 10);
             vendor.passwordChangedAt = Date.now();
           }

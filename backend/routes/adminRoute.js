@@ -4,6 +4,9 @@ const adminController = require("../controllers/adminController");
 const authController = require("../controllers/authController");
 
 router.route("/:id").patch(adminController.updateAdmin);
+router.route("/vendorstatus/:id").patch(adminController.approveVendor);
+
+
 
 router.route("/updatepassword/:id").patch(authController.protect, authController.restrict('admin'), adminController.updatePassword);
 
