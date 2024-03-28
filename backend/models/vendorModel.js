@@ -11,12 +11,12 @@ module.exports = (connectDB, DataTypes) => {
         primaryKey: true,
         allowNull: false,
         unique: true,
-
         autoIncrement: true,
       },
       firstName: {
         type: DataTypes.STRING,
         allowNull: false,
+        // select: false,
       },
       lastName: {
         type: DataTypes.STRING,
@@ -52,12 +52,12 @@ module.exports = (connectDB, DataTypes) => {
         validate: {
           isConfirmed(value) {
             if (value !== this.password) {
-              throw new Error("Password and confirm password does not match");
+              throw new Error("Password and Confirm Password does not match!");
             }
           },
         },
       },
-      lastPasswordChange: {
+      passwordChangedAt: {
         type: DataTypes.DATE,
         allowNull: true, // Initially set to null or a default value
       },
@@ -69,26 +69,28 @@ module.exports = (connectDB, DataTypes) => {
         type: DataTypes.DATE,
         allowNull: true,
       },
+      status : {
+        type: DataTypes.ENUM,
+        defaultValue : 'pending',
+        values: ['approved', 'pending']
+      }
     },
     {
       // Other model options go here
       tableName: "vendor",
-      timestamps: true,
-      updatedAt: false,
-      createdAt: false,
       paranoid: true,
+      createdAt: false,
+      updatedAt: false,
       hooks: {
         beforeCreate: async (vendor) => {
           // console.log("vendor is ", vendor);
-          const hashedPassword = await bcrypt.hash(vendor.password, 10);
-          vendor.password = hashedPassword;
+          vendor.password = await bcrypt.hash(vendor.password, 10);
           vendor.confirmPassword = undefined;
         },
         beforeUpdate: async (vendor) => {
-          if (vendor.changed("password")) {
-            const hashedPassword = await bcrypt.hash(vendor.password, 10);
-            vendor.password = hashedPassword;
-            vendor.lastPasswordChange = Date.now();
+          if (await vendor.changed("password")) {
+            vendor.password = await bcrypt.hash(vendor.password, 10);
+            vendor.passwordChangedAt = Date.now();
           }
         },
         afterUpdate: async (vendor) => {
@@ -100,15 +102,15 @@ module.exports = (connectDB, DataTypes) => {
 
   // Instance function to compare password in database
   Vendor.prototype.comparePasswordInDb = async function (pswd, pswdDB) {
-    console.log("compare password");
     return await bcrypt.compare(pswd, pswdDB);
   };
 
   Vendor.prototype.isPasswordChanged = async function (JWTTimestamp) {
-    if (this.lastPasswordChange) {
-      const passwordChangedTimestamp = parseInt(this.lastPasswordChange.getTime() / 1000, 10);
-      console.log(passwordChangedTimestamp, JWTTimestamp);
-
+    if (this.passwordChangedAt) {
+      const passwordChangedTimestamp = parseInt(
+        this.passwordChangedAt.getTime() / 1000,
+        10
+      );
       return JWTTimestamp < passwordChangedTimestamp;
     }
     return false;
@@ -117,9 +119,12 @@ module.exports = (connectDB, DataTypes) => {
   Vendor.prototype.createResetPasswordToken = async function () {
     const resetToken = crypto.randomBytes(32).toString("hex");
 
-    this.passwordResetToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+    this.passwordResetToken = crypto
+      .createHash("sha256")
+      .update(resetToken)
+      .digest("hex");
+
     this.passwordResetTokenExpires = Date.now() + 10 * 60 * 1000;
-    // console.log(resetToken, this.passwordResetToken);
     return resetToken;
   };
 

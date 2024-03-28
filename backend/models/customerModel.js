@@ -10,7 +10,7 @@ module.exports = (connectDB, DataTypes) => {
         allowNull: false,
         autoIncrement: true,
       },
-      firstName: {
+      firstName: {  
         type: DataTypes.STRING(100),
         allowNull: false,
       },
@@ -42,7 +42,6 @@ module.exports = (connectDB, DataTypes) => {
     },
     {
       // Other model options go here
-      modelName: 'Customer',
       tableName: 'customer',
       paranoid: true,
       createdAt:false,
