@@ -19,9 +19,10 @@ exports.createCustomer = asyncErrorHandler(async (req, res, next) => {
     address_lane2,
     landmark,
     pincode,
-    state,
-    role,
+    state
   } = req.body;
+
+  const role = "customer";
 
   let customer = await Customer.findOne({ where: { email }, paranoid: false });
   let existWithDeletedAt = false;
