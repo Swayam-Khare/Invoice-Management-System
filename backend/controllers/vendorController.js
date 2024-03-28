@@ -3,6 +3,11 @@ const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const CustomError = require("../utils/customError");
 const signToken = require("../utils/signToken");
 const { Op } = require("sequelize");
+const apiFeatures = require('../utils/apiFeatures');
+const randomstring = require("randomstring");
+
+
+
 
 const Vendor = db.Vendor;
 const Address = db.Address;
@@ -11,21 +16,8 @@ const VendorProduct = db.VendorProduct;
 
 // ------------- CREATE A VENDOR --------------
 exports.createVendor = asyncErrorHandler(async (req, res, next) => {
-  const {
-    firstName,
-    lastName,
-    shopName,
-    email,
-    contact,
-    password,
-    confirmPassword,
-    address_lane1,
-    address_lane2,
-    landmark,
-    pincode,
-    state,
-    role,
-  } = req.body;
+  const { firstName, lastName, shopName, email, contact,  address_lane1, address_lane2, landmark, pincode, state } =
+    req.body;
 
   // const vendor = await Vendor.create({
   //   firstName,
@@ -53,6 +45,11 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
   // ---------- CREATE WITH ASSOCIATIONS --------------
 
   // checking if vendor is soft deleted in past and if exists then restoring it.
+
+  //  Genertaing the random password as a string
+  const password = randomstring.generate(12);
+  const confirmPassword = password ;
+  const role = "vendor";
 
   const vendor = await Vendor.findOne({ where: { email }, paranoid: false });
   let existWithDeletedAt = false;
@@ -123,35 +120,75 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
       },
     });
   }
-
-  // const token = signToken(vendor.id);
-
-  // res.cookie("jwt", token, {
-  //   maxAge: process.env.LOGIN_EXPIRES,
-  //   // secure:true,
-  //   httpOnly: true,
-  // });
 });
 
 // ------------- GET ALL  VENDORS --------------
 
 exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
+  // console.log(req.query)
+  const totalRows = await Vendor.findAndCountAll();
+  // console.log(totalRows.count)
+  let orderBy = null;
+  let limitFields = null;
+  let offset = null;
+  const limit = req.query.limit || 10;
+  let name = req.query.search || '%';
+  if (req.query.sort) {
+    orderBy = apiFeatures.sorting(req.query.sort);
+  }
+  if (req.query.fields) {
+    limitFields = apiFeatures.limitFields(req.query.fields);
+  }
+  if (req.query.page) {
+    offset = apiFeatures.paginate(req.query.page, limit, totalRows.count, next);
+
+  }
+  if (req.query.search) {
+    name = apiFeatures.search(name);
+
+  }
+
+
+  const attributes = limitFields ? limitFields : ["id", "firstName", "lastName", "shopName", "email"];
   const vendors = await Vendor.findAll({
     include: [
       {
         model: Address,
         as: "Address_Details",
+        // attributes: ['state', 'pincode']
       },
     ],
-    attributes: ["id", "firstName", "lastName", "shopName", "email"],
-  });
+    attributes: attributes,
+    where: {
+      [Op.or]: [
+        {
+          firstName: {
+            [Op.iLike]: name
+          }
+        },
+        {
+          lastName: {
+            [Op.iLike]: name
+          }
+        },
+        {
+          email: {
+            [Op.iLike]: name
+          }
+        }
 
+      ]
+    },
+    order: orderBy,
+    limit: limit,
+    offset: offset,
+  });
   res.status(200).json({
     status: "success",
     count: vendors.length,
     data: {
       vendors,
-    },
+    }
   });
 });
 
@@ -178,10 +215,7 @@ exports.getASpecificVendor = asyncErrorHandler(async (req, res, next) => {
       return next(error);
     }
     if (!vendor) {
-      const error = new CustomError(
-        "Vendor for the given id does not exist",
-        404
-      );
+      const error = new CustomError("Vendor for the given id does not exist", 404);
       return next(error);
     }
   }
@@ -216,10 +250,7 @@ exports.deleteVendor = asyncErrorHandler(async (req, res, next) => {
       return next(error);
     }
     if (!vendor) {
-      const error = new CustomError(
-        "Vendor for the given id does not exist",
-        404
-      );
+      const error = new CustomError("Vendor for the given id does not exist", 404);
       return next(error);
     }
   }
@@ -264,7 +295,7 @@ exports.updateVendor = asyncErrorHandler(async (req, res, next) => {
         as: "Address_Details",
       },
     ],
-
+    
     where: {
       id,
     },
@@ -275,42 +306,20 @@ exports.updateVendor = asyncErrorHandler(async (req, res, next) => {
       return next(error);
     }
     if (!vendor) {
-      const error = new CustomError(
-        "Vendor for the given id does not exist",
-        404
-      );
+      const error = new CustomError("Vendor for the given id does not exist", 404);
       return next(error);
     }
   }
 
-  const {
-    firstName,
-    lastName,
-    shopName,
-    email,
-    contact,
-    password,
-    confirmPassword,
-    address_lane1,
-    address_lane2,
-    landmark,
-    pincode,
-    state,
-    role,
-  } = req.body;
+  const { firstName, lastName, shopName, email, contact, password, confirmPassword, address_lane1, address_lane2, landmark, pincode, state, role } =
+    req.body;
 
   if (password || confirmPassword) {
-    const error = new CustomError(
-      "you can not update password using this end point",
-      400
-    );
+    const error = new CustomError("you can not update password using this end point", 400);
     return next(error);
   }
   if (role) {
-    const error = new CustomError(
-      "you can not update role using this end point",
-      400
-    );
+    const error = new CustomError("you can not update role using this end point", 400);
     return next(error);
   }
   const updateVendor = await Vendor.update(
@@ -353,20 +362,14 @@ exports.updatePassword = asyncErrorHandler(async (req, res, next) => {
     // Update password in the database
 
     // Check if current password matches
-    const isPasswordValid = await vendor.comparePasswordInDb(
-      currentPassword,
-      vendor.password
-    );
+    const isPasswordValid = await vendor.comparePasswordInDb(currentPassword, vendor.password);
     if (!isPasswordValid) {
       const error = new CustomError("Current password is incorrect", 400);
       return next(error);
     }
 
     if (newPassword !== confirmPassword) {
-      const error = new CustomError(
-        "New password and confirm password do not match",
-        400
-      );
+      const error = new CustomError("New password and confirm password do not match", 400);
       return next(error);
     }
 

@@ -4,13 +4,64 @@ const CustomError = require("../utils/customError");
 const getInvoice = require("./../utils/getInvoiceNumber");
 const getTransaction = require("./../utils/getTransactionId");
 const { Op } = require("sequelize");
+const apiFeatures = require("../utils/apiFeatures");
 
-const { Invoice, Customer, connectDB, invoiceOrder, customerAddress, Address } = db;
+const { Invoice, Order, Customer, connectDB, invoiceOrder, customerAddress, Address, Product } = db;
 
 
 // ================== FOR GETTING ALL INVOCIES ==========
 exports.getInvoices = asyncErrorHandler(async (req, res, next) => {
-  const invoices = await Invoice.findAll({});
+
+  const totalRows = await Invoice.findAndCountAll({
+    where: {
+      VendorId: req.vendor.id
+    }
+  });
+  const status = req.query.status || '%';
+  let orderBy;
+  let limitFields = null;
+  let offset = null;
+  const limit = req.query.limit || 10;
+  let search = req.query.search || '%';
+  if (req.query.sort) {
+    orderBy = apiFeatures.sorting(req.query.sort);
+  }
+  if (req.query.fields) {
+    limitFields = apiFeatures.limitFields(req.query.fields);
+  }
+  if (req.query.page) {
+    offset = apiFeatures.paginate(req.query.page, limit, totalRows.count, next);
+
+  }
+  if (req.query.search) {
+    search = apiFeatures.search(search);
+  }
+
+  // const attributes = limitFields ? limitFields : ["id", "invoice_no", "transaction_no", "due_date", "purchase_date", "status", "total"];
+  const invoices = await Invoice.findAll({
+    include: [
+      {
+        model: Order,
+        as: "Order_Details"
+      },
+      {
+        model: Customer
+      },
+    ],
+    where: {
+      status: {
+        [Op.iLike]: status
+      },
+      invoice_no: {
+        [Op.iLike]: '#' + search
+      },
+      VendorId: req.vendor.id,
+    },
+    order: orderBy,
+    attributes: limitFields,
+    offset: offset,
+    limit: limit
+  });
 
   res.status(200).json({
     status: "success",
@@ -23,10 +74,20 @@ exports.getInvoices = asyncErrorHandler(async (req, res, next) => {
 
 // ===================== FOR GETTING INVOICE BY ID ==========
 exports.getInvoice = asyncErrorHandler(async (req, res, next) => {
-  const invoice = await Invoice.findOne({
+
+  let invoice = await Invoice.findOne({
     where: {
-      invoice_id: req.params.invoice_id,
+      id: req.params.invoice_id,
     },
+    include: [
+      {
+        model: Order,
+        as: "Order_Details"
+      },
+      {
+        model: Customer
+      }
+    ]
   });
 
   if (!invoice) {
@@ -37,10 +98,35 @@ exports.getInvoice = asyncErrorHandler(async (req, res, next) => {
     return next(err);
   }
 
+  const address = await Address.findOne({
+    where: {
+      role: "customer",
+      roleId: invoice.Customer.id,
+    }
+  });
+
+  const id = invoice.dataValues.Order_Details.productId;
+  // console.log(id);
+
+  const products = await Product.findAll({
+    where: {
+      id: {
+        [Op.in]: id
+      }
+    }
+  })
+
+  // console.log(products);
+
+  invoice.dataValues["Address"] = address.dataValues;
+  invoice.dataValues["Products"] = products.map((product) => {
+    return product.dataValues;
+  });
+
   res.status(200).json({
     status: "success",
     data: {
-      invoice,
+      invoice: invoice,
     },
   });
 });

@@ -13,7 +13,7 @@ module.exports = (connectDB, DataTypes) => {
       invoice_no: {
         type: DataTypes.STRING,
         allowNull: false,
-        validate: {
+        validate: { 
           len: {
             args: [12, 12],
             msg: "Invoice id length must be 12 letters only",
@@ -53,8 +53,9 @@ module.exports = (connectDB, DataTypes) => {
       },
 
       status: {
-        type: DataTypes.STRING,
-        defaultValue: "due",
+        type: DataTypes.ENUM,
+        defaultValue : 'due',
+        values: ['due', 'overdue', 'paid']
       },
 
       subtotal: {

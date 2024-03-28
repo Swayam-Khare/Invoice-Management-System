@@ -3,21 +3,23 @@ const asyncErrorHandler = require("../utils/asyncErrorHandler.js");
 const CustomError = require("../utils/customError.js");
 const Product = db.Product;
 const VendorProduct = db.VendorProduct;
+const apiFeatures = require("../utils/apiFeatures");
+const { Op } = require("sequelize");
 
 // CREATE OPERATION
 exports.addProduct = asyncErrorHandler(async (req, res, next) => {
 
     let product, vendorProduct
 
-    product =  await Product.findOne({
+    product = await Product.findOne({
         where: {
             name: req.body.name,
         },
     });
 
     // CHECK WHETHER EXISTING PRODUCT OR NOT
-    if(product) {
-        
+    if (product) {
+
         // IF EXISTING THEN CHECK FOR THE ASSCOIATION
         vendorProduct = await VendorProduct.findOne({
             where: {
@@ -26,9 +28,9 @@ exports.addProduct = asyncErrorHandler(async (req, res, next) => {
             },
             paranoid: false
         })
-        
+
         // CHECK WHETHER PRODUCT WAS ASSOCIATED WITH THE VENDOR IN THE PAST OR NOT
-        if(vendorProduct){
+        if (vendorProduct) {
 
             // IF PRODUCT WAS ASSOCIATED THEN RESTORE THE ENTRY
             await VendorProduct.restore({
@@ -40,13 +42,13 @@ exports.addProduct = asyncErrorHandler(async (req, res, next) => {
 
             // UPDATING THE INFORMATION OF PRODUCT RELATED TO PARTICULAR VENDOR
             const { stock, price, discount } = req.body;
-        
+
             const updateData = {};
             if (stock !== undefined) updateData.stock = stock;
             if (price !== undefined) updateData.price = price;
             if (discount !== undefined) updateData.discount = discount;
 
-            const [ updatedRows ] = await VendorProduct.update(updateData, {
+            const [updatedRows] = await VendorProduct.update(updateData, {
                 where: {
                     VendorId: req.vendor.id,
                     ProductId: product.id
@@ -61,7 +63,7 @@ exports.addProduct = asyncErrorHandler(async (req, res, next) => {
             })
 
         }
-        else{
+        else {
 
             //  CREATE THE ASSOCIATION
             vendorProduct = await VendorProduct.create({
@@ -75,8 +77,8 @@ exports.addProduct = asyncErrorHandler(async (req, res, next) => {
         }
 
     }
-    else{
-        
+    else {
+
         // IF THE PRODUCT IS NEW THEN CREATE PRODUCT AND ASSOCIATION
         product = await Product.create({
             name: req.body.name,
@@ -105,20 +107,51 @@ exports.addProduct = asyncErrorHandler(async (req, res, next) => {
 
 // READ OPERATION
 exports.readProducts = asyncErrorHandler(async (req, res, next) => {
+    const totalRows = await VendorProduct.findAndCountAll({
+        where: {
+            VendorId: req.vendor.id,
+        }
+    });
+    let orderBy, whereCondition = {};
+    let limitFields = null;
+    let offset = null;
+    const limit = req.query.limit || 10;
+    let search = req.query.search || '%';
 
-    // const queryOptions = { where: { VendorId: req.vendor.id } };
-    // let features = new ApiFeatures().filter(req.query)
-    // features.VendorId = req.vendor.id
-    // const vendorProducts = await VendorProduct.findAll({
-    //     where: features
-    // });
+    if (req.query.stock === '0') {
+        whereCondition = {
+            VendorId: req.vendor.id,
+            stock: 0
+        }
+    }
+    else if (req.query.stock) {
+        whereCondition = {
+            VendorId: req.vendor.id,
+            stock: {
+                [Op.gt]: 0
+            }
+        }
+    }
+    else {
+        whereCondition = {
+            VendorId: req.vendor.id
+        }
+    }
+    if (req.query.sort) {
+        orderBy = apiFeatures.sorting(req.query.sort);
+    }
+    if (req.query.fields) {
+        limitFields = apiFeatures.limitFields(req.query.fields);
+    }
+    if (req.query.page) {
+        offset = apiFeatures.paginate(req.query.page, limit, totalRows.count, next);
 
-    // let query = VendorProduct
-    // const features = new ApiFeatures(query, req.query).filter()
-    // const filteredVendorProductsQuery = await features.query
-    
+    }
+    if (req.query.search) {
+        search = apiFeatures.search(search);
+    }
     // FIRST FETCHING ALL THE PRODUCT ID CORRESPONDING TO VENDOR ID
-    const vendorProducts = await filteredVendorProductsQuery.findAll({
+    const vendorProducts = await VendorProduct.findAll({
         where: {
             VendorId: req.vendor.id,
         },
@@ -143,7 +176,13 @@ exports.readProducts = asyncErrorHandler(async (req, res, next) => {
     const products = await Product.findAll({
         where: {
             id: productIds,
+            name: {
+                [Op.iLike]: search
+            }
         },
+        offset: offset,
+        limit: limit,
+        order: orderBy
     });
 
     // MERGING INFORMATION OF PRODUCT AND INFO RELATED TO VENDOR IN ONE OBJECT
@@ -218,20 +257,20 @@ exports.updateProduct = asyncErrorHandler(
     async (req, res, next) => {
 
         const { stock, price, discount } = req.body;
-        
+
         const updateData = {};
         if (stock !== undefined) updateData.stock = stock;
         if (price !== undefined) updateData.price = price;
         if (discount !== undefined) updateData.discount = discount;
 
-        const [ updatedRows ] = await VendorProduct.update(updateData, {
+        const [updatedRows] = await VendorProduct.update(updateData, {
             where: {
                 VendorId: req.vendor.id,
                 ProductId: req.params.productId
             }
         });
 
-        if(updatedRows){
+        if (updatedRows) {
 
             const updatedProduct = await VendorProduct.findOne({
                 where: {
@@ -241,7 +280,7 @@ exports.updateProduct = asyncErrorHandler(
                 attributes: {
                     exclude: [
                         'VendorId'
-                    ] 
+                    ]
                 }
             });
 
@@ -258,11 +297,11 @@ exports.updateProduct = asyncErrorHandler(
                 price: updatedProduct.price,
                 discount: updatedProduct.discount
             }
-            
+
             res.status(200).json({
                 status: 'Success',
                 data: {
-                    product 
+                    product
                 }
             })
 
@@ -285,7 +324,7 @@ exports.deleteProduct = asyncErrorHandler(async (req, res, next) => {
     updateData.price = undefined;
     updateData.discount = undefined;
 
-    const [ updatedRows ] = await VendorProduct.update(updateData, {
+    const [updatedRows] = await VendorProduct.update(updateData, {
         where: {
             ProductId: req.params.productId,
             VendorId: req.vendor.id,
@@ -303,5 +342,5 @@ exports.deleteProduct = asyncErrorHandler(async (req, res, next) => {
         status: "Success",
         data: null,
     });
-    
+
 });

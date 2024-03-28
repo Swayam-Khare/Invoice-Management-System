@@ -19,6 +19,7 @@
     "nodemailer": "^6.9.12",
     "pg": "^8.11.3",
     "pg-hstore": "^2.3.4",
+    "randomstring": "^1.3.0",
     "sequelize": "^6.37.1",
     "util": "^0.12.5",
     "uuid": "^9.0.1"

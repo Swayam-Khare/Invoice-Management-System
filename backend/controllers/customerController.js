@@ -19,9 +19,10 @@ exports.createCustomer = asyncErrorHandler(async (req, res, next) => {
     address_lane2,
     landmark,
     pincode,
-    state,
-    role,
+    state
   } = req.body;
+
+  const role = "customer";
 
   let customer = await Customer.findOne({ where: { email }, paranoid: false });
   let existWithDeletedAt = false;
@@ -33,7 +34,7 @@ exports.createCustomer = asyncErrorHandler(async (req, res, next) => {
 
   //create new customer if no record restored
   if (!existWithDeletedAt || !customer) {
-    try {
+    try { 
       const result = await connectDB.transaction(async (t) => {
         customer = await Customer.create(
           {
@@ -155,6 +156,7 @@ exports.createCustomer = asyncErrorHandler(async (req, res, next) => {
 // ------------- GET ALL CUSTOMERS --------------
 
 exports.getAllCustomers = asyncErrorHandler(async (req, res, next) => {
+  console.log(req.query);
   // FETCHING ALL THE CUSTOMER ID CORRESPONDING TO VENDOR ID
   let vendorCustomers = await VendorCustomer.findAll({
     where: {
@@ -168,23 +170,25 @@ exports.getAllCustomers = asyncErrorHandler(async (req, res, next) => {
   );
 
   // FETCHING CUSTOMER DETAILS CORRESPONDING TO VENDOR
-  vendorCustomers = await Customer.findAll({
-    where: {
-      id: customerIds,
-    },
-    attributes: {
-      exclude: ["deletedAt"],
-    },
-    include: [
+  vendorCustomers = await Customer.findAll(
       {
-        model: Address,
-        as: "Address_Details",
-        attributes: {
-          exclude: ["deletedAt"],
-        },
+      where: {
+        id: customerIds,
       },
-    ],
-  });
+      attributes: {
+        exclude: ["deletedAt"],
+      },
+      include: [
+        {
+          model: Address,
+          as: "Address_Details",
+          attributes: {
+            exclude: ["deletedAt"],
+          },
+        },
+      ],
+    }
+  );
 
   res.status(200).json({
     status: "Success",
@@ -236,7 +240,7 @@ exports.getCustomer = asyncErrorHandler(async (req, res, next) => {
 // ------------- DELETE CUSTOMER --------------
 
 exports.deleteCustomer = asyncErrorHandler(async (req, res, next) => {
-  const customer = await Customer.findByPk(req.params.id);
+  const customer = await Customer.findByPk(req.params.id)
 
   if (!req.params.id) {
     return next(new CustomError("Please provide id in parameters!", 400));
@@ -265,7 +269,7 @@ exports.deleteCustomer = asyncErrorHandler(async (req, res, next) => {
 // ------------- UPDATE CUSTOMER --------------
 
 exports.updateCustomer = asyncErrorHandler(async (req, res, next) => {
-  const customer = await Customer.findByPk(req.params.id);
+  const customer = await Customer.findByPk(req.params.id)
 
   if (!req.params.id) {
     return next(new CustomError("Please provide id in parameters!", 400));
