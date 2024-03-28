@@ -1,8 +1,8 @@
 const { Sequelize, DataTypes } = require("sequelize");
 
-const database = process.env.LOCAL_DATABASE;
-const user = process.env.LOCAL_USER;
-const password = process.env.LOCAL_PASSWORD;
+const database = process.env.DATABASE;
+const user = process.env.DB_USER;
+const password = process.env.DB_PASSWORD;
 
 // ==== TO CONNECT TO LOCAL DATABASE ====
 const connectDB = new Sequelize(database, user, password, {
@@ -88,11 +88,10 @@ const check = async () => {
   try {
     await connectDB.authenticate();
     console.log("Connection has been established successfully.");
-    await db.connectDB.sync({ force: false  , alter : true});
+    await db.connectDB.sync({ force: true  , alter : true});
     console.log("All models were synchronized successfully.");
   } catch (error) {
     console.error("Unable to connect to the database:", error);
   }
 };
-
 module.exports = { db, check };
