@@ -95,3 +95,7 @@ const check = async () => {
   }
 };
 module.exports = { db, check };
+
+
+// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzEwNzUxMTMyLCJleHAiOjE3MTMzNDMxMzJ9.ZJIWQ3cORCOuwC6d2M2TQcOvjf5LMUa-rhbkiZvBRBI
+// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzEwNzUxMTMyLCJleHAiOjE3MTMzNDMxMzJ9.ZJIWQ3cORCOuwC6d2M2TQcOvjf5LMUa-rhbkiZvBRBI
