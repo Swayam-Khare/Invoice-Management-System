@@ -14,7 +14,7 @@
                 <v-btn class="w-0 px-11 text-capitalize" color="#112D4E">Sign up</v-btn>
             </div>
             <div class="image-content">
-                <img src="../assets/home.svg" alt="" class="mt-10 img" srcset="">
+                <img src="../assets/home.svg" alt="" class="mt-13 img" srcset="">
             </div>
         </div>
     </div>
