@@ -13,14 +13,42 @@
     </div>
   </div>
 
+  <v-app>
   <v-toolbar color="#ffffff00" elevation="7" class="d-md-none">
-    <img class="ml-8 mr-2" width="55px" height="55px" src="/src/assets/logo.svg" />
+    <img class="ml-8 mr-2" width="55px" height="55px" src="/src/assets/logo.svg"/>
     <v-toolbar-title>IMS</v-toolbar-title>
     <v-spacer></v-spacer>
-    <v-btn icon><img width="30px" height="30px" src="/src/assets/menu.svg" /></v-btn>
+      <v-btn @click.stop="drawer = !drawer" icon><img width="30px" height="30px" src="/src/assets/menu.svg"/></v-btn>
   </v-toolbar>
+
+  <v-navigation-drawer
+        location="end"
+        color="#112D4E"
+        temporary
+        v-model="drawer"
+        :width="255"
+      >
+        <v-list-item
+          title="Invoice Management System"
+          subtitle="IMS"
+        ></v-list-item>
+        <v-divider></v-divider>
+        <v-list-item link title="Home"></v-list-item>
+        <v-list-item link title="Contact"></v-list-item>
+        <v-list-item link title="About"></v-list-item>
+        <v-divider></v-divider>
+        <v-list-item link title="Login"></v-list-item>
+        <v-list-item link title="Signup"></v-list-item>
+      </v-navigation-drawer>
+    </v-app>
 </template>
 
 <script>
-export default {}
+export default {
+  data() {
+    return {
+      drawer: false
+    }
+  },
+}
 </script>
