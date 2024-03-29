@@ -63,7 +63,7 @@
 export default {
   data() {
     return {
-      dialog: true,         // TOGGLE THIS TO SHOW/HIDE SIGN UP DIALOG BOX
+      dialog: false,         // TOGGLE THIS TO SHOW/HIDE SIGN UP DIALOG BOX
       firstName: '',
       lastName: '',
       email: '',
