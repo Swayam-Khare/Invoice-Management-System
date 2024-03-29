@@ -1,8 +1,9 @@
 <template>
+  <v-btn :class="styling" color="#112D4E" @click="dialog = true"> Sign Up </v-btn>
   <v-dialog v-model="dialog" max-width="500px">
-    <v-card class="rounded-lg">
+    <v-card class="rounded-lg remove-scrollbar">
       <v-card-title class="mt-3 ml-4">
-        <h2 style="color: #112d4e;">Sign Up</h2>
+        <h2 style="color: #112d4e">Sign Up</h2>
       </v-card-title>
       <v-card-text>
         <v-form class="px-3" ref="form" @submit.prevent="submitForm">
@@ -84,12 +85,13 @@
           <div class="d-flex justify-center align-center text-center">
             <span>Already have an account?</span>
             <v-btn
-                variant="text"
-                color="#112d4e"
-                @click="dialog = false"
-                :ripple="false"
-                class="pl-1 pr-0 font-weight-bold"
-            >Log In</v-btn>
+              variant="text"
+              color="#112d4e"
+              @click="dialog = false"
+              :ripple="false"
+              class="pl-1 pr-0 font-weight-bold"
+              >Log In</v-btn
+            >
           </div>
           <!-- <div class="d-flex align-center">
             <span class="">Already have an account ?</span>
@@ -112,7 +114,7 @@
 export default {
   data() {
     return {
-      dialog: true,         // TOGGLE THIS TO SHOW/HIDE SIGN UP DIALOG BOX
+      dialog: false, // TOGGLE THIS TO SHOW/HIDE SIGN UP DIALOG BOX
       firstName: '',
       lastName: '',
       email: '',
@@ -125,6 +127,9 @@ export default {
       alphabetOnlyRule: (v) => /^[A-Za-z\s]*$/.test(v) || 'Alphabets only.',
       emailRule: (v) => /.+@.+\..+/.test(v) || 'Invalid email address.'
     }
+  },
+  props: {
+    styling: String
   },
   computed: {
     pincodeRules() {
@@ -169,4 +174,7 @@ export default {
 </script>
 
 <style>
+.remove-scrollbar::-webkit-scrollbar {
+  display: none;
+}
 </style>
