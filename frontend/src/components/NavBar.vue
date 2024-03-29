@@ -9,11 +9,11 @@
         <v-btn variant="text" class="text-capitalize"> Contact </v-btn>
         <v-btn variant="text" class="text-capitalize"> About </v-btn></span>
       <span class="h-100 d-flex align-center"><v-btn variant="text" class="text-capitalize"> Login </v-btn>
-        <v-btn color="#112D4E" class="h-100 rounded-lg text-capitalize"> Signup </v-btn></span>
+        <v-btn color="#112D4E" class="h-100 rounded-lg text-capitalize" @click="toggleSignup"> Signup </v-btn></span>
     </div>
   </div>
 
-  <v-app class="d-md-none h-screen position-fixed w-100 bg-transparent" >
+  <v-app class="d-md-none h-screen position-fixed w-100 bg-transparent">
     <v-toolbar color="#ffffff" elevation="7" class="d-md-none">
       <img class="ml-8 mr-2" width="55px" height="55px" src="/src/assets/logo.svg" />
       <v-toolbar-title>IMS</v-toolbar-title>
@@ -29,20 +29,33 @@
       <v-list-item link title="About"></v-list-item>
       <v-divider></v-divider>
       <v-list-item link title="Login"></v-list-item>
-      <v-list-item link title="Signup"></v-list-item>
+      <v-list-item @click="toggleSignup" link title="Signup"></v-list-item>
     </v-navigation-drawer>
   </v-app>
+  <div v-if="showSignup">
+    <signUp />
+  </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      drawer: false
-    }
-  },
+<script setup>
+import { ref } from 'vue';
+import signUp from './signUp.vue';
+
+const drawer = ref(false);
+let showSignup = ref(false);
+const toggleSignup = () => {
+  console.log('i got clicked')
+  console.log(showSignup.value)
+ return showSignup.value = !showSignup.value;
 }
+// export default {
+//   data() {
+//     return {
+//       drawer: false
+//     }
+//   },
+// }
+
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

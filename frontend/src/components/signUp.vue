@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" max-width="500px">
+  <v-dialog   max-width="500px">       <!-- v-model="dialog"-->
     <v-card class="rounded-lg">
       <v-card-title class="mt-3 ml-4">
         <h2 style="color: #112d4e;">Sign Up</h2>
@@ -112,7 +112,7 @@
 export default {
   data() {
     return {
-      dialog: true,         // TOGGLE THIS TO SHOW/HIDE SIGN UP DIALOG BOX
+      // dialog: true,         // TOGGLE THIS TO SHOW/HIDE SIGN UP DIALOG BOX
       firstName: '',
       lastName: '',
       email: '',
