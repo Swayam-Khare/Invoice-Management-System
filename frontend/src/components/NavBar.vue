@@ -8,12 +8,15 @@
         <v-btn variant="text" class="text-capitalize"> Home </v-btn>
         <v-btn variant="text" class="text-capitalize"> Contact </v-btn>
         <v-btn variant="text" class="text-capitalize"> About </v-btn></span>
-      <span class="h-100 d-flex align-center"><v-btn variant="text" class="text-capitalize"> Login </v-btn>
-        <v-btn color="#112D4E" class="h-100 rounded-lg text-capitalize"> Signup </v-btn></span>
+      <span class="h-100 d-flex align-center">
+        <v-btn variant="text" class="text-capitalize"> Login </v-btn>
+        <!-- <v-btn color="#112D4E" class="h-100 rounded-lg text-capitalize"> Signup </v-btn>-->
+        <signUp :styling="styling" />
+      </span>
     </div>
   </div>
 
-  <v-app class="d-md-none h-screen position-fixed w-100 bg-transparent" >
+  <v-app class="d-md-none h-screen position-fixed w-100 bg-transparent">
     <v-toolbar color="#ffffff" elevation="7" class="d-md-none">
       <img class="ml-8 mr-2" width="55px" height="55px" src="/src/assets/logo.svg" />
       <v-toolbar-title>IMS</v-toolbar-title>
@@ -24,24 +27,25 @@
     <v-navigation-drawer location="end" color="#112D4E" temporary v-model="drawer" :width="255">
       <v-list-item title="Invoice Management System" subtitle="IMS"></v-list-item>
       <v-divider></v-divider>
-      <v-list-item link title="Home"></v-list-item>
-      <v-list-item link title="Contact"></v-list-item>
-      <v-list-item link title="About"></v-list-item>
+      <v-list-item link title="Home" class="text-center"></v-list-item>
+      <v-list-item link title="Contact" class="text-center"></v-list-item>
+      <v-list-item link title="About" class="text-center"></v-list-item>
       <v-divider></v-divider>
-      <v-list-item link title="Login"></v-list-item>
-      <v-list-item link title="Signup"></v-list-item>
+      <v-list-item link title="Login" class="text-center"></v-list-item>
+      <v-list-item link>
+        <signUp styling="text-capitalize w-100" />
+      </v-list-item>
     </v-navigation-drawer>
   </v-app>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      drawer: false
-    }
-  },
-}
+<script setup>
+import { ref } from 'vue';
+import signUp from './signUp.vue';
+
+const drawer = ref(false);
+const styling = ref("h-100 rounded-lg text-capitalize")
+ 
 </script>
 
 <style scoped>

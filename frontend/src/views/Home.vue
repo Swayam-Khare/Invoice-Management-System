@@ -11,7 +11,9 @@
                     reminders,
                     keep track of expenses, log your work hours, and get paid faster all for free!
                 </p>
-                <v-btn class="w-0 px-11 text-capitalize" color="#112D4E">Sign up</v-btn>
+                <!-- <v-btn class="w-0 px-11 text-capitalize" color="#112D4E">Sign up</v-btn> -->
+                <Signup styling="w-0 px-11 text-capitalize" />
+
             </div>
             <div class="image-content">
                 <img src="../assets/home.svg" alt="" class="mt-13 img" srcset="">
@@ -24,6 +26,11 @@
 
 <script setup>
 import NavBar from '../components/NavBar.vue';
+import Signup from '../components/signUp.vue';
+// import { ref } from 'vue';
+
+// const displaySignup = ref(false);
+
 </script>
 
 <style scoped>
