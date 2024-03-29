@@ -2,8 +2,8 @@
     <div class="home-container">
         <NavBar />
         <div class="d-flex flex-column-reverse flex-md-row align-center justify-center w-150" id="home">
-            <div class="text-content d-flex flex-column pt-10 px-10 px-md-16 ga-8">
-                <p class="text-h3 text-grey-darken-4">
+            <div class="text-content d-flex flex-column pa-5 pt-sm-10 px-sm-10 px-md-16 ga-8">
+                <p class="text-h4 text-sm-h3 text-grey-darken-4">
                     Free invoicing software for small business.
                 </p>
                 <p class="text-h6 text-justify text-grey-darken-2">
@@ -11,12 +11,15 @@
                     reminders,
                     keep track of expenses, log your work hours, and get paid faster all for free!
                 </p>
-                <v-btn class="w-0 px-11 text-capitalize bg-btn">Sign up</v-btn>
+                <v-btn class="w-0 px-11 text-capitalize" color="#112D4E">Sign up</v-btn>
             </div>
             <div class="image-content">
-                <img src="../assets/home.svg" alt="" class="mt-10" srcset="">
+                <img src="../assets/home.svg" alt="" class="mt-10 img" srcset="">
             </div>
         </div>
+    </div>
+    <div class="h-screen w-100">
+        
     </div>
 </template>
 
@@ -32,12 +35,19 @@ import NavBar from '../components/NavBar.vue';
         background:linear-gradient(to bottom right, #3F72AF -10%,#fff 50%);
     }
 }
-.home-container{
-    /* width: 150vw; */
+
+@media only screen and (max-width: 960px) {
+    .home-container {
+        background: linear-gradient(to top, #3F72AF -100%, #fff 70%);
+        box-shadow: 0 0 5px 5px #3f71af66;
+    }
 }
-.bg-btn {
-    background-color: #112D4E;
-    color: #fff;
+
+
+@media only screen and (max-width: 490px) {
+    .img{
+        width:100%;
+    }
 }
 
 </style>
