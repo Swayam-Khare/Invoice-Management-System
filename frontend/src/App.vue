@@ -1,17 +1,13 @@
 <template>
-  <div>
-    <signUp />
-  </div>
+  <Home/>
 </template>
 
-<script>
+<script setup>
 // import { RouterLink, RouterView } from 'vue-router'
-// import signUp from './components/signUp.vue';
-
-export default {
-  name: 'App',
-  components: {
-    // signUp
-  }
-}
+// import Dummy from './components/Dummy.vue';
+import Home from './views/Home.vue';
 </script>
+
+<style>
+</style>
+
