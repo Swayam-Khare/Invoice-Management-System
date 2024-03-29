@@ -1,46 +1,97 @@
 <template>
-  <v-btn :class="styling" color="#112D4E" @click="dialog = true">
-    Sign Up
-  </v-btn>
-  <v-dialog v-model="dialog" max-width="500px" scrollable=false>
-    <v-card class="rounded-lg">
+  <v-btn :class="styling" color="#112D4E" @click="dialog = true"> Sign Up </v-btn>
+  <v-dialog v-model="dialog" max-width="500px">
+    <v-card class="rounded-lg remove-scrollbar">
       <v-card-title class="mt-3 ml-4">
-        <h2 style="color: #112d4e;">Sign Up</h2>
+        <h2 style="color: #112d4e">Sign Up</h2>
       </v-card-title>
       <v-card-text>
         <v-form class="px-3" ref="form" @submit.prevent="submitForm">
           <v-row>
             <v-col cols="12" md="6" class="pb-0 pb-md-3">
-              <v-text-field label="First Name" v-model="firstName" :rules="[alphabetOnlyRule]" variant="outlined"
-                color="#112d4e"></v-text-field>
+              <v-text-field
+                label="First Name"
+                v-model="firstName"
+                :rules="[alphabetOnlyRule]"
+                variant="outlined"
+                color="#112d4e"
+              ></v-text-field>
             </v-col>
             <v-col cols="12" md="6" class="pt-1 pt-md-3">
-              <v-text-field label="Last Name" v-model="lastName" :rules="[alphabetOnlyRule]" variant="outlined"
-                color="#112d4e"></v-text-field>
+              <v-text-field
+                label="Last Name"
+                v-model="lastName"
+                :rules="[alphabetOnlyRule]"
+                variant="outlined"
+                color="#112d4e"
+              ></v-text-field>
             </v-col>
           </v-row>
-          <v-text-field label="Email" :rules="[emailRule]" v-model="email" variant="outlined" color="#112d4e"
-            class="mt-1"></v-text-field>
-          <v-text-field label="Contact No." :rules="contactNoRules" v-model="contactNo" variant="outlined"
-            color="#112d4e" class="mt-1"></v-text-field>
-          <v-text-field label="Shop Name" v-model="shopName" variant="outlined" color="#112d4e"
-            class="mt-1"></v-text-field>
-          <v-text-field label="Address Line 1" v-model="addressLine1" variant="outlined" color="#112d4e"></v-text-field>
-          <v-text-field label="Address Line 2" v-model="addressLine2" variant="outlined" color="#112d4e"></v-text-field>
+          <v-text-field
+            label="Email"
+            :rules="[emailRule]"
+            v-model="email"
+            variant="outlined"
+            color="#112d4e"
+            class="mt-1"
+          ></v-text-field>
+          <v-text-field
+            label="Contact No."
+            :rules="contactNoRules"
+            v-model="contactNo"
+            variant="outlined"
+            color="#112d4e"
+            class="mt-1"
+          ></v-text-field>
+          <v-text-field
+            label="Shop Name"
+            v-model="shopName"
+            variant="outlined"
+            color="#112d4e"
+            class="mt-1"
+          ></v-text-field>
+          <v-text-field
+            label="Address Line 1"
+            v-model="addressLine1"
+            variant="outlined"
+            color="#112d4e"
+          ></v-text-field>
+          <v-text-field
+            label="Address Line 2"
+            v-model="addressLine2"
+            variant="outlined"
+            color="#112d4e"
+          ></v-text-field>
           <v-row>
             <v-col cols="12" md="6" class="pb-0 pb-md-3">
-              <v-text-field label="Pincode" v-model="pincode" :rules="pincodeRules" variant="outlined"
-                color="#112d4e"></v-text-field>
+              <v-text-field
+                label="Pincode"
+                v-model="pincode"
+                :rules="pincodeRules"
+                variant="outlined"
+                color="#112d4e"
+              ></v-text-field>
             </v-col>
             <v-col cols="12" md="6" class="pt-1 pt-md-3">
-              <v-text-field label="State" v-model="state" variant="outlined" color="#112d4e"></v-text-field>
+              <v-text-field
+                label="State"
+                v-model="state"
+                variant="outlined"
+                color="#112d4e"
+              ></v-text-field>
             </v-col>
           </v-row>
           <v-btn class="mt-1 txt-button" color="#112d4e" @click="validate" block>Sign Up</v-btn>
           <div class="d-flex justify-center align-center text-center">
             <span>Already have an account?</span>
-            <v-btn variant="text" color="#112d4e" @click="dialog = false" :ripple="false"
-              class="pl-1 pr-0 font-weight-bold">Log In</v-btn>
+            <v-btn
+              variant="text"
+              color="#112d4e"
+              @click="dialog = false"
+              :ripple="false"
+              class="pl-1 pr-0 font-weight-bold"
+              >Log In</v-btn
+            >
           </div>
           <!-- <div class="d-flex align-center">
             <span class="">Already have an account ?</span>
@@ -63,7 +114,7 @@
 export default {
   data() {
     return {
-      dialog: false,         // TOGGLE THIS TO SHOW/HIDE SIGN UP DIALOG BOX
+      dialog: false, // TOGGLE THIS TO SHOW/HIDE SIGN UP DIALOG BOX
       firstName: '',
       lastName: '',
       email: '',
@@ -77,8 +128,8 @@ export default {
       emailRule: (v) => /.+@.+\..+/.test(v) || 'Invalid email address.'
     }
   },
-  props:{
-    styling:String
+  props: {
+    styling: String
   },
   computed: {
     pincodeRules() {
@@ -123,4 +174,7 @@ export default {
 </script>
 
 <style>
+.remove-scrollbar::-webkit-scrollbar {
+  display: none;
+}
 </style>

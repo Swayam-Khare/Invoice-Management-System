@@ -1,17 +1,26 @@
 <template class="bg-blue">
   <div class="d-none d-md-flex align-center justify-space-between px-16 text-h6">
-    <span class="mb-2"><v-img class="elevation-7 rounded-circle mt-3" :width="64" :height="66" cover
-        src="/src/assets/logo.svg"></v-img></span>
-    <div style="width: 511px; height: 44px"
-      class="bg-white rounded-lg elevation-7 d-flex align-center justify-space-between">
+    <span class="mb-2"
+      ><v-img
+        class="elevation-7 rounded-circle mt-3"
+        :width="64"
+        :height="66"
+        cover
+        src="/src/assets/logo.svg"
+      ></v-img
+    ></span>
+    <div
+      style="width: 511px; height: 44px"
+      class="bg-white rounded-lg elevation-7 d-flex align-center justify-space-between"
+    >
       <span class="h-100 d-flex align-center">
         <v-btn variant="text" class="text-capitalize"> Home </v-btn>
         <v-btn variant="text" class="text-capitalize"> Contact </v-btn>
-        <v-btn variant="text" class="text-capitalize"> About </v-btn></span>
+        <v-btn variant="text" class="text-capitalize"> About </v-btn></span
+      >
       <span class="h-100 d-flex align-center">
-        <v-btn variant="text" class="text-capitalize"> Login </v-btn>
-        <!-- <v-btn color="#112D4E" class="h-100 rounded-lg text-capitalize"> Signup </v-btn>-->
-        <signUp :styling="styling" />
+        <Login styling="text-capitalize" />
+        <signUp styling="h-100 rounded-lg text-capitalize" />
       </span>
     </div>
   </div>
@@ -21,7 +30,9 @@
       <img class="ml-8 mr-2" width="55px" height="55px" src="/src/assets/logo.svg" />
       <v-toolbar-title>IMS</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn @click.stop="drawer = !drawer" icon><img width="30px" height="30px" src="/src/assets/menu.svg" /></v-btn>
+      <v-btn @click.stop="drawer = !drawer" icon
+        ><img width="30px" height="30px" src="/src/assets/menu.svg"
+      /></v-btn>
     </v-toolbar>
 
     <v-navigation-drawer location="end" color="#112D4E" temporary v-model="drawer" :width="255">
@@ -31,7 +42,9 @@
       <v-list-item link title="Contact" class="text-center"></v-list-item>
       <v-list-item link title="About" class="text-center"></v-list-item>
       <v-divider></v-divider>
-      <v-list-item link title="Login" class="text-center"></v-list-item>
+      <v-list-item link>
+        <Login styling="text-capitalize w-100" />
+      </v-list-item>
       <v-list-item link>
         <signUp styling="text-capitalize w-100" />
       </v-list-item>
@@ -40,13 +53,11 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import signUp from './signUp.vue';
+import { ref } from 'vue'
+import signUp from './signUp.vue'
+import Login from './LoginComponent.vue'
 
-const drawer = ref(false);
-const styling = ref("h-100 rounded-lg text-capitalize")
- 
+const drawer = ref(false)
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
