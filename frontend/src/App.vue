@@ -5,13 +5,13 @@
 </template>
 
 <script>
-// import { RouterLink, RouterView } from 'vue-router'
-// import signUp from './components/signUp.vue';
+import { RouterLink, RouterView } from 'vue-router'
+import signUp from './components/signUp.vue'
 
 export default {
   name: 'App',
   components: {
-    // signUp
+    signUp
   }
 }
 </script>
