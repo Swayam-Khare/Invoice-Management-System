@@ -26,10 +26,10 @@
 
   <v-app>
   <v-toolbar color="#ffffff00" elevation="7" class="d-md-none">
-    <img class="ml-8 mr-2" width="55px" height="55px" src="/src/assets/logo.svg"></img>
+    <img class="ml-8 mr-2" width="55px" height="55px" src="/src/assets/logo.svg"/>
     <v-toolbar-title>IMS</v-toolbar-title>
     <v-spacer></v-spacer>
-      <v-btn @click.stop="drawer = !drawer" icon><img width="30px" height="30px" src="/src/assets/menu.svg"></img></v-btn>
+      <v-btn @click.stop="drawer = !drawer" icon><img width="30px" height="30px" src="/src/assets/menu.svg"/></v-btn>
   </v-toolbar>
 
   <v-navigation-drawer
