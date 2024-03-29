@@ -1,4 +1,5 @@
 <template>
+  <v-btn :class="styling" variant="text" @click="showLoginDialog = true"> Login </v-btn>
   <v-dialog v-model="showLoginDialog" max-width="400" centered>
     <v-card>
       <v-card-title class="pl-6 pt-6">
@@ -12,7 +13,7 @@
             label="Email"
             :rules="emailRules"
             variant="outlined"
-            :color="isFocused ? 'blue' : 'primary'"
+            color="#112d4e"
             @blur="isFocused = false"
             @focus="isFocused = true"
           ></v-text-field>
@@ -22,7 +23,7 @@
             type="password"
             :rules="passwordRules"
             variant="outlined"
-            :color="isFocused ? 'blue' : 'primary'"
+            color="#112d4e"
             @blur="isFocused = false"
             @focus="isFocused = true"
           ></v-text-field>
@@ -44,7 +45,7 @@
 export default {
   data() {
     return {
-      showLoginDialog: true,
+      showLoginDialog: false,
       isFocused: false,
       email: '',
       password: '',
@@ -54,6 +55,9 @@ export default {
       ],
       passwordRules: [(v) => !!v || 'Password is required']
     }
+  },
+  props: {
+    styling: String
   },
   methods: {
     login() {
