@@ -21,9 +21,10 @@ exports.createCustomer = asyncErrorHandler(async (req, res, next) => {
     address_lane2,
     landmark,
     pincode,
-    state,
-    role,
+    state
   } = req.body;
+
+  const role = "customer";
 
   let customer = await Customer.findOne({ where: { email }, paranoid: false });
   let existWithDeletedAt = false;
@@ -157,7 +158,6 @@ exports.createCustomer = asyncErrorHandler(async (req, res, next) => {
 // ------------- GET ALL CUSTOMERS --------------
 
 exports.getAllCustomers = asyncErrorHandler(async (req, res, next) => {
-  console.log(req.query);
   // FETCHING ALL THE CUSTOMER ID CORRESPONDING TO VENDOR ID
   let vendorCustomers = await VendorCustomer.findAll({
     where: {
