@@ -137,7 +137,6 @@ exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
   }
   if (req.query.search) {
     name = apiFeatures.search(name);
-
   }
 
 
