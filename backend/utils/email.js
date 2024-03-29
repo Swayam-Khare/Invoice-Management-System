@@ -12,7 +12,7 @@ const sendEmail = async (option) => {
   });
 
   // DEFINE EMAIL OPTIONS
-  const emailOptions = {
+  const emailOptions = {  
     from: "IMS support<support@ims.com>",
     to: option.email,
     subject: option.subject,

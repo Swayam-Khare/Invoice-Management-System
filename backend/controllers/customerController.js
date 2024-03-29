@@ -155,7 +155,7 @@ exports.createCustomer = asyncErrorHandler(async (req, res, next) => {
 // ------------- GET ALL CUSTOMERS --------------
 
 exports.getAllCustomers = asyncErrorHandler(async (req, res, next) => {
-  console.log(req.query);
+  // console.log(req.query);
   // FETCHING ALL THE CUSTOMER ID CORRESPONDING TO VENDOR ID
   let vendorCustomers = await VendorCustomer.findAll({
     where: {

@@ -169,7 +169,7 @@ exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
           }
         }
 
-      ]
+      ] 
     },
     order: orderBy,
     limit: limit,
