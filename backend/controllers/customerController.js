@@ -171,6 +171,9 @@ exports.getAllCustomers = asyncErrorHandler(async (req, res, next) => {
   );
 
   // APPLYING FILTERS SORTING SEARCHING ETC. IN CUSTOMER 
+
+  const totalRows = await VendorCustomer.findAndCountAll();
+
   let orderBy = null;
   let limitFields = null;
   let offset = null;
