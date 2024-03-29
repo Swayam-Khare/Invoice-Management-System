@@ -105,15 +105,18 @@ exports.protect = asyncErrorHandler(async (req, res, next) => {
         "Vendor with the given credential does not exist!",
         401
       );
-      next(error);
+      return next(error);
     }
 
     // 4.Check if the vendor changed the password after the token was issued
-    if (vendor.isPasswordChanged(decodedToken.iat)) {
-      throw new CustomError(
+    
+    if (await vendor.isPasswordChanged(decodedToken.iat)) {
+      
+      const err =  new CustomError(
           "Password has been changed recently. Please login again!",
           401
         );
+      return next(err);
     }
 
     // 5. Attach vendor details to request object
@@ -127,18 +130,16 @@ exports.protect = asyncErrorHandler(async (req, res, next) => {
         "Admin with the given credential does not exist!",
         401
       );
-      next(error);
+      return next(error);
     }
 
     // 4. Check if the admin changed the password after the token was issued
-    if (
-      admin.passwordChangedAtasswordChange &&
-      new Date(decodedToken.iat * 1000) < admin.passwordChangedAt
-    ) {
-      throw new CustomError(
+    if (await admin.isPasswordChanged(decodedToken.iat)) {
+      const err =  new CustomError(
         "Password has been changed recently. Please login again!",
         401
       );
+      return next(err);
     }
 
     // 5. Attach admin details to request object
@@ -158,7 +159,7 @@ exports.forgotPassword = asyncErrorHandler(async (req, res, next) => {
   });
 
   if (!vendor) {
-    next(
+    return next(
       new CustomError("Vendor with the given credential does not exist!", 401)
     );
   }
@@ -213,7 +214,7 @@ exports.resetPassword = asyncErrorHandler(async (req, res, next) => {
   });
 
   if (!vendor) {
-    next(new CustomError("Token is invalid or has expired!", 400));
+    return next(new CustomError("Token is invalid or has expired!", 400));
   }
 
   // Reseting the vendor password details
@@ -243,7 +244,7 @@ exports.resetPassword = asyncErrorHandler(async (req, res, next) => {
 exports.restrict = (role) => {
   return (req, res, next) => {
     if (req.role !== role) {
-      next(
+      return next(
         new CustomError(
           "You do not have permission to perform this action",
           403

@@ -4,6 +4,9 @@ const CustomError = require("../utils/customError");
 const signToken = require("../utils/signToken");
 const { Op } = require("sequelize");
 const apiFeatures = require('../utils/apiFeatures');
+const randomstring = require("randomstring");
+
+
 
 
 const Vendor = db.Vendor;
@@ -13,7 +16,7 @@ const VendorProduct = db.VendorProduct;
 
 // ------------- CREATE A VENDOR --------------
 exports.createVendor = asyncErrorHandler(async (req, res, next) => {
-  const { firstName, lastName, shopName, email, contact, password, confirmPassword, address_lane1, address_lane2, landmark, pincode, state, role } =
+  const { firstName, lastName, shopName, email, contact,  address_lane1, address_lane2, landmark, pincode, state } =
     req.body;
 
   // const vendor = await Vendor.create({
@@ -42,6 +45,11 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
   // ---------- CREATE WITH ASSOCIATIONS --------------
 
   // checking if vendor is soft deleted in past and if exists then restoring it.
+
+  //  Genertaing the random password as a string
+  const password = randomstring.generate(12);
+  const confirmPassword = password ;
+  const role = "vendor";
 
   const vendor = await Vendor.findOne({ where: { email }, paranoid: false });
   let existWithDeletedAt = false;
@@ -137,7 +145,6 @@ exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
   }
   if (req.query.search) {
     name = apiFeatures.search(name);
-
   }
 
 
@@ -287,7 +294,7 @@ exports.updateVendor = asyncErrorHandler(async (req, res, next) => {
         as: "Address_Details",
       },
     ],
-
+    
     where: {
       id,
     },

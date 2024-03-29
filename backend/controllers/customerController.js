@@ -1,6 +1,8 @@
 const { db } = require("../models/connection");
 const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const CustomError = require("../utils/customError");
+const { Op } = require("sequelize");
+const apiFeatures = require('../utils/apiFeatures');
 
 const Customer = db.Customer;
 const Address = db.Address;
@@ -19,9 +21,10 @@ exports.createCustomer = asyncErrorHandler(async (req, res, next) => {
     address_lane2,
     landmark,
     pincode,
-    state,
-    role,
+    state
   } = req.body;
+
+  const role = "customer";
 
   let customer = await Customer.findOne({ where: { email }, paranoid: false });
   let existWithDeletedAt = false;
@@ -155,7 +158,6 @@ exports.createCustomer = asyncErrorHandler(async (req, res, next) => {
 // ------------- GET ALL CUSTOMERS --------------
 
 exports.getAllCustomers = asyncErrorHandler(async (req, res, next) => {
-  // console.log(req.query);
   // FETCHING ALL THE CUSTOMER ID CORRESPONDING TO VENDOR ID
   let vendorCustomers = await VendorCustomer.findAll({
     where: {
@@ -168,15 +170,55 @@ exports.getAllCustomers = asyncErrorHandler(async (req, res, next) => {
     (vendorCustomer) => vendorCustomer.CustomerId
   );
 
+  // APPLYING FILTERS SORTING SEARCHING ETC. IN CUSTOMER 
+
+  const totalRows = await VendorCustomer.findAndCountAll();
+
+  let orderBy = null;
+  let limitFields = null;
+  let offset = null;
+  const limit = req.query.limit || 10 ;
+  let name = req.query.search || '%';
+
+  if (req.query.sort) {
+    orderBy = apiFeatures.sorting(req.query.sort);
+  }
+  if (req.query.fields) {
+    limitFields = apiFeatures.limitFields(req.query.fields);
+  }
+  if (req.query.page) {
+    offset = apiFeatures.paginate(req.query.page, limit, totalRows.count, next);
+  }
+  if (req.query.search) {
+    name = apiFeatures.search(name);
+  }
+
+  const attribute = limitFields ? limitFields : ["id", "firstName", "lastName", "email", "contact"];
+
   // FETCHING CUSTOMER DETAILS CORRESPONDING TO VENDOR
   vendorCustomers = await Customer.findAll(
       {
       where: {
         id: customerIds,
+        [Op.or]: [
+          {
+            firstName: {
+              [Op.iLike]: name
+            }
+          },
+          {
+            lastName: {
+              [Op.iLike]: name
+            }
+          },
+          {
+            email: {
+              [Op.iLike]: name
+            }
+          }
+        ]
       },
-      attributes: {
-        exclude: ["deletedAt"],
-      },
+      attributes: attribute,
       include: [
         {
           model: Address,
@@ -186,6 +228,9 @@ exports.getAllCustomers = asyncErrorHandler(async (req, res, next) => {
           },
         },
       ],
+      order: orderBy,
+      limit: limit,
+      offset: offset
     }
   );
 
