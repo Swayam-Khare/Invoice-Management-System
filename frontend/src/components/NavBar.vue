@@ -1,5 +1,5 @@
-<template>
-  <div class="d-flex align-center justify-space-between px-16 text-h6">
+<template class="bg-blue">
+  <div class="d-none d-md-flex align-center justify-space-between px-16 text-h6">
     <span class="mb-2"
       ><v-img
         class="elevation-7 rounded-circle"
@@ -16,13 +16,20 @@
       <span class="h-100 d-flex align-center"
         ><v-btn variant="text"> Home </v-btn> <v-btn variant="text"> Contact </v-btn>
         <v-btn variant="text"> About </v-btn></span
-      >
+      > 
       <span class="h-100 d-flex align-center"
         ><v-btn variant="text"> Login </v-btn>
-        <v-btn class="h-100 bg-blue-darken-4 rounded-lg"> Signup </v-btn></span
+        <v-btn color="#112D4E" class="h-100 rounded-lg"> Signup </v-btn></span
       >
     </div>
   </div>
+
+  <v-toolbar color="#ffffff00" elevation="7" class="d-md-none">
+    <img class="ml-8 mr-2" width="55px" height="55px" src="/src/assets/logo.svg"></img>
+    <v-toolbar-title>IMS</v-toolbar-title>
+    <v-spacer></v-spacer>
+      <v-btn icon><img width="30px" height="30px" src="/src/assets/menu.svg"></img></v-btn>
+  </v-toolbar>
 </template>
 
 <script>
