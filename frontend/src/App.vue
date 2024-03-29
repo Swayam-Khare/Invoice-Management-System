@@ -1,10 +1,17 @@
-<script>
-import { RouterLink, RouterView } from 'vue-router'
-</script>
-
 <template>
-  <div class="bg-red">hello
-    <v-btn class="text-purple">home</v-btn>  
+  <div>
+    <signUp />
   </div>
-
 </template>
+
+<script>
+// import { RouterLink, RouterView } from 'vue-router'
+// import signUp from './components/signUp.vue';
+
+export default {
+  name: 'App',
+  components: {
+    // signUp
+  }
+}
+</script>
