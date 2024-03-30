@@ -1,5 +1,4 @@
 <template>
-  <!-- <v-btn :class="styling" color="#112D4E" @click="dialog = true"> Sign Up </v-btn> -->
   <v-dialog v-model="dialog" :class="hide" max-width="500px" persistent>
     <v-card class="rounded-lg remove-scrollbar">
       <v-card-title
@@ -98,17 +97,6 @@
               Log In
             </v-btn>
           </div>
-          <!-- <div class="d-flex align-center">
-            <span class="">Already have an account ?</span>
-            <v-btn
-              variant="text"
-              color="indigo darken-1"
-              @click="dialog = false"
-              :ripple="false"
-              class="pl-1"
-              >Log In</v-btn
-            >
-          </div> -->
         </v-form>
       </v-card-text>
     </v-card>
@@ -119,7 +107,6 @@
 export default {
   data() {
     return {
-      x: false,
       hide: '',
       dialog: false, // TOGGLE THIS TO SHOW/HIDE SIGN UP DIALOG BOX
       firstName: '',
@@ -134,9 +121,6 @@ export default {
       alphabetOnlyRule: (v) => /^[A-Za-z\s]*$/.test(v) || 'Alphabets only.',
       emailRule: (v) => /.+@.+\..+/.test(v) || 'Invalid email address.'
     }
-  },
-  props: {
-    styling: String
   },
   emits: ['close', 'login'],
   computed: {

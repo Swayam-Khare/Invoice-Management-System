@@ -66,9 +66,6 @@ export default {
       passwordRules: [(v) => !!v || 'Password is required']
     }
   },
-  props: {
-    styling: String
-  },
   emits: ['close', 'signup'],
   methods: {
     login() {
