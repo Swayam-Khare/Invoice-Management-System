@@ -29,7 +29,8 @@
           color="#112D4E"
           variant="text"
           class="text-capitalize h-100"
-        >
+          @click="scrollToForm"
+           >
           Contact
         </v-btn>
 
@@ -114,6 +115,9 @@
       <v-list-item link>
         <Signup styling="text-capitalize w-100" />
       </v-list-item>
+      <v-list-item link>
+        <ContactUsForm styling="text-capitalize w-100" />
+      </v-list-item>
     </v-navigation-drawer>
   </v-app>
 </template>
@@ -122,6 +126,7 @@
 import { ref } from 'vue'
 import Signup from './signUp.vue'
 import Login from './LoginComponent.vue'
+import ContactUsForm from './ContactUsForm.vue';
 // const selected = ref('home')
 const drawer = ref(false)
 const showLoginDialog = ref(false)

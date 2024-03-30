@@ -21,12 +21,14 @@
       </div>
     </div>
   </div>
+  <ContactUsForm />
 </template>
 
 <script setup>
 import NavBar from '../components/NavBar.vue'
 import Signup from '../components/signUp.vue'
 import Login from '@/components/LoginComponent.vue'
+import ContactUsForm from '@/components/ContactUsForm.vue'
 import { ref } from 'vue'
 
 const dialog = ref(false)
