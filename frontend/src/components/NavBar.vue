@@ -38,15 +38,15 @@
     <v-navigation-drawer location="end" color="#112D4E" temporary v-model="drawer" :width="255">
       <v-list-item title="Invoice Management System" subtitle="IMS"></v-list-item>
       <v-divider></v-divider>
-      <v-list-item link title="Home" class="text-center"></v-list-item>
-      <v-list-item link title="Contact" class="text-center"></v-list-item>
-      <v-list-item link title="About" class="text-center"></v-list-item>
+      <v-list-item link prepend-icon="mdi-home-outline" title="Home"></v-list-item>
+      <v-list-item link prepend-icon="mdi-account-box-outline" title="Contact"></v-list-item>
+      <v-list-item link prepend-icon="mdi-information-outline" title="About"></v-list-item>
       <v-divider></v-divider>
       <v-list-item link>
         <Login styling="text-capitalize w-100" />
       </v-list-item>
       <v-list-item link>
-        <signUp styling="text-capitalize w-100" />
+        <signUp styling="text-capitalize bg-white w-100" />
       </v-list-item>
     </v-navigation-drawer>
   </v-app>
