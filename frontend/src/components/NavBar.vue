@@ -14,13 +14,79 @@
       class="bg-white rounded-lg elevation-7 d-flex align-center justify-space-between"
     >
       <span class="h-100 d-flex align-center">
-        <v-btn variant="text" class="text-capitalize"> Home </v-btn>
-        <v-btn variant="text" class="text-capitalize"> Contact </v-btn>
-        <v-btn variant="text" class="text-capitalize"> About </v-btn></span
-      >
+        <v-btn
+          id="home"
+          color="#112D4E"
+          :ripple="false"
+          variant="text"
+          class="text-capitalize h-100"
+        >
+          Home
+        </v-btn>
+        <v-btn
+          id="contact"
+          :ripple="false"
+          color="#112D4E"
+          variant="text"
+          class="text-capitalize h-100"
+        >
+          Contact
+        </v-btn>
+
+        <!-- menu for about page -->
+        <v-menu :open-on-hover="true" offset="4">
+          <template v-slot:activator="{ props }">
+            <v-btn
+              id="about"
+              :ripple="false"
+              color="#112D4E"
+              prepend-icon="expand_more"
+              v-bind="props"
+              variant="text"
+              class="text-capitalize h-100"
+            >
+              About
+            </v-btn>
+          </template>
+
+          <!-- list item to show in menu -->
+          <v-list>
+            <v-list-item
+              id="teamItem"
+              :active="itemVariant == 'team'"
+              color="#112D4E"
+              :variant="itemVariant == 'team' ? 'flat' : 'text'"
+              :onmouseenter="activeHover"
+              :onmouseleave="cancelHover"
+              title="Team"
+              router
+              to="/#team"
+            >
+            </v-list-item>
+            <v-list-item
+              id="productItem"
+              :active="itemVariant == 'product'"
+              color="#112D4E"
+              :variant="itemVariant == 'product' ? 'flat' : 'text'"
+              :onmouseenter="activeHover"
+              :onmouseleave="cancelHover"
+              title="Product"
+              router
+              to="/#product"
+            ></v-list-item>
+          </v-list>
+        </v-menu>
+      </span>
       <span class="h-100 d-flex align-center">
-        <Login styling="text-capitalize" />
-        <signUp styling="h-100 rounded-lg text-capitalize" />
+        <v-btn class="text-capitalize" variant="text" @click="showLoginDialog = true">
+          Login
+        </v-btn>
+        <Login v-model="showLoginDialog" @close="showLoginDialog = false" @signup="dialog = true" />
+
+        <v-btn class="h-100 rounded-lg text-capitalize" color="#112D4E" @click="dialog = true">
+          Sign Up
+        </v-btn>
+        <Signup v-model="dialog" @close="dialog = false" @login="showLoginDialog = true" />
       </span>
     </div>
   </div>
@@ -38,15 +104,15 @@
     <v-navigation-drawer location="end" color="#112D4E" temporary v-model="drawer" :width="255">
       <v-list-item title="Invoice Management System" subtitle="IMS"></v-list-item>
       <v-divider></v-divider>
-      <v-list-item link title="Home" class="text-center"></v-list-item>
-      <v-list-item link title="Contact" class="text-center"></v-list-item>
-      <v-list-item link title="About" class="text-center"></v-list-item>
+      <v-list-item link prepend-icon="mdi-home-outline" title="Home"></v-list-item>
+      <v-list-item link prepend-icon="mdi-account-box-outline" title="Contact"></v-list-item>
+      <v-list-item link prepend-icon="mdi-information-outline" title="About"></v-list-item>
       <v-divider></v-divider>
       <v-list-item link>
         <Login styling="text-capitalize w-100" />
       </v-list-item>
       <v-list-item link>
-        <signUp styling="text-capitalize w-100" />
+        <Signup styling="text-capitalize w-100" />
       </v-list-item>
     </v-navigation-drawer>
   </v-app>
@@ -54,10 +120,29 @@
 
 <script setup>
 import { ref } from 'vue'
-import signUp from './signUp.vue'
+import Signup from './signUp.vue'
 import Login from './LoginComponent.vue'
-
+// const selected = ref('home')
 const drawer = ref(false)
+const showLoginDialog = ref(false)
+const dialog = ref(false)
+const itemVariant = ref('none')
+
+// const changeSelection = (event) => {
+//  selected.value = event.currentTarget.id
+// }
+
+const activeHover = (event) => {
+  if (event.currentTarget.id == 'teamItem') {
+    itemVariant.value = 'team'
+  } else if (event.currentTarget.id == 'productItem') {
+    itemVariant.value = 'product'
+  }
+}
+
+const cancelHover = (event) => {
+  itemVariant.value = 'none'
+}
 </script>
 
 <style scoped></style>
