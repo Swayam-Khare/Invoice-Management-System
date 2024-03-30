@@ -18,8 +18,7 @@
           id="home"
           color="#112D4E"
           :ripple="false"
-          :variant="selected == 'home' ? 'flat' : 'text'"
-          @click.stop="changeSelection"
+          variant="text"
           class="text-capitalize h-100"
         >
           Home
@@ -28,23 +27,56 @@
           id="contact"
           :ripple="false"
           color="#112D4E"
-          :variant="selected == 'contact' ? 'flat' : 'text'"
-          @click.stop="changeSelection"
+          variant="text"
           class="text-capitalize h-100"
         >
           Contact
         </v-btn>
-        <v-btn
-          id="about"
-          :ripple="false"
-          color="#112D4E"
-          :variant="selected == 'about' ? 'flat' : 'text'"
-          @click.stop="changeSelection"
-          class="text-capitalize h-100"
-        >
-          About
-        </v-btn></span
-      >
+
+        <!-- menu for about page -->
+        <v-menu :open-on-hover="true" offset="4">
+          <template v-slot:activator="{ props }">
+            <v-btn
+              id="about"
+              :ripple="false"
+              color="#112D4E"
+              prepend-icon="mdi-chevron-down"
+              v-bind="props"
+              variant="text"
+              class="text-capitalize h-100"
+            >
+              About
+            </v-btn>
+          </template>
+
+          <!-- list item to show in menu -->
+          <v-list>
+            <v-list-item
+              id="teamItem"
+              :active="itemVariant == 'team'"
+              color="#112D4E"
+              :variant="itemVariant == 'team' ? 'flat' : 'text'"
+              :onmouseenter="activeHover"
+              :onmouseleave="cancelHover"
+              title="Team"
+              router
+              to="/#team"
+            >
+            </v-list-item>
+            <v-list-item
+              id="productItem"
+              :active="itemVariant == 'product'"
+              color="#112D4E"
+              :variant="itemVariant == 'product' ? 'flat' : 'text'"
+              :onmouseenter="activeHover"
+              :onmouseleave="cancelHover"
+              title="Product"
+              router
+              to="/#product"
+            ></v-list-item>
+          </v-list>
+        </v-menu>
+      </span>
       <span class="h-100 d-flex align-center">
         <Login styling="text-capitalize h-100" />
         <signUp styling="h-100 rounded-lg text-capitalize" />
@@ -83,11 +115,24 @@
 import { ref } from 'vue'
 import signUp from './signUp.vue'
 import Login from './LoginComponent.vue'
-const selected = ref('home')
+// const selected = ref('home')
 const drawer = ref(false)
+const itemVariant = ref('none')
 
-const changeSelection = (event) => {
-  selected.value = event.currentTarget.id
+// const changeSelection = (event) => {
+//  selected.value = event.currentTarget.id
+// }
+
+const activeHover = (event) => {
+  if (event.currentTarget.id == 'teamItem') {
+    itemVariant.value = 'team'
+  } else if (event.currentTarget.id == 'productItem') {
+    itemVariant.value = 'product'
+  }
+}
+
+const cancelHover = (event) => {
+  itemVariant.value = 'none'
 }
 </script>
 
