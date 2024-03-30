@@ -78,8 +78,15 @@
         </v-menu>
       </span>
       <span class="h-100 d-flex align-center">
-        <Login styling="text-capitalize h-100" />
-        <signUp styling="h-100 rounded-lg text-capitalize" />
+        <v-btn class="text-capitalize" variant="text" @click="showLoginDialog = true">
+          Login
+        </v-btn>
+        <Login v-model="showLoginDialog" @close="showLoginDialog = false" @signup="dialog = true" />
+
+        <v-btn class="h-100 rounded-lg text-capitalize" color="#112D4E" @click="dialog = true">
+          Sign Up
+        </v-btn>
+        <Signup v-model="dialog" @close="dialog = false" @login="showLoginDialog = true" />
       </span>
     </div>
   </div>
@@ -105,7 +112,7 @@
         <Login styling="text-capitalize w-100" />
       </v-list-item>
       <v-list-item link>
-        <signUp styling="text-capitalize bg-white w-100" />
+        <Signup styling="text-capitalize w-100" />
       </v-list-item>
     </v-navigation-drawer>
   </v-app>
@@ -113,10 +120,12 @@
 
 <script setup>
 import { ref } from 'vue'
-import signUp from './signUp.vue'
+import Signup from './signUp.vue'
 import Login from './LoginComponent.vue'
 // const selected = ref('home')
 const drawer = ref(false)
+const showLoginDialog = ref(false)
+const dialog = ref(false)
 const itemVariant = ref('none')
 
 // const changeSelection = (event) => {
