@@ -40,7 +40,7 @@
               id="about"
               :ripple="false"
               color="#112D4E"
-              prepend-icon="mdi-chevron-down"
+              prepend-icon="expand_more"
               v-bind="props"
               variant="text"
               class="text-capitalize h-100"
