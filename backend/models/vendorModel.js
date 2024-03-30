@@ -240,7 +240,8 @@ module.exports = (connectDB, DataTypes) => {
         this.passwordChangedAt.getTime() / 1000,
         10
       );
-      return JWTTimestamp < passwordChangedTimestamp;
+      const result =  JWTTimestamp < passwordChangedTimestamp;
+      return result;
     }
     return false;
   };

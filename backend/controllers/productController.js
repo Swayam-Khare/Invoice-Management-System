@@ -152,7 +152,9 @@ exports.readProducts = asyncErrorHandler(async (req, res, next) => {
     }
     // FIRST FETCHING ALL THE PRODUCT ID CORRESPONDING TO VENDOR ID
     const vendorProducts = await VendorProduct.findAll({
-        where: whereCondition,
+        where: {
+            VendorId: req.vendor.id,
+        },
         attributes: {
             exclude: [
                 "VendorId"
@@ -160,8 +162,15 @@ exports.readProducts = asyncErrorHandler(async (req, res, next) => {
         },
     });
 
+    if (!vendorProducts.length) {
+        return res.status(404).json({
+            status: 'fail',
+            message: 'No products found for this vendor with the specified filters.',
+        });
+    }
+
     // EXTRACTING PRODUCT ID FROM VENDORPRODUCTS AND SAVING IT INTO AN ARRAY
-    const productIds = vendorProducts.map((vendorProduct) => vendorProduct.ProductId);
+    const productIds = vendorProducts.map((vp) => vp.ProductId);
 
     // FETCHING PRODUCT DETAILS CORRESPONDING TO VENDOR
     const products = await Product.findAll({
@@ -198,6 +207,7 @@ exports.readProducts = asyncErrorHandler(async (req, res, next) => {
     });
 
 });
+
 
 // READ PRODUCT BY ID
 exports.readProductById = asyncErrorHandler(async (req, res, next) => {

@@ -105,7 +105,7 @@ exports.approveVendor = asyncErrorHandler(async (req, res, next) => {
     })
 
     if(rows){
-      const message = `Hello ${vendor.name}! , Your request for using our application has been approved. You can login with the following credentials \n\n\n\n Email : ${vendor.email} \n Password : ${password} `
+      const message = `Hello ${vendor.firstName}! , Your request for using our application has been approved. You can login with the following credentials \n\n\n\n Email : ${vendor.email} \n Password : ${password} `
 
       try {
         await sendEmail({

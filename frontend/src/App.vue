@@ -1,10 +1,10 @@
-<script>
-import { RouterLink, RouterView } from 'vue-router'
+<template>
+  <Home />
+</template>
+
+<script setup>
+// import { RouterLink, RouterView } from 'vue-router'
+import Home from './views/Home.vue'
 </script>
 
-<template>
-  <div class="bg-red">hello
-    <v-btn class="text-purple">home</v-btn>  
-  </div>
-
-</template>
+<style></style>
