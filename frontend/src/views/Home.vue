@@ -16,12 +16,14 @@
         <img src="../assets/home.svg" alt="" class="mt-13 img" srcset="" />
       </div>
     </div>
+    <ContactUs />
   </div>
 </template>
 
 <script setup>
 import NavBar from '../components/NavBar.vue'
 import Signup from '../components/signUp.vue'
+import ContactUs from '../components/ContactUs.vue'
 // import { ref } from 'vue';
 
 // const displaySignup = ref(false);
