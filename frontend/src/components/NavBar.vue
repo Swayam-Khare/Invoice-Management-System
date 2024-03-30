@@ -14,12 +14,39 @@
       class="bg-white rounded-lg elevation-7 d-flex align-center justify-space-between"
     >
       <span class="h-100 d-flex align-center">
-        <v-btn variant="text" class="text-capitalize"> Home </v-btn>
-        <v-btn variant="text" class="text-capitalize"> Contact </v-btn>
-        <v-btn variant="text" class="text-capitalize"> About </v-btn></span
+        <v-btn
+          id="home"
+          color="#112D4E"
+          :ripple="false"
+          :variant="selected == 'home' ? 'flat' : 'text'"
+          @click.stop="changeSelection"
+          class="text-capitalize h-100"
+        >
+          Home
+        </v-btn>
+        <v-btn
+          id="contact"
+          :ripple="false"
+          color="#112D4E"
+          :variant="selected == 'contact' ? 'flat' : 'text'"
+          @click.stop="changeSelection"
+          class="text-capitalize h-100"
+        >
+          Contact
+        </v-btn>
+        <v-btn
+          id="about"
+          :ripple="false"
+          color="#112D4E"
+          :variant="selected == 'about' ? 'flat' : 'text'"
+          @click.stop="changeSelection"
+          class="text-capitalize h-100"
+        >
+          About
+        </v-btn></span
       >
       <span class="h-100 d-flex align-center">
-        <Login styling="text-capitalize" />
+        <Login styling="text-capitalize h-100" />
         <signUp styling="h-100 rounded-lg text-capitalize" />
       </span>
     </div>
@@ -56,8 +83,12 @@
 import { ref } from 'vue'
 import signUp from './signUp.vue'
 import Login from './LoginComponent.vue'
-
+const selected = ref('home')
 const drawer = ref(false)
+
+const changeSelection = (event) => {
+  selected.value = event.currentTarget.id
+}
 </script>
 
 <style scoped></style>
