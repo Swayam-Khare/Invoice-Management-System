@@ -14,13 +14,20 @@
       class="bg-white rounded-lg elevation-7 d-flex align-center justify-space-between"
     >
       <span class="h-100 d-flex align-center">
-        <v-btn variant="text" class="text-capitalize"> Home </v-btn>
-        <v-btn variant="text" class="text-capitalize"> Contact </v-btn>
-        <v-btn variant="text" class="text-capitalize"> About </v-btn></span
-      >
+        <v-btn variant="text" class="text-capitalize" href="#home"> Home </v-btn>
+        <v-btn variant="text" class="text-capitalize" href="#contact"> Contact </v-btn>
+        <v-btn variant="text" class="text-capitalize"> About </v-btn>
+      </span>
       <span class="h-100 d-flex align-center">
-        <Login styling="text-capitalize" />
-        <signUp styling="h-100 rounded-lg text-capitalize" />
+        <v-btn class="text-capitalize" variant="text" @click="showLoginDialog = true">
+          Login
+        </v-btn>
+        <Login v-model="showLoginDialog" @close="showLoginDialog = false" @signup="dialog = true" />
+
+        <v-btn class="h-100 rounded-lg text-capitalize" color="#112D4E" @click="dialog = true">
+          Sign Up
+        </v-btn>
+        <Signup v-model="dialog" @close="dialog = false" @login="showLoginDialog = true" />
       </span>
     </div>
   </div>
@@ -46,7 +53,7 @@
         <Login styling="text-capitalize w-100" />
       </v-list-item>
       <v-list-item link>
-        <signUp styling="text-capitalize w-100" />
+        <Signup styling="text-capitalize w-100" />
       </v-list-item>
     </v-navigation-drawer>
   </v-app>
@@ -54,10 +61,12 @@
 
 <script setup>
 import { ref } from 'vue'
-import signUp from './signUp.vue'
+import Signup from './signUp.vue'
 import Login from './LoginComponent.vue'
 
 const drawer = ref(false)
+const showLoginDialog = ref(false)
+const dialog = ref(false)
 </script>
 
 <style scoped></style>
