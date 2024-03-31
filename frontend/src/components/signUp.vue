@@ -107,7 +107,6 @@
 export default {
   data() {
     return {
-      hide: '',
       firstName: '',
       lastName: '',
       email: '',
