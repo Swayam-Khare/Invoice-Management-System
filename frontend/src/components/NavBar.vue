@@ -115,9 +115,6 @@
       </v-list-item>
     </v-navigation-drawer>
   </v-app>
-  <div v-if="showSignup">
-    <signUp />
-  </div>
 </template>
 
 <script setup>
