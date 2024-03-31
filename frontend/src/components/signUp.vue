@@ -108,7 +108,6 @@ export default {
   data() {
     return {
       hide: '',
-      // dialog: false, // TOGGLE THIS TO SHOW/HIDE SIGN UP DIALOG BOX
       firstName: '',
       lastName: '',
       email: '',

@@ -55,7 +55,6 @@
 export default {
   data() {
     return {
-      // showLoginDialog: false,
       isFocused: false,
       email: '',
       password: '',
