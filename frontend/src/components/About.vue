@@ -32,20 +32,29 @@
       </v-col>
     </v-row>
 
+    <v-spacer></v-spacer>
+
     <!-- Team Section -->
-    <v-row>
-      <v-col v-for="member in teamMembers" :key="member.id" cols="12" sm="6" md="4">
-        <v-card>
-          <v-avatar size="100" class="mx-auto mt-4">
-            <v-img :src="member.photo" alt="Profile Photo"></v-img>
-          </v-avatar>
-          <v-card-text class="text-center">
-            <h3 class="text-h6 font-weight-bold">{{ member.name }}</h3>
-            <p class="text-body-1">{{ member.role }}</p>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+    <div class="my-12 mx-16">
+      <v-row>
+        <v-col v-for="member in teamMembers" :key="member.id" cols="12" sm="6" md="4">
+          <v-card color="justify-center align-center d-flex " flat>
+            <v-avatar size="100" class="mx-2 my-2">
+              <v-img :src="member.photo" alt="Profile Photo"></v-img>
+            </v-avatar>
+            <v-card-text class="text-start">
+              <h3 class="text-h6 font-weight-bold" style="color: #112d4e">{{ member.name }}</h3>
+              <p class="text-body-1">{{ member.role }}</p>
+            </v-card-text>
+          </v-card>
+          <v-card-social>
+            <v-card-text class="text-start">
+              <h3 class="text-h6 font-weight-bold" style="color: #112d4e">{{ member.name }}</h3>
+            </v-card-text>
+          </v-card-social>
+        </v-col>
+      </v-row>
+    </div>
   </v-container>
 </template>
 
@@ -62,7 +71,7 @@ const teamMembers = ref([
     id: 1,
     name: 'John Doe',
     role: 'CEO',
-    photo: 'https://via.placeholder.com/100x100?text=JD'
+    photo: 'https://via.placeholder.com/100x100?text=JS'
   },
   {
     id: 2,
