@@ -1,9 +1,12 @@
 <template>
-  <v-btn :class="styling" color="#112D4E" @click="dialog = true"> Sign Up </v-btn>
-  <v-dialog v-model="dialog" max-width="500px">
+  <v-dialog v-model="dialog" :class="hide" max-width="500px" persistent>
     <v-card class="rounded-lg remove-scrollbar">
-      <v-card-title class="mt-3 ml-4">
-        <h2 style="color: #112d4e">Sign Up</h2>
+      <v-card-title
+        class="d-flex justify-space-between align-center"
+        style="background-color: #112d4ef1"
+      >
+        <p style="color: #f5f5f5" class="text-h5 pl-5">Sign Up</p>
+        <v-btn icon="close" variant="text" color="#f5f5f5" @click="$emit('close')"></v-btn>
       </v-card-title>
       <v-card-text>
         <v-form class="px-3" ref="form" @submit.prevent="submitForm">
@@ -87,23 +90,13 @@
             <v-btn
               variant="text"
               color="#112d4e"
-              @click="dialog = false"
+              @click="$emit('close'), $emit('login')"
               :ripple="false"
-              class="pl-1 pr-0 font-weight-bold"
-              >Log In</v-btn
+              class="pl-1 pr-0 font-weight-bold text-capitalize"
             >
+              Log In
+            </v-btn>
           </div>
-          <!-- <div class="d-flex align-center">
-            <span class="">Already have an account ?</span>
-            <v-btn
-              variant="text"
-              color="indigo darken-1"
-              @click="dialog = false"
-              :ripple="false"
-              class="pl-1"
-              >Log In</v-btn
-            >
-          </div> -->
         </v-form>
       </v-card-text>
     </v-card>
@@ -114,6 +107,7 @@
 export default {
   data() {
     return {
+      hide: '',
       dialog: false, // TOGGLE THIS TO SHOW/HIDE SIGN UP DIALOG BOX
       firstName: '',
       lastName: '',
@@ -128,9 +122,7 @@ export default {
       emailRule: (v) => /.+@.+\..+/.test(v) || 'Invalid email address.'
     }
   },
-  props: {
-    styling: String
-  },
+  emits: ['close', 'login'],
   computed: {
     pincodeRules() {
       return [
