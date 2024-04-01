@@ -52,7 +52,7 @@
     <!-- Team Section -->
     <hr class="mx-auto my-12" style="border: none; border-top: 7px dotted #112d4eaa; width: 15%" />
     <div id="team">
-      <p class="text-h4 text-center font-weight-bold mb-5">Our Team</p>
+      <p class="text-h4 text-center font-weight-bold mb-5 text-grey-darken-3">Our Team</p>
       <v-row class="ma-0 ma-xs-6 mx-md-16 my-md-11">
         <v-col v-for="member in teamMembers" :key="member.id" cols="12" sm="6" md="4">
           <v-card color="justify-center align-center d-flex " flat>
