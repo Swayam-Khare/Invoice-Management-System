@@ -20,9 +20,9 @@
         <img src="../assets/home.svg" alt="" class="mt-13 img" srcset="" />
       </div>
     </div>
-    <ContactUs />
   </div>
   <About />
+  <ContactUs />
 </template>
 
 <script setup>
