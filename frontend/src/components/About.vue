@@ -1,8 +1,8 @@
 <template>
-  <v-container class="about-container ma-0 w-100">
+  <div id="product">
     <!-- Header Section -->
-    <v-row class="w-100">
-      <v-col cols="5">
+    <v-row class="mx-1 mx-md-10">
+      <v-col cols="12" md="5" class="w-100">
         <img src="../assets/imgs/Social-icon/fb.svg" alt="Illustration" class="img" />
       </v-col>
 
@@ -20,9 +20,12 @@
             on their core operations.
           </p>
         </v-col>
-
+      </v-col>
+    </v-row>
+    <v-row class="mx-1 mx-md-10">
+      <v-col>
         <v-col>
-          <h3>Our Vision for the Future</h3>
+          <p class="text-h4 mb-2">Our Vision for the Future</p>
 
           <p class="text-h6 text-justify text-grey-darken-2">
             Looking ahead, we are committed to continuously improving our platform and expanding our
@@ -31,7 +34,7 @@
           </p>
         </v-col>
         <v-col>
-          <h3>Get Started Today</h3>
+          <p class="text-h4 mb-2">Get Started Today</p>
           <p class="text-h6 text-justify text-grey-darken-2">
             Ready to experience the future of invoice management? Explore our website to learn more
             about our platform's features, or contact us directly for personalized assistance.
@@ -39,17 +42,18 @@
           <br />
           <br />
           <p class="text-h6 text-justify text-grey-darken-2">
-            IMS is owned by Argusoft India and ran by this global, awesome team 👇
+            IMS is owned by Argusoft India and build by our awesome team 👇
           </p>
         </v-col>
       </v-col>
     </v-row>
 
     <v-spacer></v-spacer>
-
     <!-- Team Section -->
-    <div class="my-12 mx-16">
-      <v-row>
+    <hr class="mx-auto my-12" style="border: none; border-top: 7px dotted #112d4eaa; width: 15%" />
+    <div id="team">
+      <p class="text-h4 text-center font-weight-bold mb-5">Our Team</p>
+      <v-row class="w-100 ma-0 ma-xs-6 mx-md-16 my-md-11">
         <v-col v-for="member in teamMembers" :key="member.id" cols="12" sm="6" md="4">
           <v-card color="justify-center align-center d-flex " flat>
             <div class="user-container">
@@ -60,35 +64,33 @@
               <p class="text-body-1">{{ member.role }}</p>
             </v-card-text>
           </v-card>
-          <v-card-social>
-            <div class="social-icon">
-              <!-- <a :href="member.instagram" target="_blank" flat>
+          <div class="social-icon">
+            <!-- <a :href="member.instagram" target="_blank" flat>
                 <img
                   class="social-icon-img"
                   src="../assets/imgs/Social-icon/icons8-instagram.svg"
                   alt="Profile Photo"
                 />
               </a> -->
-              <a :href="member.linkedin" target="_blank" flat>
-                <img
-                  class="social-icon-img"
-                  src="../assets/imgs/Social-icon/icons8-linkedin.svg"
-                  alt="Profile Photo"
-                />
-              </a>
-              <a :href="member.github" target="_blank" flat>
-                <img
-                  class="social-icon-img"
-                  src="../assets/imgs/Social-icon/icons8-github.svg"
-                  alt="Profile Photo"
-                />
-              </a>
-            </div>
-          </v-card-social>
+            <a :href="member.linkedin" target="_blank" flat>
+              <img
+                class="social-icon-img"
+                src="../assets/imgs/Social-icon/icons8-linkedin.svg"
+                alt="Profile Photo"
+              />
+            </a>
+            <a :href="member.github" target="_blank" flat>
+              <img
+                class="social-icon-img"
+                src="../assets/imgs/Social-icon/icons8-github.svg"
+                alt="Profile Photo"
+              />
+            </a>
+          </div>
         </v-col>
       </v-row>
     </div>
-  </v-container>
+  </div>
 </template>
 
 <script setup>
@@ -225,20 +227,16 @@ const teamMembers = ref([
 }
 
 .social-icon-img {
-  border: 1px solid white;
-
   height: 36px;
   width: 36px;
-
   filter: grayscale(60%);
   transition: all 0.3s ease;
 }
 
 .social-icon-img:hover {
   filter: none;
-  box-shadow: 0 0 0 4px white;
   scale: 1.1;
-  border: 0;
+  border: none;
 }
 .social-icon {
   margin-left: 25px;
@@ -248,5 +246,9 @@ const teamMembers = ref([
   justify-content: center;
   align-items: center;
   gap: 4px;
+}
+
+p {
+  font-family: 'Inter', sans-serif;
 }
 </style>
