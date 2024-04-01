@@ -1,12 +1,12 @@
 <template>
-  <v-dialog  max-width="500px" persistent>
+  <v-dialog max-width="500px" persistent>
     <v-card class="rounded-lg remove-scrollbar">
       <v-card-title
         class="d-flex justify-space-between align-center"
         style="background-color: #112d4ef1"
       >
         <p style="color: #f5f5f5" class="text-h5 pl-5">Sign Up</p>
-        <v-btn icon="close" variant="text" color="#f5f5f5" @click="$emit('close')"></v-btn>
+        <v-btn icon="close" variant="text" color="#f5f5f5" @click="closeDialog"></v-btn>
       </v-card-title>
       <v-card-text>
         <v-form class="px-3" ref="form" @submit.prevent="submitForm">
@@ -18,6 +18,8 @@
                 :rules="[alphabetOnlyRule]"
                 variant="outlined"
                 color="#112d4e"
+                class="custom-text-field-centered-label"
+                density="compact"
               ></v-text-field>
             </v-col>
             <v-col cols="12" md="6" class="pt-1 pt-md-3">
@@ -27,6 +29,8 @@
                 :rules="[alphabetOnlyRule]"
                 variant="outlined"
                 color="#112d4e"
+                class="custom-text-field-centered-label"
+                density="compact"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -36,7 +40,8 @@
             v-model="email"
             variant="outlined"
             color="#112d4e"
-            class="mt-1"
+            class="mt-1 custom-text-field-centered-label"
+            density="compact"
           ></v-text-field>
           <v-text-field
             label="Contact No."
@@ -44,26 +49,32 @@
             v-model="contactNo"
             variant="outlined"
             color="#112d4e"
-            class="mt-1"
+            class="mt-1 custom-text-field-centered-label"
+            density="compact"
           ></v-text-field>
           <v-text-field
             label="Shop Name"
             v-model="shopName"
             variant="outlined"
             color="#112d4e"
-            class="mt-1"
+            class="mt-1 custom-text-field-centered-label"
+            density="compact"
           ></v-text-field>
           <v-text-field
             label="Address Line 1"
             v-model="addressLine1"
             variant="outlined"
             color="#112d4e"
+            class="custom-text-field-centered-label"
+            density="compact"
           ></v-text-field>
           <v-text-field
             label="Address Line 2"
             v-model="addressLine2"
             variant="outlined"
             color="#112d4e"
+            class="custom-text-field-centered-label"
+            density="compact"
           ></v-text-field>
           <v-row>
             <v-col cols="12" md="6" class="pb-0 pb-md-3">
@@ -73,6 +84,8 @@
                 :rules="pincodeRules"
                 variant="outlined"
                 color="#112d4e"
+                class="custom-text-field-centered-label mb-1"
+                density="compact"
               ></v-text-field>
             </v-col>
             <v-col cols="12" md="6" class="pt-1 pt-md-3">
@@ -81,10 +94,12 @@
                 v-model="state"
                 variant="outlined"
                 color="#112d4e"
+                class="custom-text-field-centered-label"
+                density="compact"
               ></v-text-field>
             </v-col>
           </v-row>
-          <v-btn class="mt-1 txt-button" color="#112d4e" @click="validate" block>Sign Up</v-btn>
+          <v-btn class="mt-2 txt-button" color="#112d4e" @click="validate" block>Sign Up</v-btn>
           <div class="d-flex justify-center align-center text-center">
             <span>Already have an account?</span>
             <v-btn
@@ -103,68 +118,76 @@
   </v-dialog>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      firstName: '',
-      lastName: '',
-      email: '',
-      contactNo: '',
-      shopName: '',
-      addressLine1: '',
-      addressLine2: '',
-      pincode: '',
-      state: '',
-      alphabetOnlyRule: (v) => /^[A-Za-z\s]*$/.test(v) || 'Alphabets only.',
-      emailRule: (v) => /.+@.+\..+/.test(v) || 'Invalid email address.'
-    }
-  },
-  emits: ['close', 'login'],
-  computed: {
-    pincodeRules() {
-      return [
-        (v) => !!v || 'Pincode is required.',
-        (v) => (v && /^\d+$/.test(v)) || 'Pincode must contain only digits.',
-        (v) => (v && /^\d{6}$/.test(v)) || 'Pincode must be exactly 6 digits.'
-      ]
-    },
-    contactNoRules() {
-      return [
-        (v) => !!v || 'Contact number is required.',
-        (v) => (v && /^\d+$/.test(v)) || 'Contact number must contain only digits.',
-        (v) => (v && v.length >= 10) || 'Contact number must be at least 10 digits.'
-      ]
-    }
-  },
-  methods: {
-    submitForm() {
-      if (this.$refs.form.validate()) {
-        // Process the signup form data here
-        console.log('Form submitted!')
-        // Reset form fields
-        this.resetForm()
-      }
-    },
-    validate() {
-      this.$refs.form.validate()
-    },
-    resetForm() {
-      this.firstName = ''
-      this.lastName = ''
-      this.email = ''
-      this.shopName = ''
-      this.addressLine1 = ''
-      this.addressLine2 = ''
-      this.pincode = ''
-      this.state = ''
-    }
+<script setup>
+import { ref, computed } from 'vue'
+
+const emit = defineEmits(['close', 'login'])
+
+const firstName = ref('')
+const lastName = ref('')
+const email = ref('')
+const contactNo = ref('')
+const shopName = ref('')
+const addressLine1 = ref('')
+const addressLine2 = ref('')
+const pincode = ref('')
+const state = ref('')
+const alphabetOnlyRule = (v) => /^[A-Za-z\s]*$/.test(v) || 'Alphabets only.'
+const emailRule = (v) => /.+@.+\..+/.test(v) || 'Invalid email address.'
+
+const pincodeRules = computed(() => [
+  (v) => !!v || 'Pincode is required.',
+  (v) => (v && /^\d+$/.test(v)) || 'Pincode must contain only digits.',
+  (v) => (v && /^\d{6}$/.test(v)) || 'Pincode must be exactly 6 digits.'
+])
+
+const contactNoRules = computed(() => [
+  (v) => !!v || 'Contact number is required.',
+  (v) => (v && /^\d+$/.test(v)) || 'Contact number must contain only digits.',
+  (v) => (v && v.length >= 10) || 'Contact number must be at least 10 digits.'
+])
+
+const form = ref(null) // If you need a ref to the form for validation
+
+function submitForm() {
+  if (form.value.validate()) {
+    console.log('Form submitted!')
+    resetForm()
   }
+}
+
+function validate() {
+  form.value.validate()
+}
+
+function resetForm() {
+  firstName.value = ''
+  lastName.value = ''
+  email.value = ''
+  contactNo.value = ''
+  shopName.value = ''
+  addressLine1.value = ''
+  addressLine2.value = ''
+  pincode.value = ''
+  state.value = ''
+}
+
+function closeDialog() {
+  emit('close')
 }
 </script>
 
 <style>
 .remove-scrollbar::-webkit-scrollbar {
   display: none;
+}
+.custom-text-field-centered-label .v-input__control {
+  height: 45px;
+}
+.v-messages__message {
+  white-space: nowrap;
+}
+.v-input__details {
+  padding-left: 0;
 }
 </style>
