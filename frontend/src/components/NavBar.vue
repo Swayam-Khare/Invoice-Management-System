@@ -40,7 +40,7 @@
               id="about"
               :ripple="false"
               color="#112D4E"
-              prepend-icon="expand_more"
+              append-icon="expand_more"
               v-bind="props"
               variant="text"
               class="text-capitalize h-100"
@@ -50,7 +50,7 @@
           </template>
 
           <!-- list item to show in menu -->
-          <v-list>
+          <v-list class="pa-0">
             <v-list-item
               id="teamItem"
               :active="itemVariant == 'team'"
@@ -60,7 +60,8 @@
               :onmouseleave="cancelHover"
               title="Team"
               router
-              to="/#team"
+              @click="scroll('team')"
+              class="text-left"
             >
             </v-list-item>
             <v-list-item
@@ -72,7 +73,8 @@
               :onmouseleave="cancelHover"
               title="Product"
               router
-              to="/#product"
+              @click="scroll('product')"
+              class="text-left"
             ></v-list-item>
           </v-list>
         </v-menu>
@@ -91,7 +93,7 @@
     </div>
   </div>
 
-  <v-app class="d-md-none h-screen position-fixed w-100 bg-transparent">
+  <v-app class="d-md-none h-screen position-absolute w-100 bg-transparent">
     <v-toolbar color="#ffffff" elevation="7" class="d-md-none">
       <img class="ml-8 mr-2" width="55px" height="55px" src="/src/assets/logo.svg" />
       <v-toolbar-title>IMS</v-toolbar-title>
@@ -115,21 +117,55 @@
       </v-list-item>
     </v-navigation-drawer>
   </v-app>
+
+  <v-slide-y-reverse-transition>
+    <v-btn
+      v-show="showScrollButton"
+      icon="arrow_upward"
+      @click="scroll('home')"
+      class="scroll-top-btn"
+      color="#112D4E88"
+      style="color: #112d4e"
+    ></v-btn>
+  </v-slide-y-reverse-transition>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import Signup from './signUp.vue'
 import Login from './LoginComponent.vue'
+import { computed } from 'vue'
+import { onMounted } from 'vue'
+import { onBeforeUnmount } from 'vue'
 // const selected = ref('home')
 const drawer = ref(false)
 const showLoginDialog = ref(false)
 const dialog = ref(false)
 const itemVariant = ref('none')
+const scrollPosition = ref(0)
 
 // const changeSelection = (event) => {
 //  selected.value = event.currentTarget.id
 // }
+
+const handleScroll = () => {
+  scrollPosition.value = window.scrollY
+}
+
+onMounted(() => {
+  // Add scroll event listener when component is mounted
+  window.addEventListener('scroll', handleScroll)
+})
+
+onBeforeUnmount(() => {
+  // Remove scroll event listener when component is destroyed
+  window.removeEventListener('scroll', handleScroll)
+})
+
+const showScrollButton = computed(() => {
+  // Show scroll to top button only when scroll position is greater than 200px
+  return scrollPosition.value > 300
+})
 
 const activeHover = (event) => {
   if (event.currentTarget.id == 'teamItem') {
@@ -139,9 +175,20 @@ const activeHover = (event) => {
   }
 }
 
-const cancelHover = (event) => {
+const cancelHover = () => {
   itemVariant.value = 'none'
+}
+
+const scroll = (id) => {
+  document.getElementById(id).scrollIntoView(true)
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.scroll-top-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1;
+}
+</style>
