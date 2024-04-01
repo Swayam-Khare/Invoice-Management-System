@@ -80,10 +80,49 @@
         </v-menu>
       </span>
       <span class="h-100 d-flex align-center">
-        <v-btn class="text-capitalize" variant="text" @click="showLoginDialog = true">
-          Login
-        </v-btn>
-        <Login v-model="showLoginDialog" @close="showLoginDialog = false" @signup="dialog = true" />
+
+        <v-menu :open-on-hover="true" offset="4">
+          <template v-slot:activator="{ props }">
+            <v-btn
+              id="login"
+              :ripple="false"
+              color="#112D4E"
+              append-icon="expand_more"
+              v-bind="props"
+              variant="text"
+              class="text-capitalize h-100"
+            >
+              Login
+            </v-btn>
+          </template>
+
+          <v-list class="pa-0">
+            <v-list-item
+              id="adminItem"
+              :active="itemVariant == 'admin'"
+              color="#112D4E"
+              :variant="itemVariant == 'admin' ? 'flat' : 'text'"
+              :onmouseenter="activeHover"
+              :onmouseleave="cancelHover"
+              title="Admin"
+              @click="showLoginDialog = true, titleValue = 'Admin Login'"
+              class="text-left"
+            >
+            </v-list-item>
+            <v-list-item
+              id="vendorItem"
+              :active="itemVariant == 'vendor'"
+              color="#112D4E"
+              :variant="itemVariant == 'vendor' ? 'flat' : 'text'"
+              :onmouseenter="activeHover"
+              :onmouseleave="cancelHover"
+              title="Vendor"
+              @click="showLoginDialog = true, titleValue = 'Vendor Login'"
+              class="text-left"
+            ></v-list-item>
+          </v-list>
+        </v-menu>
+        <Login v-model="showLoginDialog" @close="showLoginDialog = false" @vendor ="titleValue = 'Vendor Login', showLoginDialog = true" @signup="dialog = true" :myTitle="titleValue"/>
 
         <v-btn class="h-100 rounded-lg text-capitalize" color="#112D4E" @click="dialog = true">
           Sign Up
@@ -143,6 +182,7 @@ const showLoginDialog = ref(false)
 const dialog = ref(false)
 const itemVariant = ref('none')
 const scrollPosition = ref(0)
+const titleValue = ref('Admin Login')
 
 // const changeSelection = (event) => {
 //  selected.value = event.currentTarget.id
@@ -172,6 +212,10 @@ const activeHover = (event) => {
     itemVariant.value = 'team'
   } else if (event.currentTarget.id == 'productItem') {
     itemVariant.value = 'product'
+  } else if (event.currentTarget.id == 'adminItem') {
+    itemVariant.value = 'admin'
+  } else if (event.currentTarget.id == 'vendorItem') {
+    itemVariant.value = 'vendor'
   }
 }
 
