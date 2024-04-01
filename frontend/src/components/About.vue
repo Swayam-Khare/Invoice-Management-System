@@ -156,9 +156,9 @@ const teamMembers = ref([
     name: 'Sujit Pattanaik',
     role: 'Programmer Analyst',
     photo: Sujit,
-    linkedin: 'https://www.linkedin.com/in/anant-patel-329307201',
+    linkedin: 'https://www.linkedin.com/in/sujit-pattanaik-b33078202/',
     instagram: '',
-    github: 'https://github.com/anantpatel2002'
+    github: 'https://github.com/Sujit-BBSR'
   },
   {
     id: 6,
@@ -192,7 +192,7 @@ const teamMembers = ref([
     name: 'Vivek Singh',
     role: 'Programmer Analyst',
     photo: Vivek,
-    linkedin: 'www.linkedin.com/in/vivek-singh-290452257',
+    linkedin: 'https://www.linkedin.com/in/vivek-singh-290452257',
     instagram: 'https://www.instagram.com/__vivek__.__singh__/',
     github: ' https://github.com/vivek-singh-2001'
   }
