@@ -1,7 +1,7 @@
 <template>
   <div class="home-container" id="home">
     <NavBar />
-    <div class="d-flex flex-column-reverse flex-md-row align-center justify-center w-150">
+    <div class="d-flex flex-column-reverse flex-md-row align-center justify-center mr-md-10">
       <div class="text-content d-flex flex-column pa-5 pt-sm-10 px-sm-10 px-md-16 ga-8">
         <p class="text-h4 text-sm-h3 text-grey-darken-4">
           Free invoicing software for small business.
@@ -21,12 +21,14 @@
       </div>
     </div>
   </div>
+  <About />
 </template>
 
 <script setup>
 import NavBar from '../components/NavBar.vue'
 import Signup from '../components/signUp.vue'
 import Login from '@/components/LoginComponent.vue'
+import About from '@/components/About.vue'
 import { ref } from 'vue'
 
 const dialog = ref(false)
