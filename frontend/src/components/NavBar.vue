@@ -50,7 +50,7 @@
           </template>
 
           <!-- list item to show in menu -->
-          <v-list>
+          <v-list class="pa-0">
             <v-list-item
               id="teamItem"
               :active="itemVariant == 'team'"
@@ -61,6 +61,7 @@
               title="Team"
               router
               @click="scroll('team')"
+              class="text-left"
             >
             </v-list-item>
             <v-list-item
@@ -73,6 +74,7 @@
               title="Product"
               router
               @click="scroll('product')"
+              class="text-left"
             ></v-list-item>
           </v-list>
         </v-menu>
