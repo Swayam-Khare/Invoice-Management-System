@@ -108,11 +108,10 @@
       <v-list-item link prepend-icon="account_box" title="Contact"></v-list-item>
       <v-list-item link prepend-icon="info" title="About"></v-list-item>
       <v-divider></v-divider>
-      <v-list-item link>
-        <Login styling="text-capitalize w-100" />
+
+      <v-list-item link prepend-icon="login" title="Login" @click="showLoginDialog = true">
       </v-list-item>
-      <v-list-item link>
-        <Signup styling="text-capitalize w-100" />
+      <v-list-item link prepend-icon="person_add" title="Signup" @click="dialog = true">
       </v-list-item>
     </v-navigation-drawer>
   </v-app>
