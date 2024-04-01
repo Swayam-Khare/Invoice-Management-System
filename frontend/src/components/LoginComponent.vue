@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="showLoginDialog" max-width="400" centered persistent>
+  <v-dialog max-width="400" centered persistent>
     <v-card>
       <v-card-title
         class="d-flex justify-space-between align-center"
@@ -55,7 +55,6 @@
 export default {
   data() {
     return {
-      showLoginDialog: false,
       isFocused: false,
       email: '',
       password: '',

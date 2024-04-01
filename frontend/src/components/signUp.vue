@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" :class="hide" max-width="500px" persistent>
+  <v-dialog  max-width="500px" persistent>
     <v-card class="rounded-lg remove-scrollbar">
       <v-card-title
         class="d-flex justify-space-between align-center"
@@ -107,8 +107,6 @@
 export default {
   data() {
     return {
-      hide: '',
-      dialog: false, // TOGGLE THIS TO SHOW/HIDE SIGN UP DIALOG BOX
       firstName: '',
       lastName: '',
       email: '',
