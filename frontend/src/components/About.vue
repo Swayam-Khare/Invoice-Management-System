@@ -1,7 +1,7 @@
 <template>
-  <v-container class="home-container">
+  <v-container class="about-container ma-0 w-100">
     <!-- Header Section -->
-    <v-row>
+    <v-row class="w-100">
       <v-col cols="5">
         <img src="../assets/imgs/Social-icon/fb.svg" alt="Illustration" class="img" />
       </v-col>
@@ -199,8 +199,8 @@ const teamMembers = ref([
 
 <style scoped>
 .img {
-  height: 90%;
-  width: 90%;
+  height: 95%;
+  width: 95%;
 }
 
 .user-container {
