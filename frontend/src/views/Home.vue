@@ -1,7 +1,9 @@
 <template>
   <div class="home-container" id="home">
     <NavBar />
-    <div class="d-flex flex-column-reverse flex-md-row align-center justify-center mr-md-10 my-12">
+    <div
+      class="d-flex flex-column-reverse flex-md-row align-center justify-center mr-md-10 pb-4 mb-12"
+    >
       <div class="text-content d-flex flex-column pa-5 pt-sm-10 px-sm-10 px-md-16 ga-8">
         <p class="text-h4 text-sm-h3 text-grey-darken-4">
           Free invoicing software for small business.
