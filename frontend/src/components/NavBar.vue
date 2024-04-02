@@ -52,19 +52,6 @@
           <!-- list item to show in menu -->
           <v-list class="pa-0">
             <v-list-item
-              id="teamItem"
-              :active="itemVariant == 'team'"
-              color="#112D4E"
-              :variant="itemVariant == 'team' ? 'flat' : 'text'"
-              :onmouseenter="activeHover"
-              :onmouseleave="cancelHover"
-              title="Team"
-              router
-              @click="scroll('team')"
-              class="text-left"
-            >
-            </v-list-item>
-            <v-list-item
               id="productItem"
               :active="itemVariant == 'product'"
               color="#112D4E"
@@ -74,6 +61,19 @@
               title="Product"
               router
               @click="scroll('product')"
+              class="text-left"
+            >
+            </v-list-item>
+            <v-list-item
+              id="teamItem"
+              :active="itemVariant == 'team'"
+              color="#112D4E"
+              :variant="itemVariant == 'team' ? 'flat' : 'text'"
+              :onmouseenter="activeHover"
+              :onmouseleave="cancelHover"
+              title="Team"
+              router
+              @click="scroll('team')"
               class="text-left"
             ></v-list-item>
           </v-list>
