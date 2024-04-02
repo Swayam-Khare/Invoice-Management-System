@@ -17,9 +17,10 @@
             :rules="emailRules"
             variant="outlined"
             color="#112d4e"
+            density="compact"
             @blur="isFocused = false"
             @focus="isFocused = true"
-          ></v-text-field>
+            ></v-text-field>
           <v-text-field
             v-model="password"
             label="Password"
@@ -28,6 +29,7 @@
             variant="outlined"
             color="#112d4e"
             class="mt-1"
+            density="compact"
             @blur="isFocused = false"
             @focus="isFocused = true"
           ></v-text-field>
@@ -43,7 +45,7 @@
         <a
           href="#"
           style="text-decoration: none; color: #112d4e; font-weight: bold"
-          @click="$emit('signup'), $emit('close')"
+          @click="$emit('close'), $emit('signup')"
         >
           Sign Up
         </a>

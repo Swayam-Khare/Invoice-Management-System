@@ -122,12 +122,12 @@
             ></v-list-item>
           </v-list>
         </v-menu>
-        <Login v-model="showLoginDialog" @close="showLoginDialog = false" @vendor ="titleValue = 'Vendor Login', showLoginDialog = true" @signup="dialog = true" :myTitle="titleValue"/>
+        <Login v-model="showLoginDialog" @close="showLoginDialog = false" @vendor ="titleValue = 'Vendor Login', showLoginDialog = true" @signup="showSignupDialog = true" :myTitle="titleValue"/>
 
-        <v-btn class="h-100 rounded-lg text-capitalize" color="#112D4E" @click="dialog = true">
+        <v-btn class="h-100 rounded-lg text-capitalize" color="#112D4E" @click="showSignupDialog = true">
           Sign Up
         </v-btn>
-        <Signup v-model="dialog" @close="dialog = false" @login="showLoginDialog = true" />
+        <Signup v-model="showSignupDialog" @close="showSignupDialog = false" @login="showLoginDialog = true" />
       </span>
     </div>
   </div>
@@ -152,7 +152,7 @@
 
       <v-list-item link prepend-icon="login" title="Login" @click="showLoginDialog = true">
       </v-list-item>
-      <v-list-item link prepend-icon="person_add" title="Signup" @click="dialog = true">
+      <v-list-item link prepend-icon="person_add" title="Signup" @click="showSignupDialog = true">
       </v-list-item>
     </v-navigation-drawer>
   </v-app>
@@ -179,7 +179,7 @@ import { onBeforeUnmount } from 'vue'
 // const selected = ref('home')
 const drawer = ref(false)
 const showLoginDialog = ref(false)
-const dialog = ref(false)
+const showSignupDialog = ref(false)
 const itemVariant = ref('none')
 const scrollPosition = ref(0)
 const titleValue = ref('Admin Login')

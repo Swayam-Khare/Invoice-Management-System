@@ -1,8 +1,8 @@
 <template>
     <div id="formContainer">
-      <v-sheet class="mx-auto mt-8" height="auto" max-width="1000" width="100%">
+      <v-sheet class="mx-auto my-8" height="auto" max-width="1000" width="100%">
         <v-hover v-slot="{ isHovering, props }">
-          <v-card v-bind="props" :elevation="isHovering ? 24 : 6" class="mx-auto">
+          <v-card v-bind="props" :elevation="isHovering ? 12 : 6" class="mx-auto">
             <v-form>
               <v-row justify="center" class="mb-2">
                 <v-col cols="12" class="text-center">
@@ -22,6 +22,7 @@
                         :rules="[alphabetOnlyRule]"
                         variant="outlined"
                         color="#112d4e"
+                        density="compact"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6">
@@ -31,6 +32,7 @@
                         :rules="[alphabetOnlyRule]"
                         variant="outlined"
                         color="#112d4e"
+                        density="compact"
                       ></v-text-field>
                     </v-col>
                   </v-row>
@@ -43,6 +45,7 @@
                         variant="outlined"
                         color="#112d4e"
                         class="mt-1"
+                        density="compact"
                       ></v-text-field>
                     </v-col>
                   </v-row>
@@ -55,6 +58,7 @@
                         variant="outlined"
                         color="#112d4e"
                         class="mt-1"
+                        density="compact"
                       ></v-text-field>
                     </v-col>
                   </v-row>
@@ -67,6 +71,7 @@
                         color="#112d4e"
                         class="mt-1"
                         rows="4"
+                        density="compact"
                       ></v-textarea>
                     </v-col>
                   </v-row>

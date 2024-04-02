@@ -1,5 +1,5 @@
 <template>
-  <v-dialog max-width="500px" persistent>
+  <v-dialog max-width="500px" centered persistent>
     <v-card class="rounded-lg remove-scrollbar">
       <v-card-title
         class="d-flex justify-space-between align-center"
