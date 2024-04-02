@@ -27,6 +27,7 @@
           id="contact"
           :ripple="false"
           color="#112D4E"
+          @click="scroll('formContainer')"
           variant="text"
           class="text-capitalize h-100"
         >
@@ -80,7 +81,6 @@
         </v-menu>
       </span>
       <span class="h-100 d-flex align-center">
-
         <v-menu :open-on-hover="true" offset="4">
           <template v-slot:activator="{ props }">
             <v-btn
@@ -105,7 +105,7 @@
               :onmouseenter="activeHover"
               :onmouseleave="cancelHover"
               title="Admin"
-              @click="showLoginDialog = true, titleValue = 'Admin Login'"
+              @click="(showLoginDialog = true), (titleValue = 'Admin Login')"
               class="text-left"
             >
             </v-list-item>
@@ -117,12 +117,18 @@
               :onmouseenter="activeHover"
               :onmouseleave="cancelHover"
               title="Vendor"
-              @click="showLoginDialog = true, titleValue = 'Vendor Login'"
+              @click="(showLoginDialog = true), (titleValue = 'Vendor Login')"
               class="text-left"
             ></v-list-item>
           </v-list>
         </v-menu>
-        <Login v-model="showLoginDialog" @close="showLoginDialog = false" @vendor ="titleValue = 'Vendor Login', showLoginDialog = true" @signup="dialog = true" :myTitle="titleValue"/>
+        <Login
+          v-model="showLoginDialog"
+          @close="showLoginDialog = false"
+          @vendor="(titleValue = 'Vendor Login'), (showLoginDialog = true)"
+          @signup="dialog = true"
+          :myTitle="titleValue"
+        />
 
         <v-btn class="h-100 rounded-lg text-capitalize" color="#112D4E" @click="dialog = true">
           Sign Up
