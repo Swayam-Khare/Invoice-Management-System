@@ -70,7 +70,6 @@
             <v-btn
               id="login"
               :ripple="false"
-              color="#112D4E"
               append-icon="expand_more"
               v-bind="props"
               variant="text"
