@@ -14,8 +14,23 @@
       class="bg-white rounded-lg elevation-7 d-flex align-center justify-space-between"
     >
       <span class="h-100 d-flex align-center">
-        <v-btn :ripple="false" variant="text" class="nav-btn text-capitalize h-100"> Home </v-btn>
-        <v-btn :ripple="false" variant="text" class="nav-btn text-capitalize h-100">
+        <v-btn
+          id="home"
+          color="#112D4E"
+          :ripple="false"
+          variant="text"
+          class="text-capitalize h-100"
+        >
+          Home
+        </v-btn>
+        <v-btn
+          id="contact"
+          :ripple="false"
+          color="#112D4E"
+          @click="scroll('formContainer')"
+          variant="text"
+          class="text-capitalize h-100"
+        >
           Contact
         </v-btn>
 

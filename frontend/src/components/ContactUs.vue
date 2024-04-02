@@ -29,6 +29,7 @@
                       :rules="[alphabetOnlyRule]"
                       variant="outlined"
                       color="#112d4e"
+                      density="compact"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6">
@@ -38,6 +39,7 @@
                       :rules="[alphabetOnlyRule]"
                       variant="outlined"
                       color="#112d4e"
+                      density="compact"
                     ></v-text-field>
                   </v-col>
                 </v-row>
@@ -50,6 +52,7 @@
                       variant="outlined"
                       color="#112d4e"
                       class="mt-1"
+                      density="compact"
                     ></v-text-field>
                   </v-col>
                 </v-row>
@@ -62,6 +65,7 @@
                       variant="outlined"
                       color="#112d4e"
                       class="mt-1"
+                      density="compact"
                     ></v-text-field>
                   </v-col>
                 </v-row>
@@ -74,6 +78,7 @@
                       color="#112d4e"
                       class="mt-1"
                       rows="4"
+                      density="compact"
                     ></v-textarea>
                   </v-col>
                 </v-row>
