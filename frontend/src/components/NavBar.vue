@@ -40,11 +40,10 @@
             <v-btn
               id="about"
               :ripple="false"
-              color="#112D4E"
               append-icon="expand_more"
               v-bind="props"
               variant="text"
-              class="text-capitalize h-100"
+              class="nav-btn text-capitalize h-100"
             >
               About
             </v-btn>
@@ -86,11 +85,10 @@
             <v-btn
               id="login"
               :ripple="false"
-              color="#112D4E"
               append-icon="expand_more"
               v-bind="props"
               variant="text"
-              class="text-capitalize h-100"
+              class="nav-btn text-capitalize h-100"
             >
               Login
             </v-btn>
@@ -153,10 +151,16 @@
       <v-divider></v-divider>
       <v-list-item link prepend-icon="home" title="Home"></v-list-item>
       <v-list-item link prepend-icon="account_box" title="Contact"></v-list-item>
-      <v-list-item link prepend-icon="info" title="About"></v-list-item>
+      <v-list-item link prepend-icon="info" title="About" @click="scroll('product')"></v-list-item>
+      <v-list-item link prepend-icon="groups" title="Team" @click="scroll('team')"></v-list-item>
       <v-divider></v-divider>
 
-      <v-list-item link prepend-icon="login" title="Login" @click="showLoginDialog = true">
+      <v-list-item
+        link
+        prepend-icon="login"
+        title="Login"
+        @click="(showLoginDialog = true), (titleValue = 'Admin Login')"
+      >
       </v-list-item>
       <v-list-item link prepend-icon="person_add" title="Signup" @click="dialog = true">
       </v-list-item>
@@ -231,6 +235,9 @@ const cancelHover = () => {
 
 const scroll = (id) => {
   document.getElementById(id).scrollIntoView(true)
+  if (drawer.value) {
+    drawer.value = false
+  }
 }
 </script>
 
@@ -240,5 +247,13 @@ const scroll = (id) => {
   bottom: 20px;
   right: 20px;
   z-index: 1;
+}
+
+.nav-btn:hover {
+  color: #112d4e !important;
+}
+
+.v-navigation-drawer__scrim {
+  position: fixed !important;
 }
 </style>

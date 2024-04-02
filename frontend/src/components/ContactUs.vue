@@ -1,6 +1,6 @@
 <template>
   <div id="formContainer">
-    <v-sheet class="mx-auto mt-8 mb-8" height="auto" max-width="1000" width="100%">
+    <v-sheet class="mx-auto my-8" height="auto" max-width="1000" width="100%">
       <v-hover v-slot="{ isHovering, props }">
         <v-card v-bind="props" :elevation="isHovering ? 24 : 6" class="mx-auto">
           <v-form>
