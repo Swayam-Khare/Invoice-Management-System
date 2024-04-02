@@ -80,7 +80,6 @@
         </v-menu>
       </span>
       <span class="h-100 d-flex align-center">
-
         <v-menu :open-on-hover="true" offset="4">
           <template v-slot:activator="{ props }">
             <v-btn
@@ -105,7 +104,7 @@
               :onmouseenter="activeHover"
               :onmouseleave="cancelHover"
               title="Admin"
-              @click="showLoginDialog = true, titleValue = 'Admin Login'"
+              @click="(showLoginDialog = true), (titleValue = 'Admin Login')"
               class="text-left"
             >
             </v-list-item>
@@ -117,12 +116,18 @@
               :onmouseenter="activeHover"
               :onmouseleave="cancelHover"
               title="Vendor"
-              @click="showLoginDialog = true, titleValue = 'Vendor Login'"
+              @click="(showLoginDialog = true), (titleValue = 'Vendor Login')"
               class="text-left"
             ></v-list-item>
           </v-list>
         </v-menu>
-        <Login v-model="showLoginDialog" @close="showLoginDialog = false" @vendor ="titleValue = 'Vendor Login', showLoginDialog = true" @signup="dialog = true" :myTitle="titleValue"/>
+        <Login
+          v-model="showLoginDialog"
+          @close="showLoginDialog = false"
+          @vendor="(titleValue = 'Vendor Login'), (showLoginDialog = true)"
+          @signup="dialog = true"
+          :myTitle="titleValue"
+        />
 
         <v-btn class="h-100 rounded-lg text-capitalize" color="#112D4E" @click="dialog = true">
           Sign Up
@@ -150,7 +155,12 @@
       <v-list-item link prepend-icon="info" title="About"></v-list-item>
       <v-divider></v-divider>
 
-      <v-list-item link prepend-icon="login" title="Login" @click="showLoginDialog = true">
+      <v-list-item
+        link
+        prepend-icon="login"
+        title="Login"
+        @click="(showLoginDialog = true), (titleValue = 'Admin Login')"
+      >
       </v-list-item>
       <v-list-item link prepend-icon="person_add" title="Signup" @click="dialog = true">
       </v-list-item>
