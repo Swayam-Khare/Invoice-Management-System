@@ -27,6 +27,7 @@
             :rules="passwordRules"
             variant="outlined"
             color="#112d4e"
+            class="mt-1"
             @blur="isFocused = false"
             @focus="isFocused = true"
           ></v-text-field>
@@ -70,7 +71,7 @@ const isFocused = ref(false)
 
 const emit = defineEmits(['close', 'signup', 'vendor'])
 
-const props = defineProps({
+const { myTitle } = defineProps({
   myTitle: {
     type: String,
     default: 'Admin Login'
