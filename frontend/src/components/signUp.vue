@@ -18,7 +18,6 @@
                 :rules="[alphabetOnlyRule]"
                 variant="outlined"
                 color="#112d4e"
-                class="custom-text-field-centered-label"
                 density="compact"
               ></v-text-field>
             </v-col>
@@ -29,7 +28,6 @@
                 :rules="[alphabetOnlyRule]"
                 variant="outlined"
                 color="#112d4e"
-                class="custom-text-field-centered-label"
                 density="compact"
               ></v-text-field>
             </v-col>
@@ -40,7 +38,7 @@
             v-model="email"
             variant="outlined"
             color="#112d4e"
-            class="mt-1 custom-text-field-centered-label"
+            class="mt-1"
             density="compact"
           ></v-text-field>
           <v-text-field
@@ -49,7 +47,7 @@
             v-model="contactNo"
             variant="outlined"
             color="#112d4e"
-            class="mt-1 custom-text-field-centered-label"
+            class="mt-1"
             density="compact"
           ></v-text-field>
           <v-text-field
@@ -57,7 +55,7 @@
             v-model="shopName"
             variant="outlined"
             color="#112d4e"
-            class="mt-1 custom-text-field-centered-label"
+            class="mt-1"
             density="compact"
           ></v-text-field>
           <v-text-field
@@ -65,7 +63,6 @@
             v-model="addressLine1"
             variant="outlined"
             color="#112d4e"
-            class="custom-text-field-centered-label"
             density="compact"
           ></v-text-field>
           <v-text-field
@@ -73,7 +70,6 @@
             v-model="addressLine2"
             variant="outlined"
             color="#112d4e"
-            class="custom-text-field-centered-label"
             density="compact"
           ></v-text-field>
           <v-row>
@@ -84,7 +80,7 @@
                 :rules="pincodeRules"
                 variant="outlined"
                 color="#112d4e"
-                class="custom-text-field-centered-label mb-1"
+                class="mb-1"
                 density="compact"
               ></v-text-field>
             </v-col>
@@ -94,12 +90,11 @@
                 v-model="state"
                 variant="outlined"
                 color="#112d4e"
-                class="custom-text-field-centered-label"
                 density="compact"
               ></v-text-field>
             </v-col>
           </v-row>
-          <v-btn class="mt-2 txt-button" color="#112d4e" @click="validate" block>Sign Up</v-btn>
+          <v-btn class="mt-1 txt-button" color="#112d4e" @click="validate" block>Sign Up</v-btn>
           <div class="d-flex justify-center align-center text-center">
             <span>Already have an account?</span>
             <v-btn
@@ -181,13 +176,13 @@ function closeDialog() {
 .remove-scrollbar::-webkit-scrollbar {
   display: none;
 }
-.custom-text-field-centered-label .v-input__control {
-  height: 45px;
+.v-input__control {
+  height: 45px !important;
 }
 .v-messages__message {
-  white-space: nowrap;
+  white-space: nowrap !important;
 }
 .v-input__details {
-  padding-left: 0;
+  padding-left: 0px !important;
 }
 </style>
