@@ -99,7 +99,7 @@
               ></v-text-field>
             </v-col>
           </v-row>
-          <v-btn class="mt-2 txt-button" color="#112d4e" @click="validate" block>Sign Up</v-btn>
+          <v-btn class="mt-1 txt-button" color="#112d4e" @click="validate" block>Sign Up</v-btn>
           <div class="d-flex justify-center align-center text-center">
             <span>Already have an account?</span>
             <v-btn
@@ -185,9 +185,9 @@ function closeDialog() {
   height: 45px;
 }
 .v-messages__message {
-  white-space: nowrap;
+  white-space: nowrap !important;
 }
 .v-input__details {
-  padding-left: 0;
+  padding-left: 0px !important;
 }
 </style>
