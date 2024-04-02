@@ -1,7 +1,7 @@
 <template>
   <div id="product">
     <!-- Header Section -->
-    <v-row class="mx-1 mx-md-10">
+    <v-row class="mx-1 my-10 mx-md-10">
       <v-col cols="12" md="5" class="w-100">
         <img src="../assets/imgs/Social-icon/fb.svg" alt="Illustration" class="img" />
       </v-col>
@@ -24,7 +24,7 @@
     </v-row>
     <v-row class="mx-1 mx-md-10">
       <v-col>
-        <v-col>
+        <v-col class="mb-10">
           <p class="text-h4 mb-2">Our Vision for the Future</p>
 
           <p class="text-h6 text-justify text-grey-darken-2">
