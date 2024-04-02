@@ -2,7 +2,7 @@
   <div id="formContainer">
     <v-sheet class="mx-auto my-8" height="auto" max-width="1000" width="100%">
       <v-hover v-slot="{ isHovering, props }">
-        <v-card v-bind="props" :elevation="isHovering ? 24 : 6" class="mx-auto">
+        <v-card v-bind="props" :elevation="isHovering ? 12 : 6" class="mx-auto">
           <v-form>
             <v-row justify="center" class="mb-2">
               <v-col cols="12" class="text-center">
