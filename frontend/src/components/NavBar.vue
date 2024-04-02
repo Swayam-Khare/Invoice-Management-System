@@ -14,22 +14,8 @@
       class="bg-white rounded-lg elevation-7 d-flex align-center justify-space-between"
     >
       <span class="h-100 d-flex align-center">
-        <v-btn
-          id="home"
-          color="#112D4E"
-          :ripple="false"
-          variant="text"
-          class="text-capitalize h-100"
-        >
-          Home
-        </v-btn>
-        <v-btn
-          id="contact"
-          :ripple="false"
-          color="#112D4E"
-          variant="text"
-          class="text-capitalize h-100"
-        >
+        <v-btn :ripple="false" variant="text" class="nav-btn text-capitalize h-100"> Home </v-btn>
+        <v-btn :ripple="false" variant="text" class="nav-btn text-capitalize h-100">
           Contact
         </v-btn>
 
@@ -39,11 +25,10 @@
             <v-btn
               id="about"
               :ripple="false"
-              color="#112D4E"
               append-icon="expand_more"
               v-bind="props"
               variant="text"
-              class="text-capitalize h-100"
+              class="nav-btn text-capitalize h-100"
             >
               About
             </v-btn>
@@ -80,7 +65,7 @@
         </v-menu>
       </span>
       <span class="h-100 d-flex align-center">
-        <v-btn class="text-capitalize" variant="text" @click="showLoginDialog = true">
+        <v-btn class="nav-btn text-capitalize h-100" variant="text" @click="showLoginDialog = true">
           Login
         </v-btn>
         <Login v-model="showLoginDialog" @close="showLoginDialog = false" @signup="dialog = true" />
@@ -108,7 +93,8 @@
       <v-divider></v-divider>
       <v-list-item link prepend-icon="home" title="Home"></v-list-item>
       <v-list-item link prepend-icon="account_box" title="Contact"></v-list-item>
-      <v-list-item link prepend-icon="info" title="About"></v-list-item>
+      <v-list-item link prepend-icon="info" title="About" @click="scroll('product')"></v-list-item>
+      <v-list-item link prepend-icon="groups" title="Team" @click="scroll('team')"></v-list-item>
       <v-divider></v-divider>
 
       <v-list-item link prepend-icon="login" title="Login" @click="showLoginDialog = true">
@@ -181,6 +167,9 @@ const cancelHover = () => {
 
 const scroll = (id) => {
   document.getElementById(id).scrollIntoView(true)
+  if (drawer.value) {
+    drawer.value = false
+  }
 }
 </script>
 
@@ -190,5 +179,13 @@ const scroll = (id) => {
   bottom: 20px;
   right: 20px;
   z-index: 1;
+}
+
+.nav-btn:hover {
+  color: #112d4e !important;
+}
+
+.v-navigation-drawer__scrim {
+  position: fixed !important;
 }
 </style>
