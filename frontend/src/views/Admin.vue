@@ -1,17 +1,18 @@
 <template>
   <div
-    class="navbar d-flex justify-space-between px-12 py-3 elevation-7"
+    class="navbar d-flex justify-space-between px-2 px-sm-7 py-0 py-md-3 elevation-7"
     style="background-color: #112d4edd"
   >
     <img src="../assets/logo.svg" alt="Logo" />
-    <div class="d-flex justify-space-between w-25 align-center">
-      <div class="search">
+    <div class="d-flex align-center">
+      <div class="search pr-10">
         <!-- <v-text-field label="Search" class="w-auto" variant="solo-filled"></v-text-field> -->
         <input
           type="text"
           placeholder="Search..."
-          class="elevation-6 pa-3 search bg-grey-lighten-2"
+          class="elevation-6 pa-3 search bg-grey-lighten-2 d-none d-sm-flex"
         />
+        <!-- <v-icon icon="search" class="bg-grey-lighten-2 d-flex d-md-none"></v-icon> -->
       </div>
       <v-menu>
         <template v-slot:activator="{ props }">
@@ -20,6 +21,7 @@
           </button>
         </template>
         <v-list class="mt-4">
+          <v-list-item class="font-weight-bold"> Hi, Admin </v-list-item>
           <v-list-item height="40" v-for="(item, index) in items" :key="index" :value="index">
             <v-list-item-title>{{ item.title }}</v-list-item-title>
           </v-list-item>
@@ -27,13 +29,38 @@
       </v-menu>
     </div>
   </div>
-  <div class="list">
-    <table class="mx-auto my-8">
+  <div class="mobile-search pt-4">
+    <input
+      type="text"
+      placeholder="Search..."
+      class="elevation-6 pa-3 mx-auto search bg-grey-lighten-2 d-flex d-sm-none"
+    />
+  </div>
+  <div class="list overflow-auto">
+    <table class="mx-auto my-5 my-sm-8 elevation-5">
       <tr>
-        <th>Name</th>
+        <th>
+          Name
+          <v-icon icon="swap_vert" class="cursor-pointer"></v-icon>
+          <!-- <v-icon icon="arrow_downward" size="small"></v-icon> -->
+        </th>
         <th>Email</th>
         <th>Contact</th>
-        <th>Status</th>
+        <th>
+          Status
+          <v-menu>
+            <template v-slot:activator="{ props }">
+              <button v-bind="props">
+                <v-icon icon="filter_list" size="small" class="pl-1 cursor-pointer"></v-icon>
+              </button>
+            </template>
+            <v-list class="mt-4">
+              <v-list-item height="40" v-for="(item, index) in status" :key="index" :value="index">
+                <v-list-item-title>{{ item.title }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </th>
         <th>Actions</th>
       </tr>
       <tr v-for="(item, index) in vendors" :key="index" :value="index">
@@ -46,6 +73,7 @@
               approved: item.status === 'approved',
               pending: item.status === 'pending'
             }"
+            class="text-capitalize"
             >{{ item.status }}</span
           >
         </td>
@@ -62,10 +90,12 @@
   </div>
   <v-pagination
     v-model="page"
-    :length="100"
+    :length="10"
     next-icon="arrow_forward_ios"
     prev-icon="arrow_back_ios"
-    class="w-50 mx-auto"
+    class="pagination mx-auto mt-0"
+    :total-visible="4"
+    size="x-small"
   ></v-pagination>
 </template>
 
@@ -74,7 +104,7 @@ import { ref } from 'vue'
 import randomColor from 'randomcolor'
 import { onMounted } from 'vue'
 
-const page = ref(2)
+const page = ref(1)
 onMounted(() => {
   const color = randomColor()
   document.getElementById('random-color').style.backgroundColor = color
@@ -82,7 +112,39 @@ onMounted(() => {
 
 const items = ref([{ title: 'Update Profile' }, { title: 'Logout' }])
 
+const status = ref([{ title: 'All' }, { title: 'Pending' }, { title: 'Approved' }])
+
 const vendors = ref([
+  {
+    name: 'Chandan Kumar',
+    email: 'chandan@gmail.com',
+    status: 'pending',
+    contact: '9104324532'
+  },
+  {
+    name: 'Anant Patel',
+    email: 'anant@gmail.com',
+    status: 'approved',
+    contact: '9104324532'
+  },
+  {
+    name: 'Sumit Sharma',
+    email: 'sumit@gmail.com',
+    status: 'approved',
+    contact: '9104324532'
+  },
+  {
+    name: 'Anant Patel',
+    email: 'anant@gmail.com',
+    status: 'pending',
+    contact: '9104324532'
+  },
+  {
+    name: 'Sumit Sharma',
+    email: 'sumit@gmail.com',
+    status: 'pending',
+    contact: '9104324532'
+  },
   {
     name: 'Chandan Kumar',
     email: 'chandan@gmail.com',
@@ -117,6 +179,12 @@ const vendors = ref([
 </script>
 
 <style scoped>
+@media only screen and (max-width: 690) {
+  .pagination {
+    width: 70% !important;
+  }
+}
+
 .search {
   outline: none;
   border-radius: 5px;
