@@ -37,7 +37,7 @@
       </v-card-text>
 
       <v-card-actions class="pl-6 pt-0 pr-6">
-        <v-btn color="#112D4E" variant="elevated" block @click="login">Login</v-btn>
+        <v-btn color="#112D4E" variant="elevated" block @click="login" :disabled="!isFormValid" >Login</v-btn>
       </v-card-actions>
 
       <v-card-text v-if="myTitle == 'Vendor Login'" class="pl-6 pt-3 pb-4 text-center">
@@ -88,10 +88,18 @@ const passwordRules = computed(() => [
   (v) => !!v || 'Password is required'
 ])
 
+const isFormValid = computed(() => {
+      const emailValid = emailRules.value.every(rule => rule(email.value) === true)
+      const passwordValid = passwordRules.value.every(rule => rule(password.value) === true)
+      return emailValid && passwordValid
+    })
+
 const login = () => {
   console.log('Email:', email.value)
   console.log('Password:', password.value)
   // Close the dialog
+
+  if(isFormValid.value)
   emit('close')
 }
 </script>
