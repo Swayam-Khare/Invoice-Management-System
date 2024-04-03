@@ -36,7 +36,7 @@
       class="elevation-6 pa-3 mx-auto search bg-grey-lighten-2 d-flex d-sm-none"
     />
   </div>
-  <div class="list overflow-auto">
+  <div class="list px-2 px-sm-0 overflow-auto">
     <table class="mx-auto my-5 my-sm-8 elevation-5">
       <tr>
         <th>
@@ -226,8 +226,16 @@ td {
   /* border-bottom: 1px solid rgba(0, 0, 0, 0.521); */
 }
 
+tr {
+  transition: 0.2s;
+}
+
 tr:nth-child(odd) {
   background-color: #112d4e13;
+}
+
+tr:first-child:hover {
+  scale: 1;
 }
 
 tr:hover {
