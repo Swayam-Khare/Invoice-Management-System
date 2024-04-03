@@ -210,6 +210,7 @@ const vendors = ref([
 table {
   border-collapse: collapse;
   width: 90%;
+  overflow: hidden;
 }
 
 th {
@@ -227,6 +228,10 @@ td {
 
 tr:nth-child(odd) {
   background-color: #112d4e13;
+}
+
+tr:hover {
+  scale: 1.01;
 }
 
 .approved {
