@@ -1,16 +1,35 @@
 <template>
+    <div class="d-flex flex-md-row flex-column  justify-space-between align-end">
+        <div class="mobile-search pt-4 px-2 px-sm-10 px-md-14 px-lg-16 ml-lg-3 ml-xxl-16">
+            <input type="text" placeholder="Search..." class="elevation-6 pa-3 mx-auto search bg-grey-lighten-2" />
+        </div>
+
+        <div class="d-flex justify-end mx-md-16 px-2 my-1  ">
+
+            <v-btn class="text-capitalize hover-btn mx-0 mx-sm-8 mx-md-0 elevation-6" @click="showSignupDialog = true">Add
+                product</v-btn>
+            <CreateProduct v-model="showSignupDialog" @close="showSignupDialog = false"
+                @login="showLoginDialog = true" />
+
+        </div>
+    </div>
     <div class="list px-2 px-sm-0 overflow-auto">
-        <table class="mx-auto my-5 my-sm-8 elevation-5">
+
+        <table class="mx-auto my-5 my-sm-5 elevation-5">
             <tr>
                 <th>
                     Name
                     <v-icon icon="swap_vert" class="cursor-pointer"></v-icon>
                     <!-- <v-icon icon="arrow_downward" size="small"></v-icon> -->
                 </th>
-                <th>Email</th>
-                <th>Contact</th>
+                <th>Price
+                    <v-icon icon="swap_vert" class="cursor-pointer"></v-icon>
+
+                </th>
+                <th>Discount</th>
+
                 <th>
-                    Status
+                    Stock
                     <v-menu>
                         <template v-slot:activator="{ props }">
                             <button v-bind="props">
@@ -28,13 +47,13 @@
             </tr>
             <tr v-for="(item, index) in vendors" :key="index" :value="index">
                 <td>{{ item.name }}</td>
-                <td>{{ item.email }}</td>
-                <td>{{ item.contact }}</td>
-                <td>
+                <td>{{ item.price }}</td>
+                <td>{{ item.discount }}</td>
+                <td class="">
                     <span :class="{
-                            approved: item.status === 'approved',
-                            pending: item.status === 'pending'
-                        }" class="text-capitalize">{{ item.status }}</span>
+                approved: item.stock > 0,
+                pending: item.stock == 0,
+            }">{{ item.stock > 0 ? item.stock : 'Out of Stock' }}</span>
                 </td>
                 <td class="d-flex align-center ga-5">
                     <img src="../assets/edit_square.svg" class="hover-scale" style="width: 25px; height: 25px" />
@@ -50,80 +69,96 @@
 <script setup>
 import { ref } from 'vue'
 // import randomColor from 'randomcolor'
+import CreateProduct from './CreateProduct.vue';
 import { onMounted } from 'vue'
 
 const page = ref(1)
-onMounted(() => {
-    const color = randomColor()
-    document.getElementById('random-color').style.backgroundColor = color
-})
+// onMounted(() => {
+//     const color = randomColor()
+//     document.getElementById('random-color').style.backgroundColor = color
+// })
 
-const items = ref([{ title: 'Update Profile' }, { title: 'Logout' }])
+// const items = ref([{ title: 'Update Profile' }, { title: 'Logout' }])
 
-const status = ref([{ title: 'All' }, { title: 'Pending' }, { title: 'Approved' }])
-
+const status = ref([{ title: 'All' }, { title: 'Out of Stock' }])
 const vendors = ref([
     {
-        name: 'Chandan Kumar',
-        email: 'chandan@gmail.com',
-        status: 'pending',
-        contact: '9104324532'
+        name: 'product 1',
+        description: "lsdkfjl skdjflsdk fslkjfls dkk",
+        stock: 0,
+        price: 200,
+        discount: 3
     },
     {
-        name: 'Anant Patel',
-        email: 'anant@gmail.com',
-        status: 'approved',
-        contact: '9104324532'
+        name: 'product 1',
+        description: "lsdkfjl skdjflsdk fslkjfls dkk",
+        stock: 52,
+        price: 0,
+        discount: 3
     },
     {
-        name: 'Sumit Sharma',
-        email: 'sumit@gmail.com',
-        status: 'approved',
-        contact: '9104324532'
+        name: 'product 1',
+        description: "lsdkfjl skdjflsdk fslkjfls dkk",
+        stock: 52,
+        price: 200,
+        discount: 3
     },
     {
-        name: 'Anant Patel',
-        email: 'anant@gmail.com',
-        status: 'pending',
-        contact: '9104324532'
+        name: 'product 1',
+        description: "lsdkfjl skdjflsdk fslkjfls dkk",
+        stock: 52,
+        price: 200,
+        discount: 3
     },
     {
-        name: 'Sumit Sharma',
-        email: 'sumit@gmail.com',
-        status: 'pending',
-        contact: '9104324532'
+        name: 'product 1',
+        description: "lsdkfjl skdjflsdk fslkjfls dkk",
+        stock: 0,
+        price: 200,
+        discount: 3
     },
     {
-        name: 'Chandan Kumar',
-        email: 'chandan@gmail.com',
-        status: 'pending',
-        contact: '9104324532'
+        name: 'product 1',
+        description: "lsdkfjl skdjflsdk fslkjfls dkk",
+        stock: 0,
+        price: 200,
+        discount: 3
     },
     {
-        name: 'Anant Patel',
-        email: 'anant@gmail.com',
-        status: 'approved',
-        contact: '9104324532'
+        name: 'product 1',
+        description: "lsdkfjl skdjflsdk fslkjfls dkk",
+        stock: 20552,
+        price: 200,
+        discount: 3
     },
     {
-        name: 'Sumit Sharma',
-        email: 'sumit@gmail.com',
-        status: 'approved',
-        contact: '9104324532'
+        name: 'product 1',
+        description: "lsdkfjl skdjflsdk fslkjfls dkk",
+        stock: 0,
+        price: 200,
+        discount: 3
     },
     {
-        name: 'Anant Patel',
-        email: 'anant@gmail.com',
-        status: 'pending',
-        contact: '9104324532'
+        name: 'product 1',
+        description: "lsdkfjl skdjflsdk fslkjfls dkk",
+        stock: 0,
+        price: 200,
+        discount: 3
     },
     {
-        name: 'Sumit Sharma',
-        email: 'sumit@gmail.com',
-        status: 'pending',
-        contact: '9104324532'
+        name: 'product 1',
+        description: "lsdkfjl skdjflsdk fslkjfls dkk",
+        stock: 52,
+        price: 200,
+        discount: 3
     }
 ])
+
+const showLoginDialog = ref(false)
+const showSignupDialog = ref(false)
+
+
+
 </script>
 
 <style scoped>
@@ -195,7 +230,6 @@ tr:hover {
     color: green;
     border-radius: 20px;
     padding: 5px 10px;
-    border: 1px solid green;
 }
 
 .pending {
@@ -203,7 +237,6 @@ tr:hover {
     color: red;
     border-radius: 20px;
     padding: 5px 10px;
-    border: 1px solid red;
 }
 
 .hover-scale {
@@ -213,5 +246,11 @@ tr:hover {
 .hover-scale:hover {
     scale: 1.3;
     cursor: pointer;
+}
+
+.hover-btn:hover {
+    background-color: #112D4E;
+    color: white;
+    transition: .5s;
 }
 </style>
