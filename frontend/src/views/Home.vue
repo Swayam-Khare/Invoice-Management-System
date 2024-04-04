@@ -22,7 +22,7 @@
     </div>
   </div>
   <About />
-  <ContactUs />
+  <ContactUs />  
 </template>
 
 <script setup>
