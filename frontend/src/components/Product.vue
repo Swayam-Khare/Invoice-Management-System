@@ -11,13 +11,12 @@
     <div class="d-flex justify-end mx-md-16 px-2 my-1">
       <v-btn
         class="text-capitalize hover-btn mx-0 mx-sm-8 mx-md-0 elevation-6"
-        @click="showSignupDialog = true"
+        @click="showProductDialog = true"
         >Add product</v-btn
       >
       <CreateProduct
-        v-model="showSignupDialog"
-        @close="showSignupDialog = false"
-        @login="showLoginDialog = true"
+        v-model="showProductDialog"
+        @close="showProductDialog = false"
       />
     </div>
   </div>
@@ -174,8 +173,7 @@ const vendors = ref([
   }
 ])
 
-const showLoginDialog = ref(false)
-const showSignupDialog = ref(false)
+const showProductDialog = ref(false)
 </script>
 
 <style scoped>

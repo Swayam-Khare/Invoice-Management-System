@@ -50,7 +50,7 @@
               :title="title"
               color="#112d4ef1"
               :value="title"
-              @click="(isActiveTab = tab), (showSignupDialog = isShow)"
+              @click="(isActiveTab = tab), (showProductDialog = isShow)"
             ></v-list-item>
           </v-list-group>
 
@@ -91,7 +91,7 @@
         </v-list>
       </v-navigation-drawer>
       <v-main class="h-screen">
-        <component :is="isActiveTab" v-model="showSignupDialog" @close="showSignupDialog = false" />
+        <component :is="isActiveTab" v-model="showProductDialog" @close="showProductDialog = false" />
       </v-main>
     </v-layout>
   </v-card>
@@ -105,7 +105,7 @@ import CreateProduct from '../components/CreateProduct.vue'
 const drawer = ref(true)
 const rail = ref(true)
 const isActiveTab = ref('')
-const showSignupDialog = ref(false)
+const showProductDialog = ref(false)
 const product = ref([
   ['All Products', 'local_mall', Product, false],
   ['Create Product', 'add_circle', CreateProduct, true]

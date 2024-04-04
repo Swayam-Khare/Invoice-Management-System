@@ -16,20 +16,18 @@
       <span class="h-100 d-flex align-center">
         <v-btn
           id="home"
-          color="#112D4E"
           :ripple="false"
           variant="text"
-          class="text-capitalize h-100"
+          class="text-capitalize h-100 nav-btn"
         >
           Home
         </v-btn>
         <v-btn
           id="contact"
           :ripple="false"
-          color="#112D4E"
           @click="scroll('formContainer')"
           variant="text"
-          class="text-capitalize h-100"
+          class="text-capitalize h-100 nav-btn"
         >
           Contact
         </v-btn>
