@@ -67,10 +67,10 @@
  const stock = ref();
  const price = ref();
  const discount = ref();
-  const alphabetOnlyRule = (v) => /^[A-Za-z\s]*$/.test(v) || 'Alphabets only.'
-  const emailRule = (v) => /.+@.+\..+/.test(v) || 'Invalid email address.'
  
-  
+ const pincodeRules = computed(() => [
+  (v) => !!v || 'Pincode is required.',
+])
   const form = ref(null) // If you need a ref to the form for validation
   
   function submitForm() {
