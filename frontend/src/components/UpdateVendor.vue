@@ -1,9 +1,19 @@
 <template>
-  <v-container fluid>
-    <v-row justify="center" align="center" class="text-center">
-      <v-col><v-text>Update Your Information Here </v-text></v-col>
+  <v-container fluid style="height: 100vh">
+    <v-row
+      justify="center"
+      align="center"
+      class="text-center mt-4 mb-16"
+      style="background-color: #112d4e"
+    >
+      <v-col
+        ><v-text class="heading text-white"
+          ><strong>Update Yourself {{ name }} </strong></v-text
+        ></v-col
+      >
     </v-row>
-    <v-row justify="center" align="center" style="height: 100vh" class="text-center">
+
+    <v-row justify="center" align="center" class="text-center">
       <!-- Supporting Image on the Left -->
       <v-col cols="2">
         <img
@@ -22,7 +32,9 @@
 
       <v-col cols="12" md="4">
         <v-card v-if="currentPage === 'personal'">
-          <v-card-title class="text-center mb-4">Personal Details</v-card-title>
+          <v-card-title class="text-center mb-8 text-white" style="background-color: #112d4e"
+            >Personal Details</v-card-title
+          >
           <v-card-text class="w-50 mx-auto">
             <v-text-field
               v-model="firstName"
@@ -51,12 +63,14 @@
             ></v-text-field>
           </v-card-text>
           <v-card-actions class="d-flex justify-center">
-            <v-btn @click="goToAddressPage">Next </v-btn>
+            <v-btn @click="goToAddressPage"><v-icon icon="arrow_forward_ios" /></v-btn>
           </v-card-actions>
         </v-card>
 
         <v-card v-else>
-          <v-card-title class="text-center mb-4">Address Details</v-card-title>
+          <v-card-title class="text-center mb-4 text-white" style="background-color: #112d4e"
+            >Address Details</v-card-title
+          >
           <v-card-text class="w-50 mx-auto" justify="center">
             <v-text-field
               v-model="addressLane1"
@@ -73,7 +87,7 @@
             <v-text-field v-model="state" label="State" variant="outlined"></v-text-field>
           </v-card-text>
           <v-card-actions class="d-flex justify-center">
-            <v-btn @click="goToPersonalPage">Previous</v-btn>
+            <v-btn @click="goToPersonalPage"><v-icon icon="arrow_back_ios" /></v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -93,6 +107,9 @@
         />
       </v-col>
     </v-row>
+    <div justify="center" align="center">
+      <v-btn style="background-color: #112d4e" class="text-white mt-16">Update</v-btn>
+    </div>
   </v-container>
 </template>
 
@@ -108,8 +125,8 @@ const contactNoRules = computed(() => [
 ])
 
 const currentPage = ref('personal')
-const firstName = ref('vivek')
-const lastName = ref('singh')
+const firstName = ref('Jetha laal')
+const lastName = ref('Gada')
 const shopName = ref('Gada Electronics')
 const contact = ref('9601038130')
 
@@ -127,3 +144,10 @@ function goToPersonalPage() {
   currentPage.value = 'personal'
 }
 </script>
+
+<style>
+.heading {
+  font-size: 32px;
+  margin-top: 100px;
+}
+</style>
