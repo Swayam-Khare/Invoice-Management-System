@@ -27,6 +27,7 @@
           id="contact"
           :ripple="false"
           color="#112D4E"
+          @click="scroll('formContainer')"
           variant="text"
           class="text-capitalize h-100"
         >
@@ -39,11 +40,10 @@
             <v-btn
               id="about"
               :ripple="false"
-              color="#112D4E"
               append-icon="expand_more"
               v-bind="props"
               variant="text"
-              class="text-capitalize h-100"
+              class="nav-btn text-capitalize h-100"
             >
               About
             </v-btn>
@@ -51,19 +51,6 @@
 
           <!-- list item to show in menu -->
           <v-list class="pa-0">
-            <v-list-item
-              id="teamItem"
-              :active="itemVariant == 'team'"
-              color="#112D4E"
-              :variant="itemVariant == 'team' ? 'flat' : 'text'"
-              :onmouseenter="activeHover"
-              :onmouseleave="cancelHover"
-              title="Team"
-              router
-              @click="scroll('team')"
-              class="text-left"
-            >
-            </v-list-item>
             <v-list-item
               id="productItem"
               :active="itemVariant == 'product'"
@@ -75,22 +62,33 @@
               router
               @click="scroll('product')"
               class="text-left"
+            >
+            </v-list-item>
+            <v-list-item
+              id="teamItem"
+              :active="itemVariant == 'team'"
+              color="#112D4E"
+              :variant="itemVariant == 'team' ? 'flat' : 'text'"
+              :onmouseenter="activeHover"
+              :onmouseleave="cancelHover"
+              title="Team"
+              router
+              @click="scroll('team')"
+              class="text-left"
             ></v-list-item>
           </v-list>
         </v-menu>
       </span>
       <span class="h-100 d-flex align-center">
-
         <v-menu :open-on-hover="true" offset="4">
           <template v-slot:activator="{ props }">
             <v-btn
               id="login"
               :ripple="false"
-              color="#112D4E"
               append-icon="expand_more"
               v-bind="props"
               variant="text"
-              class="text-capitalize h-100"
+              class="nav-btn text-capitalize h-100"
             >
               Login
             </v-btn>
@@ -105,7 +103,7 @@
               :onmouseenter="activeHover"
               :onmouseleave="cancelHover"
               title="Admin"
-              @click="showLoginDialog = true, titleValue = 'Admin Login'"
+              @click="(showLoginDialog = true), (titleValue = 'Admin Login')"
               class="text-left"
             >
             </v-list-item>
@@ -117,17 +115,17 @@
               :onmouseenter="activeHover"
               :onmouseleave="cancelHover"
               title="Vendor"
-              @click="showLoginDialog = true, titleValue = 'Vendor Login'"
+              @click="(showLoginDialog = true), (titleValue = 'Vendor Login')"
               class="text-left"
             ></v-list-item>
           </v-list>
         </v-menu>
-        <Login v-model="showLoginDialog" @close="showLoginDialog = false" @vendor ="titleValue = 'Vendor Login', showLoginDialog = true" @signup="dialog = true" :myTitle="titleValue"/>
+        <Login v-model="showLoginDialog" @close="showLoginDialog = false" @vendor ="titleValue = 'Vendor Login', showLoginDialog = true" @signup="showSignupDialog = true" :myTitle="titleValue"/>
 
-        <v-btn class="h-100 rounded-lg text-capitalize" color="#112D4E" @click="dialog = true">
+        <v-btn class="h-100 rounded-lg text-capitalize" color="#112D4E" @click="showSignupDialog = true">
           Sign Up
         </v-btn>
-        <Signup v-model="dialog" @close="dialog = false" @login="showLoginDialog = true" />
+        <Signup v-model="showSignupDialog" @close="showSignupDialog = false" @login="showLoginDialog = true" />
       </span>
     </div>
   </div>
@@ -147,12 +145,18 @@
       <v-divider></v-divider>
       <v-list-item link prepend-icon="home" title="Home"></v-list-item>
       <v-list-item link prepend-icon="account_box" title="Contact"></v-list-item>
-      <v-list-item link prepend-icon="info" title="About"></v-list-item>
+      <v-list-item link prepend-icon="info" title="About" @click="scroll('product')"></v-list-item>
+      <v-list-item link prepend-icon="groups" title="Team" @click="scroll('team')"></v-list-item>
       <v-divider></v-divider>
 
-      <v-list-item link prepend-icon="login" title="Login" @click="showLoginDialog = true">
+      <v-list-item
+        link
+        prepend-icon="login"
+        title="Login"
+        @click="(showLoginDialog = true), (titleValue = 'Admin Login')"
+      >
       </v-list-item>
-      <v-list-item link prepend-icon="person_add" title="Signup" @click="dialog = true">
+      <v-list-item link prepend-icon="person_add" title="Signup" @click="showSignupDialog = true">
       </v-list-item>
     </v-navigation-drawer>
   </v-app>
@@ -179,7 +183,7 @@ import { onBeforeUnmount } from 'vue'
 // const selected = ref('home')
 const drawer = ref(false)
 const showLoginDialog = ref(false)
-const dialog = ref(false)
+const showSignupDialog = ref(false)
 const itemVariant = ref('none')
 const scrollPosition = ref(0)
 const titleValue = ref('Admin Login')
@@ -225,6 +229,9 @@ const cancelHover = () => {
 
 const scroll = (id) => {
   document.getElementById(id).scrollIntoView(true)
+  if (drawer.value) {
+    drawer.value = false
+  }
 }
 </script>
 
@@ -234,5 +241,13 @@ const scroll = (id) => {
   bottom: 20px;
   right: 20px;
   z-index: 1;
+}
+
+.nav-btn:hover {
+  color: #112d4e !important;
+}
+
+.v-navigation-drawer__scrim {
+  position: fixed !important;
 }
 </style>
