@@ -1,10 +1,7 @@
 <template>
   <v-dialog max-width="500px" centered persistent>
     <v-card class="rounded-lg remove-scrollbar">
-      <v-card-title
-        class="d-flex justify-space-between align-center"
-        style="background-color: #112d4ef1"
-      >
+      <v-card-title class="d-flex justify-space-between align-center" style="background-color: #112d4ef1">
         <p style="color: #f5f5f5" class="text-h5 pl-5">Sign Up</p>
         <v-btn icon="close" variant="text" color="#f5f5f5" @click="closeDialog"></v-btn>
       </v-card-title>
@@ -12,98 +9,39 @@
         <v-form class="px-3" ref="form" @submit.prevent="submitForm">
           <v-row>
             <v-col cols="12" md="6" class="pb-0 pb-md-3">
-              <v-text-field
-                label="First Name"
-                v-model="firstName"
-                :rules="[alphabetOnlyRule]"
-                variant="outlined"
-                color="#112d4e"
-                density="compact"
-              ></v-text-field>
+              <v-text-field label="First Name" v-model="firstName" :rules="[alphabetOnlyRule,required]" variant="outlined"
+                color="#112d4e" density="compact"></v-text-field>
             </v-col>
             <v-col cols="12" md="6" class="pt-1 pt-md-3">
-              <v-text-field
-                label="Last Name"
-                v-model="lastName"
-                :rules="[alphabetOnlyRule]"
-                variant="outlined"
-                color="#112d4e"
-                density="compact"
-              ></v-text-field>
+              <v-text-field label="Last Name" v-model="lastName" :rules="[alphabetOnlyRule,required]" variant="outlined"
+                color="#112d4e" density="compact"></v-text-field>
             </v-col>
           </v-row>
-          <v-text-field
-            label="Email"
-            :rules="[emailRule]"
-            v-model="email"
-            variant="outlined"
-            color="#112d4e"
-            class="mt-1"
-            density="compact"
-          ></v-text-field>
-          <v-text-field
-            label="Contact No."
-            :rules="contactNoRules"
-            v-model="contactNo"
-            variant="outlined"
-            color="#112d4e"
-            class="mt-1"
-            density="compact"
-          ></v-text-field>
-          <v-text-field
-            label="Shop Name"
-            v-model="shopName"
-            variant="outlined"
-            color="#112d4e"
-            class="mt-1"
-            density="compact"
-          ></v-text-field>
-          <v-text-field
-            label="Address Line 1"
-            v-model="addressLine1"
-            variant="outlined"
-            color="#112d4e"
-            density="compact"
-          ></v-text-field>
-          <v-text-field
-            label="Address Line 2"
-            v-model="addressLine2"
-            variant="outlined"
-            color="#112d4e"
-            density="compact"
-          ></v-text-field>
+          <v-text-field label="Email" :rules="[emailRule]" v-model="email" variant="outlined" color="#112d4e"
+            class="mt-1" density="compact"></v-text-field>
+          <v-text-field label="Contact No." :rules="contactNoRules" v-model="contactNo" variant="outlined"
+            color="#112d4e" class="mt-1" density="compact"></v-text-field>
+          <v-text-field label="Shop Name" v-model="shopName" :rules="[required]" variant="outlined" color="#112d4e" class="mt-1"
+            density="compact"></v-text-field>
+          <v-text-field label="Address Line 1" v-model="addressLine1" :rules="[required]" variant="outlined" color="#112d4e"
+            density="compact"></v-text-field>
+          <v-text-field label="Address Line 2" v-model="addressLine2" variant="outlined" color="#112d4e"
+            density="compact"></v-text-field>
           <v-row>
             <v-col cols="12" md="6" class="pb-0 pb-md-3">
-              <v-text-field
-                label="Pincode"
-                v-model="pincode"
-                :rules="pincodeRules"
-                variant="outlined"
-                color="#112d4e"
-                class="mb-1"
-                density="compact"
-              ></v-text-field>
+              <v-text-field label="Pincode" v-model="pincode" :rules="pincodeRules" variant="outlined" color="#112d4e"
+                class="mb-1" density="compact"></v-text-field>
             </v-col>
             <v-col cols="12" md="6" class="pt-1 pt-md-3">
-              <v-text-field
-                label="State"
-                v-model="state"
-                variant="outlined"
-                color="#112d4e"
-                density="compact"
-              ></v-text-field>
+              <v-text-field label="State" v-model="state" :rules="[required]" variant="outlined" color="#112d4e"
+                density="compact"></v-text-field>
             </v-col>
           </v-row>
-          <v-btn class="mt-1 txt-button" color="#112d4e" @click="validate" block>Sign Up</v-btn>
+          <v-btn type="submit" class="mt-1 txt-button" color="#112d4e" @click="validate" block>Sign Up</v-btn>
           <div class="d-flex justify-center align-center text-center">
             <span>Already have an account?</span>
-            <v-btn
-              variant="text"
-              color="#112d4e"
-              @click="$emit('close'), $emit('login')"
-              :ripple="false"
-              class="pl-1 pr-0 font-weight-bold text-capitalize"
-            >
+            <v-btn variant="text" color="#112d4e" @click="$emit('close'), $emit('login')" :ripple="false"
+              class="pl-1 pr-0 font-weight-bold text-capitalize">
               Log In
             </v-btn>
           </div>
@@ -130,6 +68,8 @@ const state = ref('')
 const alphabetOnlyRule = (v) => /^[A-Za-z\s]*$/.test(v) || 'Alphabets only.'
 const emailRule = (v) => /.+@.+\..+/.test(v) || 'Invalid email address.'
 
+const required = ((v) => (!!v || 'This field is Required'));
+
 const pincodeRules = computed(() => [
   (v) => !!v || 'Pincode is required.',
   (v) => (v && /^\d+$/.test(v)) || 'Pincode must contain only digits.',
@@ -139,32 +79,35 @@ const pincodeRules = computed(() => [
 const contactNoRules = computed(() => [
   (v) => !!v || 'Contact number is required.',
   (v) => (v && /^\d+$/.test(v)) || 'Contact number must contain only digits.',
-  (v) => (v && v.length >= 10) || 'Contact number must be at least 10 digits.'
+  (v) => (v && /^\d{10}$/.test(v)) || 'Contact number must be of 10 digits.'
 ])
 
 const form = ref(null) // If you need a ref to the form for validation
 
-function submitForm() {
-  if (form.value.validate()) {
-    console.log('Form submitted!')
+async function submitForm() {
+  const check = await validate();
+  // console.log(check.valid)
+  if (check.valid) {
+    // console.log('Form submitted!')
     resetForm()
+    emit('close')
   }
 }
 
 function validate() {
-  form.value.validate()
+  return form.value.validate()
 }
 
 function resetForm() {
-  firstName.value = ''
-  lastName.value = ''
-  email.value = ''
-  contactNo.value = ''
-  shopName.value = ''
-  addressLine1.value = ''
-  addressLine2.value = ''
-  pincode.value = ''
-  state.value = ''
+  firstName.value = null
+  lastName.value = null
+  email.value = null
+  contactNo.value = null
+  shopName.value = null
+  addressLine1.value = null
+  addressLine2.value = null
+  pincode.value = null
+  state.value = null
 }
 
 function closeDialog() {
@@ -176,12 +119,15 @@ function closeDialog() {
 .remove-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
 .v-input__control {
   height: 45px !important;
 }
+
 .v-messages__message {
   white-space: nowrap !important;
 }
+
 .v-input__details {
   padding-left: 0px !important;
 }
