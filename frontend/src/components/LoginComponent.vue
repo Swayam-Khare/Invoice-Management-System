@@ -10,7 +10,7 @@
       </v-card-title>
 
       <v-card-text>
-        <v-form>
+        <v-form @submit.prevent="submitForm">
           <v-text-field
             v-model="email"
             label="Email"
@@ -33,12 +33,12 @@
             @blur="isFocused = false"
             @focus="isFocused = true"
           ></v-text-field>
+          <v-card-actions class="pl-6 pt-0 pr-6">
+            <v-btn color="#112D4E" type="submit" variant="elevated" block   :disabled="!isFormValid" >Login</v-btn>
+          </v-card-actions>
         </v-form>
       </v-card-text>
 
-      <v-card-actions class="pl-6 pt-0 pr-6">
-        <v-btn color="#112D4E" variant="elevated" block @click="login" :disabled="!isFormValid" >Login</v-btn>
-      </v-card-actions>
 
       <v-card-text v-if="myTitle == 'Vendor Login'" class="pl-6 pt-3 pb-4 text-center">
         Not registered?
@@ -94,11 +94,8 @@ const isFormValid = computed(() => {
       return emailValid && passwordValid
     })
 
-const login = () => {
-  console.log('Email:', email.value)
-  console.log('Password:', password.value)
+const submitForm = () => {
   // Close the dialog
-
   if(isFormValid.value)
   emit('close')
 }
