@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "pinia": "^2.1.7",
+    "randomcolor": "^0.6.2",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0",
     "vuetify": "^3.5.13"
