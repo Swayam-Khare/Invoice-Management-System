@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const cookieParser = require('cookie-parser');
 
 const customerRouter = require("./routes/customerRoute");
 const globalErrorHandler = require("./utils/globalErrorHandler");
@@ -12,8 +13,9 @@ const adminRouter = require("./routes/adminRoute");
 
 // USE MODULES HERE
 const app = express();
-app.use(cors());
+app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 app.use(express.json());
+app.use(cookieParser());
 
 // USE ROUTES HERE
 app.use("/api/v1/customers", customerRouter);
