@@ -54,70 +54,46 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="12" md="12">
+      <v-col cols="12" md="3">
         <v-card>
-          <v-card-title>Billing History</v-card-title>
-          <v-card-text>
-            <v-row>
-              <v-col cols="12" md="4">
-                <v-chip color="primary">
-                  Last Billing
-                  <v-chip-closable>10/02/2021</v-chip-closable>
-                </v-chip>
-              </v-col>
-              <v-col cols="12" md="4">
-                <v-chip color="success">
-                  Last Recharge
-                  <v-chip-closable>₹ 2,625</v-chip-closable>
-                </v-chip>
-              </v-col>
-              <v-col cols="12" md="4">
-                <v-chip color="error">
-                  Last Due
-                  <v-chip-closable>₹ 3545</v-chip-closable>
-                </v-chip>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="12" md="6">
-                <v-card-text>
-                  <GmapMap
-                    :center="{ lat: 22.5726, lng: 88.3639 }"
-                    :zoom="12"
-                    map-type-id="terrain"
-                    style="width: 100%; height: 300px"
-                  >
-                    <GmapMarker
-                      :key="index"
-                      v-for="(m, index) in markers"
-                      :position="m.position"
-                      :clickable="true"
-                      :draggable="true"
-                      @click="center = m.position"
-                    />
-                  </GmapMap>
-                </v-card-text>
-              </v-col>
-              <v-col cols="12" md="6">
-                <v-card-text>
-                  <v-sparkline
-                    :value="values"
-                    :gradient="['#4CAF50', '#2E7D32']"
-                    :smooth="10"
-                    :padding="8"
-                    :line-width="2"
-                    :radius="5"
-                    :height="150"
-                    auto-draw
-                  ></v-sparkline>
-                </v-card-text>
-              </v-col>
-            </v-row>
+          <v-card-title class="pl-9" style="background-color: #112d4ef1"
+            ><p style="color: #f5f5f5">Address Details</p>
+          </v-card-title>
+          <v-card-text class="pl-5">
+            <v-card variant="flat">
+              <v-card-title class="pt-6">Address</v-card-title>
+              <v-card-text>
+                <v-row class="pa-3">
+                  <!-- <p> -->
+                  123 Main Street<br />
+                  Apartment 456<br />
+                  City, State 12345<br />
+                  Country
+                  <!-- </p> -->
+                </v-row>
+              </v-card-text>
+            </v-card>
+            <v-card variant="flat">
+              <v-card-title>Contact</v-card-title>
+              <v-card-text>
+                <v-row class="pa-3">
+                  <!-- <v-icon left>mdi-phone</v-icon> -->
+                  Ph.&nbsp;+1 123-456-7890
+                </v-row>
+              </v-card-text>
+            </v-card>
           </v-card-text>
           <v-card-actions>
-            <v-btn color="primary">Review</v-btn>
+            <v-btn class="pl-6 pb-1" color="primary" style="font-weight: bold">Edit Address</v-btn>
           </v-card-actions>
         </v-card>
+      </v-col>
+      <v-col cols="12" md="9">
+        <img
+          src="../assets/imgs/profile-details/photo-2.svg"
+          alt="Right Image"
+          style="max-width: 50%; max-height: 93%"
+        />
       </v-col>
     </v-row>
   </v-container>
