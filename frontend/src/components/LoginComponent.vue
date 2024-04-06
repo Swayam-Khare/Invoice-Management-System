@@ -41,6 +41,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useAdminStore } from '../stores/admin';
+// import router from '@/router';
 const adminStore = useAdminStore();
 const email = ref('')
 const password = ref('')
@@ -69,16 +70,25 @@ const isFormValid = computed(() => {
   return emailValid && passwordValid
 })
 
-const isAuthenticated = ()=>{
-  
-}
+// const isAuthenticated = () => {
+//   console.log(adminStore.token);
+// }
 const submitForm = async () => {
   // Close the dialog
   if (isFormValid.value) {
-    adminStore.loginAdmin({ email: email.value, password: password.value });
-    emit('close');
-    email.value = null;
-    password.value = null;
+    try {
+      await adminStore.loginAdmin({ email: email.value, password: password.value });
+      emit('close');
+      email.value = null;
+      password.value = null;
+      if (adminStore.isAuthenticated) {
+        console.log('true');
+        // router.push({name:'admin'})
+      } else console.log('false')
+    } catch (error) {
+      console.log(error.message)
+    }
+
   }
 }
 </script>
