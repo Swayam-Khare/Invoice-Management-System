@@ -91,7 +91,8 @@
           ></v-list-item>
         </v-list>
       </v-navigation-drawer>
-      <v-main
+
+      <!-- <v-main
         class="d-flex justify-space-between align-center pr-3 pl-15"
         style="height: 56px; background-color: #112d4e"
       >
@@ -99,15 +100,22 @@
 
         <v-btn class="text-capitalize elevation-7" prepend-icon="logout" color="#ffffff"
           >Logout</v-btn
-        >
+        ></v-main
+      > -->
+
       <v-main class="h-screen">
-        <component :is="isActiveTab" v-model="showProductDialog" @close="showProductDialog = false" />
+        <component
+          :is="isActiveTab"
+          v-model="showProductDialog"
+          @close="showProductDialog = false"
+        />
       </v-main>
     </v-layout>
   </v-card>
 </template>
 <script setup>
 import { ref } from 'vue'
+
 import Customer from '../components/Customer.vue'
 import Product from '../components/Product.vue'
 import CreateProduct from '../components/CreateProduct.vue'

@@ -1,21 +1,8 @@
 <template>
-  <v-container fluid style="height: 100vh">
-    <v-row
-      justify="center"
-      align="center"
-      class="text-center mt-4 mb-16"
-      style="background-color: #112d4e"
-    >
-      <v-col
-        ><v-text class="heading text-white"
-          ><strong>Update Yourself {{ name }} </strong></v-text
-        ></v-col
-      >
-    </v-row>
-
+  <v-container fluid style="height: 100vh" v-model="isOpen">
     <v-row justify="center" align="center" class="text-center">
       <!-- Supporting Image on the Left -->
-      <v-col cols="2">
+      <v-col cols="2" class="d-none d-sm-flex">
         <img
           v-if="currentPage === 'personal'"
           src="../assets/imgs/vendor/photo-1.svg"
@@ -32,9 +19,10 @@
 
       <v-col cols="12" md="4">
         <v-card v-if="currentPage === 'personal'">
-          <v-card-title class="text-center mb-8 text-white" style="background-color: #112d4e"
+          <v-card-title class="text-center mb-4 text-white" style="background-color: #112d4e"
             >Personal Details</v-card-title
           >
+          <v-divider></v-divider>
           <v-card-text class="w-50 mx-auto">
             <v-text-field
               v-model="firstName"
@@ -71,6 +59,7 @@
           <v-card-title class="text-center mb-4 text-white" style="background-color: #112d4e"
             >Address Details</v-card-title
           >
+          <v-divider></v-divider>
           <v-card-text class="w-50 mx-auto" justify="center">
             <v-text-field
               v-model="addressLane1"
@@ -92,7 +81,7 @@
         </v-card>
       </v-col>
       <!-- Supporting Image on the Right -->
-      <v-col cols="2">
+      <v-col cols="2" class="d-none d-sm-flex">
         <img
           v-if="currentPage === 'personal'"
           src="../assets/imgs/vendor/photo-2.svg"
@@ -108,13 +97,29 @@
       </v-col>
     </v-row>
     <div justify="center" align="center">
-      <v-btn style="background-color: #112d4e" class="text-white mt-16">Update</v-btn>
+      <v-btn style="background-color: #112d4e" class="text-white mt-16" @click="updateProfile"
+        >Update</v-btn
+      >
+      <v-btn style="background-color: #112d4e" class="text-white mt-16 ml-16" @click="closeForm"
+        >Close</v-btn
+      >
     </div>
   </v-container>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
+const isOpen = ref(true)
+const emit = defineEmits(['close'])
+
+const props = defineProps({
+  initialPage: {
+    type: String,
+    default: 'personal'
+  }
+})
+
+const currentPage = ref(props.initialPage)
 
 const alphabetOnlyRule = (v) => /^[A-Za-z\s]*$/.test(v) || 'Alphabets only.'
 
@@ -124,7 +129,6 @@ const contactNoRules = computed(() => [
   (v) => (v && v.length >= 10) || 'Contact number must be at least 10 digits.'
 ])
 
-const currentPage = ref('personal')
 const firstName = ref('Jetha laal')
 const lastName = ref('Gada')
 const shopName = ref('Gada Electronics')
@@ -136,12 +140,23 @@ const landmark = ref('surat')
 const pincode = ref('394327')
 const state = ref('Gujarat')
 
-function goToAddressPage() {
+const goToAddressPage = () => {
   currentPage.value = 'address'
 }
 
-function goToPersonalPage() {
+const goToPersonalPage = () => {
   currentPage.value = 'personal'
+}
+
+const updateProfile = () => {
+  // Logic for updating the profile
+  console.log('Update profile:', { firstName: firstName.value, lastName: lastName.value })
+  // ... (additional logic)
+  closeForm()
+}
+
+const closeForm = () => {
+  emit('close')
 }
 </script>
 
