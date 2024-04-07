@@ -13,7 +13,7 @@
                 color="#112d4e" density="compact"></v-text-field>
             </v-col>
             <v-col cols="12" md="6" class="pt-1 pt-md-3">
-              <v-text-field label="Last Name" v-model="lastName" :rules="[alphabetOnlyRule,required]" variant="outlined"
+              <v-text-field label="Last Name" v-model="lastName" :rules="[alphabetOnlyRule]" variant="outlined"
                 color="#112d4e" density="compact"></v-text-field>
             </v-col>
           </v-row>

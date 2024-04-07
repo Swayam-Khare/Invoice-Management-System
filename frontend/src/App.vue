@@ -1,12 +1,14 @@
 <template>
-  <!-- <Home /> -->
+  <Home />
+
   <!-- <Admin /> -->
-  <profile />
+  <!-- <Vendor /> -->
+  <!-- <Product /> -->
 </template>
 
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
-// import Home from './views/Home.vue'
+// import { RouterLink, RouterView } from 'vue-router'
+import Home from './views/Home.vue'
 // import Admin from './views/Admin.vue'
 
 import profile from './components/Profile.vue'

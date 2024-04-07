@@ -65,8 +65,9 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-
+import { ref, computed } from 'vue';
+import {useAdminStore} from '../stores/admin';
+const adminStore = useAdminStore();
 const email = ref('')
 const password = ref('')
 const isFocused = ref(false)
@@ -96,7 +97,12 @@ const isFormValid = computed(() => {
 
 const submitForm = () => {
   // Close the dialog
-  if(isFormValid.value)
-  emit('close')
+  if(isFormValid.value){
+    console.log('in submit function',email.value,password.value);
+    adminStore.loginAdmin({email:email.value,password:password.value});
+    emit('close');
+    email.value=null;
+    password.value=null;
+  }
 }
 </script>

@@ -142,7 +142,7 @@
       <v-list-item title="Invoice Management System" subtitle="IMS"></v-list-item>
       <v-divider></v-divider>
       <v-list-item link prepend-icon="home" title="Home"></v-list-item>
-      <v-list-item link prepend-icon="account_box" title="Contact"></v-list-item>
+      <v-list-item link prepend-icon="account_box" title="Contact" @click="scroll('formContainer')"></v-list-item>
       <v-list-item link prepend-icon="info" title="About" @click="scroll('product')"></v-list-item>
       <v-list-item link prepend-icon="groups" title="Team" @click="scroll('team')"></v-list-item>
       <v-divider></v-divider>
