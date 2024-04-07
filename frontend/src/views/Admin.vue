@@ -247,7 +247,7 @@ tr:hover {
   color: green;
   border-radius: 20px;
   padding: 5px 10px;
-  border: 1px solid green;
+  /* border: 1px solid green; */
 }
 
 .pending {
@@ -255,7 +255,7 @@ tr:hover {
   color: red;
   border-radius: 20px;
   padding: 5px 10px;
-  border: 1px solid red;
+  /* border: 1px solid red; */
 }
 
 .hover-scale {

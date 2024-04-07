@@ -26,7 +26,7 @@
                     <v-text-field
                       label="First Name"
                       v-model="firstName"
-                      :rules="[alphabetOnlyRule]"
+                      :rules="[alphabetOnlyRule,required]"
                       variant="outlined"
                       color="#112d4e"
                       density="compact"
@@ -84,7 +84,7 @@
                 </v-row>
                 <v-row justify="center">
                   <v-col cols="12" sm="6" md="4">
-                    <v-btn class="mt-1 txt-button" color="#112d4e" @click="validate" block
+                    <v-btn type="submit" class="mt-1 txt-button" color="#112d4e" @click="validate" block
                       >Send Message</v-btn
                     >
                   </v-col>
@@ -105,30 +105,35 @@ const lastName = ref('')
 const email = ref('')
 const contactNo = ref('')
 const messageUs = ref('')
+
+
+const required = ((v) => (!!v || 'This field is Required'));
+
 const alphabetOnlyRule = (v) => /^[A-Za-z\s]*$/.test(v) || 'Alphabets only.'
 const emailRule = (v) => /.+@.+\..+/.test(v) || 'Invalid email address.'
 
 const contactNoRules = computed(() => [
   (v) => !!v || 'Contact number is required.',
   (v) => (v && /^\d+$/.test(v)) || 'Contact number must contain only digits.',
-  (v) => (v && v.length >= 10) || 'Contact number must be at least 10 digits.'
+  (v) => (v && /^\d{10}$/.test(v)) || 'Contact number must be of 10 digits.'
 ])
 const form = ref(null) // If you need a ref to the form for validation
-function submitForm() {
-  if (form.value.validate()) {
-    console.log('Your details have been submitted!')
+async function submitForm() {
+  const check = await validate();
+  // console.log(check.valid);
+  if (check.valid) {
     resetForm()
   }
 }
-function validate() {
-  form.value.validate()
+ function validate() {
+  return  form.value.validate()
 }
 function resetForm() {
-  firstName.value = ''
-  lastName.value = ''
-  email.value = ''
-  contactNo.value = ''
-  messageUs.value = ''
+  firstName.value = null;
+  lastName.value = null;
+  email.value = null;
+  contactNo.value = null;
+  messageUs.value = null;
 }
 </script>
 

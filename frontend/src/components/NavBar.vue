@@ -16,20 +16,18 @@
       <span class="h-100 d-flex align-center">
         <v-btn
           id="home"
-          color="#112D4E"
           :ripple="false"
           variant="text"
-          class="text-capitalize h-100"
+          class="text-capitalize h-100 nav-btn"
         >
           Home
         </v-btn>
         <v-btn
           id="contact"
           :ripple="false"
-          color="#112D4E"
           @click="scroll('formContainer')"
           variant="text"
-          class="text-capitalize h-100"
+          class="text-capitalize h-100 nav-btn"
         >
           Contact
         </v-btn>
@@ -144,7 +142,7 @@
       <v-list-item title="Invoice Management System" subtitle="IMS"></v-list-item>
       <v-divider></v-divider>
       <v-list-item link prepend-icon="home" title="Home"></v-list-item>
-      <v-list-item link prepend-icon="account_box" title="Contact"></v-list-item>
+      <v-list-item link prepend-icon="account_box" title="Contact" @click="scroll('formContainer')"></v-list-item>
       <v-list-item link prepend-icon="info" title="About" @click="scroll('product')"></v-list-item>
       <v-list-item link prepend-icon="groups" title="Team" @click="scroll('team')"></v-list-item>
       <v-divider></v-divider>
