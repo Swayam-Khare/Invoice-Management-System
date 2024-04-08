@@ -87,16 +87,17 @@
         </td>
       </tr>
     </table>
+
+    <v-pagination
+      v-model="page"
+      :length="10"
+      next-icon="arrow_forward_ios"
+      prev-icon="arrow_back_ios"
+      class="pagination mx-auto mt-0"
+      :total-visible="4"
+      size="x-small"
+    ></v-pagination>
   </div>
-  <v-pagination
-    v-model="page"
-    :length="10"
-    next-icon="arrow_forward_ios"
-    prev-icon="arrow_back_ios"
-    class="pagination mx-auto mt-0"
-    :total-visible="4"
-    size="x-small"
-  ></v-pagination>
 </template>
 
 <script setup>

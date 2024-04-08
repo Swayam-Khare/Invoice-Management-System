@@ -74,7 +74,9 @@
     <div class="bg-white rounded-lg mx-4 elevation-3 mb-7">
       <div class="d-flex justify-space-between align-center py-4 px-6">
         <h3>Customer Info</h3>
-        <v-btn color="#112D4E" class="text-capitalize">Select Customer</v-btn>
+        <v-btn color="#112D4E" @click="showSelectCustomer = true" class="text-capitalize"
+          >Select Customer</v-btn
+        >
       </div>
       <v-divider class="mb-4 mx-4"></v-divider>
       <div class="d-flex justify-space-around">
@@ -129,9 +131,15 @@
               item-color="#112D4E"
               color="#112D4E"
               label="State"
+              density="compact"
               :items="states"
             ></v-select>
-            <v-text-field variant="outlined" label="Pincode" color="#112D4E"></v-text-field>
+            <v-text-field
+              variant="outlined"
+              density="compact"
+              label="Pincode"
+              color="#112D4E"
+            ></v-text-field>
           </div>
         </div>
       </div>
@@ -163,7 +171,7 @@
             <td>
               <v-btn
                 color="#112D4E"
-                @click="addProduct"
+                @click="showSelectProduct = true"
                 prepend-icon="add"
                 variant="outlined"
                 class="text-capitalize mx-n1 my-3"
@@ -201,16 +209,26 @@
         </div>
       </div>
     </div>
+
+    <!-- Select Customer Dialog -->
+    <SelectCustomer v-model="showSelectCustomer" @close="showSelectCustomer = false"/>
+
+    <!-- Select Product Dialog -->
+    <SelectProduct v-model="showSelectProduct" @close="showSelectProduct = false"/>
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
+import SelectCustomer from './SelectCustomer.vue'
+import SelectProduct from './SelectProduct.vue'
 
 const showDuePicker = ref(false)
 const showPurchasePicker = ref(false)
 const actualDueDate = ref(null)
 const actualPurchaseDate = ref(null)
+const showSelectCustomer = ref(false)
+const showSelectProduct = ref(false)
 const status = ['Paid', 'Due', 'Overdue']
 const states = ['Uttar Pradesh', 'Gujarat', 'Rajasthan']
 
@@ -235,15 +253,15 @@ const purchaseDate = computed(() => {
   return ''
 })
 
-const addProduct = () => {
-  orderData.value.push({
-    product: 'Product',
-    quantity: 1,
-    price: 0,
-    discount: 0,
-    subtotal: 0
-  })
-}
+// const addProduct = () => {
+//   orderData.value.push({
+//     product: 'Product',
+//     quantity: 1,
+//     price: 0,
+//     discount: 0,
+//     subtotal: 0
+//   })
+// }
 </script>
 
 <style scoped>
