@@ -73,12 +73,13 @@
             </template>
 
             <v-list-item
-              v-for="([title, icon], i) in invoice"
+              v-for="([title, icon, tab], i) in invoice"
               :key="i"
               :prepend-icon="icon"
               :title="title"
               color="#112d4ef1"
               :value="title"
+              @click="isActiveTab = tab"
             ></v-list-item>
           </v-list-group>
 
@@ -91,19 +92,7 @@
           ></v-list-item>
         </v-list>
       </v-navigation-drawer>
-
-      <!-- <v-main
-        class="d-flex justify-space-between align-center pr-3 pl-15"
-        style="height: 56px; background-color: #112d4e"
-      >
-        <img src="../assets/logo.svg" alt="Logo" style="height: 50px; width: 50px" />
-
-        <v-btn class="text-capitalize elevation-7" prepend-icon="logout" color="#ffffff"
-          >Logout</v-btn
-        ></v-main
-      > -->
-
-      <v-main class="h-screen">
+      <v-main>
         <component
           :is="isActiveTab"
           v-model="showProductDialog"
@@ -119,6 +108,7 @@ import { ref } from 'vue'
 import Customer from '../components/Customer.vue'
 import Product from '../components/Product.vue'
 import CreateProduct from '../components/CreateProduct.vue'
+import CreateInvoice from '../components/CreateInvoice.vue'
 
 const drawer = ref(true)
 const rail = ref(true)
@@ -130,6 +120,6 @@ const product = ref([
 ])
 const invoice = ref([
   ['All Invoices', 'local_mall'],
-  ['Create Invoice', 'add_circle']
+  ['Create Invoice', 'add_circle', CreateInvoice]
 ])
 </script>
