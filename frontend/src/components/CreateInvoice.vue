@@ -6,12 +6,12 @@
     </div>
 
     <!-- Due Date -->
-    <div style="width: fit-content" class="d-flex ga-6 ml-auto mr-4">
+    <div style="width: fit-content" class="d-flex flex-wrap ga-md-6 ml-auto mr-4">
       <div style="width: 300px">
         <v-menu v-model="showDuePicker">
           <template v-slot:activator="{ props }">
             <div class="d-flex justify-space-around align-center">
-              <v-icon color="#112D4E" class="mb-7 mr-4" icon="calendar_month"></v-icon>
+              <v-icon color="#112D4E" class="mb-7 mr-4 ml-4 ml-md-0" icon="calendar_month"></v-icon>
               <v-text-field
                 color="#112d4e"
                 density="compact"
@@ -37,7 +37,7 @@
         <v-menu v-model="showPurchasePicker">
           <template v-slot:activator="{ props }">
             <div class="d-flex justify-space-around align-center">
-              <v-icon color="#112D4E" class="mb-7 mr-4" icon="calendar_month"></v-icon>
+              <v-icon color="#112D4E" class="mb-7 mr-4 ml-4 ml-md-0" icon="calendar_month"></v-icon>
               <v-text-field
                 variant="outlined"
                 density="compact"
@@ -59,7 +59,7 @@
 
       <!-- Status Select -->
       <div style="width: 300px" class="d-flex align-center">
-        <v-icon color="#112D4E" class="mb-7 mr-4" icon="pending_actions"></v-icon>
+        <v-icon color="#112D4E" class="mb-7 mr-4 ml-4 ml-md-0" icon="pending_actions"></v-icon>
         <v-select
           variant="outlined"
           color="#112D4E"
@@ -72,15 +72,15 @@
 
     <!-- Customer Info -->
     <div class="bg-white rounded-lg mx-4 elevation-3 mb-7">
-      <div class="d-flex justify-space-between align-center py-4 px-6">
+      <div class="d-flex flex-wrap justify-space-between align-center py-4 px-6">
         <h3>Customer Info</h3>
-        <v-btn color="#112D4E" @click="showSelectCustomer = true" class="text-capitalize"
+        <v-btn color="#112D4E" @click="showSelectCustomer = true" class="text-capitalize mt-2 mt-sm-0"
           >Select Customer</v-btn
         >
       </div>
       <v-divider class="mb-4 mx-4"></v-divider>
-      <div class="d-flex justify-space-around">
-        <div class="d-flex flex-column" style="width: 48%">
+      <div class="d-flex flex-wrap flex-column flex-sm-row px-sm-2 justify-space-around">
+        <div class="d-flex flex-wrap flex-column px-4 px-sm-0 custom-info">
           <v-text-field
             density="compact"
             variant="outlined"
@@ -106,7 +106,7 @@
             color="#112D4E"
           ></v-text-field>
         </div>
-        <div class="d-flex flex-column" style="width: 48%">
+        <div class="d-flex flex-wrap flex-column px-4 px-sm-0 custom-info">
           <v-text-field
             density="compact"
             variant="outlined"
@@ -184,8 +184,8 @@
     </div>
 
     <!-- Addtional Notes -->
-    <div class="d-flex justify-space-between">
-      <div class="w-50">
+    <div class="d-flex flex-wrap mr-5 justify-space-between">
+      <div class="custom-notes mr-3 mr-sm-0">
         <textarea
           style="resize: none"
           class="rounded-lg text-capitalize mx-4 pt-3 pl-4 bg-white elevation-3 w-100"
@@ -195,15 +195,15 @@
         ></textarea>
       </div>
 
-      <div style="width: 15%" class="mr-5 text-h6">
+      <div class="custom-total mr-sm-5 mr-md-0 text-h6 ml-5 mt-2 mt-sm-n2">
         <div class="d-flex justify-space-between w-100">
-          <span>Subtotal:</span> <span>$0.00</span>
+          <span>Subtotal: </span> <span>$0.00</span>
         </div>
         <div class="d-flex justify-space-between w-100">
-          <span>Discount:</span> <span>$0.00</span>
+          <span>Discount: </span> <span>$0.00</span>
         </div>
-        <div class="d-flex justify-space-between w-100"><span>Tax:</span> <span>$0.00</span></div>
-        <div class="d-flex justify-space-between w-100"><span>Total:</span> <span>$0.00</span></div>
+        <div class="d-flex justify-space-between w-100"><span>Tax: </span> <span> $0.00</span></div>
+        <div class="d-flex justify-space-between w-100"><span>Total: </span> <span> $0.00</span></div>
         <div class="mt-5 d-flex justify-center">
           <v-btn color="#006c53" class="text-capitalize">Create Invoice</v-btn>
         </div>
@@ -265,6 +265,38 @@ const purchaseDate = computed(() => {
 </script>
 
 <style scoped>
+.custom-info {
+  width: 100%;
+}
+
+.custom-notes {
+  width: 100%;
+}
+
+.custom-total {
+  width: 100%;
+}
+
+@media only screen and (min-width: 600px) {
+  .custom-info {
+    width: 48% !important;
+  }
+
+  .custom-notes {
+    width: 50% !important;
+  }
+
+  .custom-total {
+    width: 25% !important;
+  }
+}
+
+@media only screen and (min-width: 900px) {
+  .custom-total {
+    width: 15% !important;
+  }
+}
+
 h1,
 h3 {
   color: #112d4e;
