@@ -1,6 +1,6 @@
 <template>
-  <Home />
-
+  <!-- <Home /> -->
+<Profile />
   <!-- <Admin /> -->
   <!-- <Vendor /> -->
   <!-- <Product /> -->
@@ -11,7 +11,7 @@
 import Home from './views/Home.vue'
 // import Admin from './views/Admin.vue'
 
-import profile from './components/Profile.vue'
+import Profile from './components/Profile.vue'
 
 // import Customer from './components/Customer.vue'
 </script>

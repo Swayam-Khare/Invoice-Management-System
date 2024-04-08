@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid style="height: 100vh">
+  <!-- <v-container fluid style="height: 100vh">
     <v-row justify="center" class="mt-16">
       <v-col cols="12" md="2" class="d-sm-flex justify-center bg-blue-grey-lighten-4">
         <img
@@ -72,12 +72,10 @@
               <v-card-title class="pt-6">Address</v-card-title>
               <v-card-text>
                 <v-row class="pa-3">
-                  <!-- <p> -->
                   123 Main Street<br />
                   Apartment 456<br />
                   City, State 12345<br />
                   Country
-                  <!-- </p> -->
                 </v-row>
               </v-card-text>
             </v-card>
@@ -85,7 +83,6 @@
               <v-card-title>Contact</v-card-title>
               <v-card-text>
                 <v-row class="pa-3">
-                  <!-- <v-icon left>mdi-phone</v-icon> -->
                   Ph.&nbsp;+1 123-456-7890
                 </v-row>
               </v-card-text>
@@ -117,7 +114,148 @@
       ref="updateVendorRef"
       :initialPage="initialPage"
     />
-  </v-container>
+  </v-container> -->
+
+  <!-- <v-container fluid>
+  <v-row no-gutters class="fill-height">
+    <v-col cols="12" md="6" class="d-flex justify-center">
+      <v-card class=" ma-1" style="width: 50%;" outlined rounded>
+        <v-card-title class="rounded-top" style="background-color: #112d4ef1; color: #f5f5f5">My Profile</v-card-title>
+        <v-card-text class="d-flex flex-column justify-space-between">
+          <div class="text-center">
+            <v-avatar class="ma-5" size="100">
+              <img
+                class="my-auto mx-auto user-img"
+                src="../assets/imgs/User/2.png"
+                alt="Right Image"
+                style="max-width: 100%; max-height: 100%"
+              />
+            </v-avatar>
+            <h3 class="headline mb-1">John Doe</h3>
+            <p class="subheading mb-1">Windhoek, TN, New York, USA</p>
+            <p class="body-1 mb-1">+1-656-569-999-1230</p>
+            <p class="body-1 mb-1">johndoe@example.com</p>
+          </div>
+          <v-card-actions class="justify-center">
+            <v-btn style="background-color: #112d4ef1; color: #f5f5f5 " class="mt-3" dark>Save</v-btn>
+          </v-card-actions>
+        </v-card-text>
+      </v-card>
+    </v-col>
+    <v-col cols="12" md="6" class="d-flex justify-center">
+      <v-row no-gutters class="w-50">
+          <v-card class="ma-1 mb-2" outlined rounded style="width: 50%;">
+            <v-card-title class="rounded-top" style="background-color: #112d4ef1; color: #f5f5f5">Address Details</v-card-title>
+            <v-card-text class="pa-3">
+              <div class="text-center">
+                <p class="body-1 mb-1">123 Main Street, Apt 456</p>
+                <p class="body-1 mb-1">Anytown, CA 12345</p>
+                <p class="body-1 mb-1">United States</p>
+              </div>
+            </v-card-text>
+          </v-card>
+          <v-card class="ma-1" outlined rounded style="width: 50%;">
+            <v-card-title class="rounded-top" style="background-color: #112d4ef1; color: #f5f5f5">Credentials</v-card-title>
+            <v-card-text class="pa-3">
+              <div class="text-center">
+                <p class="body-1 mb-1">johndoe@example.com</p>
+                <p class="body-1 mb-1">********</p>
+              </div>
+            </v-card-text>
+          </v-card>
+      </v-row>
+    </v-col>
+  </v-row>
+</v-container> -->
+
+<v-container fluid  >
+  <v-row no-gutters class=" fill-height">
+    <v-col cols="12" md="6" class="d-flex justify-center">
+      <v-card class=" d-flex flex-column fill-height w-50" style=" border-radius: 10px;">
+        <v-card-title style="background-color: #112d4ef1; color: #f5f5f5;">
+          My Profile
+        </v-card-title>
+        <v-card-text class="flex-grow-1 justify-space-between pa-5">
+          <div>
+            <v-avatar class="ma-5 ml-0" size="100">
+              <img class="my-auto mx-auto user-img" src="../assets/imgs/User/2.png" alt="Profile Image" style="max-width: 100%; max-height: 100%" />
+            </v-avatar>
+            <div class="mb-2">
+              <span class="font-weight-bold caption text-uppercase">First Name</span>
+              <p class="body-1">John Doe</p>
+            </div>
+            <div class="mb-2">
+              <span class="font-weight-bold caption text-uppercase">Location</span>
+              <p class="body-1">Windhoek, TN, New York, USA</p>
+            </div>
+            <div class="mb-2">
+              <span class="font-weight-bold caption text-uppercase">Phone Number</span>
+              <p class="body-1">+1-656-569-999-1230</p>
+            </div>
+            <div class="mb-0">
+              <span class="font-weight-bold caption text-uppercase">Email</span>
+              <p class="body-1">johndoe@example.com</p>
+            </div>
+          </div>
+        </v-card-text>
+        <v-card-actions>
+            <v-btn  style="background-color: #112d4ef1; color: #f5f5f5; border-radius: 10px;" block dark>
+              Update
+            </v-btn>
+          </v-card-actions>
+      </v-card>
+    </v-col>
+    <v-col cols="12" md="6" class="d-flex justify-center">
+      <v-row no-gutters align="center" class="flex-column">
+        <v-card class=" w-50" style="max-height: 70%; border-radius: 10px;">
+          <v-card-title style="background-color: #112d4ef1; color: #f5f5f5; ">
+            Address Details
+          </v-card-title>
+          <v-card-text class="pa-3">
+            <div class="mb-2">
+              <span class="font-weight-bold caption text-uppercase">Street</span>
+              <p class="body-1">123 Main Street, Apt 456</p>
+            </div>
+            <div class="mb-2">
+              <span class="font-weight-bold caption text-uppercase">City</span>
+              <p class="body-1">Anytown, CA 12345</p>
+            </div>
+            <div class="mb-0">
+              <span class="font-weight-bold caption text-uppercase">Country</span>
+              <p class="body-1">United States</p>
+            </div>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn style="background-color: #112d4ef1; color: #f5f5f5; border-radius: 10px;" block dark>
+              Update
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+        <v-card class="mt-5 w-50" style="max-height: 70%; border-radius: 10px;">
+          <v-card-title style="background-color: #112d4ef1; color: #f5f5f5;">
+            Credentials
+          </v-card-title>
+          <v-card-text class="pa-3">
+            <div class="mb-2">
+              <span class="font-weight-bold caption text-uppercase">Email</span>
+              <p class="body-1">johndoe@example.com</p>
+            </div>
+            <div class="mb-0">
+              <span class="font-weight-bold caption text-uppercase">Password</span>
+              <p class="body-1">**********</p>
+            </div>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn style="background-color: #112d4ef1; color: #f5f5f5; border-radius: 10px;" block dark>
+              Update
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-row>
+    </v-col>
+  </v-row>
+</v-container>
+
 </template>
 
 <script setup>
