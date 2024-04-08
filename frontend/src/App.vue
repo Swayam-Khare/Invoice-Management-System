@@ -4,7 +4,7 @@
  <RouterView/>
 
   <!-- <Admin /> -->
-  <Vendor />
+  <!-- <Vendor /> -->
   <!-- <Product /> -->
   <!-- <CreateInvoice /> -->
   <!-- <SelectCustomer /> -->
