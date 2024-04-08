@@ -77,14 +77,14 @@ const isFormValid = computed(() => {
 const submitForm = async () => {
   // Close the dialog
   if (isFormValid.value) {
-    adminStore.loginAdmin({ email: email.value, password: password.value });
+   await adminStore.loginAdmin({ email: email.value, password: password.value });
     emit('close');
-    if (adminStore.isAuthenticated) {
+    console.log('line 82',adminStore.token);
+    if (adminStore.token) {
       console.log('true');
-      router.push('/admin')
+      router.replace('/admin')
     } else console.log('false')
-    // console.log('at line 86', adminStore.isAuthenticated);
-    console.log(adminStore.stateVariable);
+    console.log('in line 87',adminStore.stateVariable);
     // email.value = null;
     // password.value = null;
   }
