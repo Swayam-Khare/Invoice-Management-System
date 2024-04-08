@@ -19,7 +19,7 @@
                     <v-text-field label="Discount" v-model="discount" variant="outlined" color="#112d4e"
                         density="compact" :rules="[required, numberOnly]"></v-text-field>
 
-                    <v-btn type="submit" class="mt-1 txt-button" color="#112d4e" @click="validate" block>Create</v-btn>
+                    <v-btn type="submit" class="mt-1 mb-3 txt-button" color="#112d4e" @click="validate" block>Create</v-btn>
 
                 </v-form>
             </v-card-text>
