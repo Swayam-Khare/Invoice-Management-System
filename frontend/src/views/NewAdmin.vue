@@ -31,7 +31,7 @@
     <div>
         <v-data-table-server v-model:items-per-page="itemsPerPage" :headers="headers" :items="data"
             :items-length="totalItems" :loading="loading" item-value="name"
-            @update:options="loadItems"></v-data-table-server>
+            @update:options="loadItems" ></v-data-table-server>
 
 
     </div>
@@ -39,23 +39,26 @@
 
 <script setup>
 import { ref } from 'vue'
-// import randomColor from 'randomcolor'
+import randomColor from 'randomcolor'
 import { onMounted } from 'vue';
 import { useVendorStore } from '../stores/vendorStore.js';
 import { onBeforeMount } from 'vue';
+let data = ref([]);
 const vendorStore = useVendorStore();
-let data = ref(null);
-onBeforeMount(() => {
-    vendorStore.getAllVendors();
-    data.value = vendorStore.vendors
-    console.log('', vendorStore.vendors);
+onBeforeMount(async () => {
+    if (data.value.length === 0) {
+        await vendorStore.getAllVendors();
+        data.value = vendorStore.vendors;
+    }
+
 })
+
+
 
 const page = ref(1)
 onMounted(() => {
-    alert('hi')
-    // const color = randomColor()
-    document.getElementById('random-color').style.backgroundColor = 'red';
+    const color = randomColor()
+    document.getElementById('random-color').style.backgroundColor = color;
 
 
 })
