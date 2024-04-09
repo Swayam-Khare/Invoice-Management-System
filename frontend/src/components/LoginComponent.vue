@@ -43,9 +43,11 @@ import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { ref, computed } from 'vue';
 import { useAdminStore } from '../stores/admin';
+import { useVendorStore } from '../stores/vendor';
 // import router from '@/router';
 const router = useRouter();
 const adminStore = useAdminStore();
+const vendorStore = useVendorStore();
 const email = ref('')
 const password = ref('')
 const isFocused = ref(false)
@@ -55,9 +57,10 @@ const emit = defineEmits(['close', 'signup', 'vendor'])
 const { myTitle } = defineProps({
   myTitle: {
     type: String,
-    default: 'Admin Login'
+    // default: 'Admin Login'
   }
 })
+console.log(myTitle , "Tvhbkjvhwvfwhk vcnd fjbhsfkbjcw dnsm")
 const emailRules = computed(() => [
   (v) => !!v || 'Email is required',
   (v) => /.+@.+\..+/.test(v) || 'Email must be valid'
@@ -76,17 +79,48 @@ const isFormValid = computed(() => {
 
 const submitForm = async () => {
   // Close the dialog
+  // if (isFormValid.value) {
+  //  await adminStore.loginAdmin({ email: email.value, password: password.value });
+  //  await vendorStore.loginVendor({ email: email.value, password: password.value });
+  //   emit('close');
+  //   console.log('line 82',adminStore.token);
+  //   console.log('line 83',vendorStore.token);
+  //   if (adminStore.token) {
+  //     console.log('true');
+  //     router.replace('/admin')
+  //   } else console.log('false')
+  //   console.log('in line 87',adminStore.stateVariable);
+  //   // email.value = null;
+  //   // password.value = null;
+  // }
   if (isFormValid.value) {
-   await adminStore.loginAdmin({ email: email.value, password: password.value });
-    emit('close');
-    console.log('line 82',adminStore.token);
-    if (adminStore.token) {
-      console.log('true');
-      router.replace('/admin')
-    } else console.log('false')
-    console.log('in line 87',adminStore.stateVariable);
-    // email.value = null;
-    // password.value = null;
+    console.log(myTitle);
+    if (myTitle === 'Admin Login') {
+      await adminStore.loginAdmin({ email: email.value, password: password.value });
+      emit('close');
+      console.log('line 97', adminStore.token);
+      if (adminStore.token) {
+        console.log('true');
+        router.replace('/admin');
+      } else {
+        console.log('false');
+      }
+      console.log('in line 97', adminStore.stateVariable);
+    } else if (myTitle === 'Vendor Login') {
+      await vendorStore.loginVendor({ email: email.value, password: password.value });
+      emit('close');
+      console.log('line 108', vendorStore.token);
+      if (vendorStore.token) {
+        console.log('true');
+        router.replace('/vendor');
+      } else {
+        console.log('false');
+      }
+      console.log('in line 108', vendorStore.stateVariable);
+    }
+    else{
+      console.log('false');
+    }
   }
 }
 </script>
