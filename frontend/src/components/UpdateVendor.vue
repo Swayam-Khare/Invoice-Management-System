@@ -1,22 +1,6 @@
 <template>
   <v-container fluid style="height: 100vh" v-model="isOpen">
     <v-row justify="center" align="center" class="text-center">
-      <!-- Supporting Image on the Left -->
-      <v-col cols="2" class="d-none d-sm-flex">
-        <img
-          v-if="currentPage === 'personal'"
-          src="../assets/imgs/vendor/photo-1.svg"
-          alt="Left Image"
-          style="max-width: 100%"
-        />
-        <img
-          v-if="currentPage === 'address'"
-          src="../assets/imgs/vendor/photo-3.svg"
-          alt="Left Image"
-          style="max-width: 100%"
-        />
-      </v-col>
-
       <v-col cols="12" md="4">
         <v-card v-if="currentPage === 'personal'">
           <v-card-title class="text-center mb-4 text-white" style="background-color: #112d4e"
@@ -79,21 +63,6 @@
             <v-btn @click="goToPersonalPage"><v-icon icon="arrow_back_ios" /></v-btn>
           </v-card-actions>
         </v-card>
-      </v-col>
-      <!-- Supporting Image on the Right -->
-      <v-col cols="2" class="d-none d-sm-flex">
-        <img
-          v-if="currentPage === 'personal'"
-          src="../assets/imgs/vendor/photo-2.svg"
-          alt="Right Image"
-          style="max-width: 100%"
-        />
-        <img
-          v-if="currentPage === 'address'"
-          src="../assets/imgs/vendor/photo-4.svg"
-          alt="Right Image"
-          style="max-width: 100%"
-        />
       </v-col>
     </v-row>
     <div justify="center" align="center">
