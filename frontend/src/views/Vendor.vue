@@ -107,6 +107,7 @@ import Customer from '../components/Customer.vue'
 import Product from '../components/Product.vue'
 import CreateProduct from '../components/CreateProduct.vue'
 import CreateInvoice from '../components/CreateInvoice.vue'
+import AllInvoice from '../components/AllInvoice.vue'
 
 const drawer = ref(true)
 const rail = ref(true)
@@ -117,7 +118,7 @@ const product = ref([
   ['Create Product', 'add_circle', CreateProduct, true],
 ])
 const invoice = ref([
-  ['All Invoices', 'local_mall'],
+  ['All Invoices', 'local_mall', AllInvoice],
   ['Create Invoice', 'add_circle', CreateInvoice],
 ])
 </script>

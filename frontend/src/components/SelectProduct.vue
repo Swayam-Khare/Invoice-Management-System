@@ -6,7 +6,7 @@
         <v-btn icon="close" variant="text" color="#f5f5f5" @click="closeDialog"></v-btn>
       </v-card-title>
       <v-row>
-        <div class="d-flex w-100 mt-7 mx-9 mb-6 justify-space-between align-center">
+        <div class="d-flex flex-wrap w-100 mt-7 mx-9 mb-6 justify-space-between align-center">
           <div>
             Show
             <input
@@ -19,7 +19,7 @@
           </div>
 
           <div>
-            <input type="text" class="pl-2 border-md rounded ml-2" placeholder="Search Product" />
+            <input type="text" class="pl-2 mt-4 mt-md-0 border-md rounded ml-sm-2" placeholder="Search Product" />
           </div>
         </div>
       </v-row>

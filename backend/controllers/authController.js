@@ -66,7 +66,7 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
     return next(new CustomError("Page not Found!", 404));
   }
 
-  res.cookie("jwt", token, {
+  res.cookie("jwtAuth", token, {
     maxAge: process.env.LOGIN_EXPIRES * 24 * 60 * 60 * 1000,
     // secure:true,
     httpOnly: true,
@@ -80,12 +80,13 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
 
 exports.protect = asyncErrorHandler(async (req, res, next) => {
   // 1. Read the token and check if it exists
-  const testToken = req.headers.authorization;
-  let token;
+  // const testToken = req.headers.authorization;
+ const {jwtAuth} = req.cookies;
+  let token = jwtAuth;
 
-  if (testToken && testToken.startsWith("Bearer ")) {
-    token = testToken.split(" ")[1];
-  }
+  // if (testToken && testToken.startsWith("Bearer ")) {
+  //   token = testToken.split(" ")[1];
+  // }
   if (!token) {
     next(new CustomError("You are not logged in!", 401));
   }
