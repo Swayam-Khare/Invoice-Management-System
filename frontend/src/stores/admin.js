@@ -6,6 +6,7 @@ export const useAdminStore = defineStore('adminStore', () => {
     const adminArr = ref([]);
     let isloading = ref(false);
     let token = ref(null);
+    let typelogin = ref("admin");
     const stateVariable = ref(10);
 
 
@@ -23,6 +24,6 @@ export const useAdminStore = defineStore('adminStore', () => {
         }
        
     }
-    return { adminArr, loginAdmin,  token, stateVariable };
+    return { adminArr, loginAdmin,  token, stateVariable, typelogin };
 })
 

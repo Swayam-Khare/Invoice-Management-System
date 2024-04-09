@@ -30,7 +30,7 @@
       <v-card-text v-if="myTitle == 'Admin Login'" class="pl-6 pt-3 pb-4 text-center">
         Not an Admin?
         <a href="#" style="text-decoration: none; color: #112d4e; font-weight: bold"
-          @click="$emit('close'), $emit('vendor')">
+          @click="$emit('close'), $emit('vendor') ,  (adminStore.typelogin = 'vendor')">
           Login as Vendor
         </a>
       </v-card-text>
@@ -43,7 +43,7 @@ import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { ref, computed } from 'vue';
 import { useAdminStore } from '../stores/admin';
-import { useVendorStore } from '../stores/vendor';
+import { useVendorStore } from '../stores/vendorStore';
 // import router from '@/router';
 const router = useRouter();
 const adminStore = useAdminStore();
@@ -78,24 +78,10 @@ const isFormValid = computed(() => {
 
 
 const submitForm = async () => {
-  // Close the dialog
-  // if (isFormValid.value) {
-  //  await adminStore.loginAdmin({ email: email.value, password: password.value });
-  //  await vendorStore.loginVendor({ email: email.value, password: password.value });
-  //   emit('close');
-  //   console.log('line 82',adminStore.token);
-  //   console.log('line 83',vendorStore.token);
-  //   if (adminStore.token) {
-  //     console.log('true');
-  //     router.replace('/admin')
-  //   } else console.log('false')
-  //   console.log('in line 87',adminStore.stateVariable);
-  //   // email.value = null;
-  //   // password.value = null;
-  // }
+  
   if (isFormValid.value) {
     console.log(myTitle);
-    if (myTitle === 'Admin Login') {
+    if (adminStore.typelogin === 'admin') {
       await adminStore.loginAdmin({ email: email.value, password: password.value });
       emit('close');
       console.log('line 97', adminStore.token);
@@ -106,7 +92,7 @@ const submitForm = async () => {
         console.log('false');
       }
       console.log('in line 97', adminStore.stateVariable);
-    } else if (myTitle === 'Vendor Login') {
+    } else if (adminStore.typelogin === 'vendor') {
       await vendorStore.loginVendor({ email: email.value, password: password.value });
       emit('close');
       console.log('line 108', vendorStore.token);
