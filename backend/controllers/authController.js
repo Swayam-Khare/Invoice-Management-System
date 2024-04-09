@@ -67,7 +67,7 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
   }
 
   res.cookie("jwt", token, {
-    maxAge: process.env.LOGIN_EXPIRES,
+    maxAge: process.env.LOGIN_EXPIRES * 24 * 60 * 60 * 1000,
     // secure:true,
     httpOnly: true,
   });
@@ -109,13 +109,13 @@ exports.protect = asyncErrorHandler(async (req, res, next) => {
     }
 
     // 4.Check if the vendor changed the password after the token was issued
-    
+
     if (await vendor.isPasswordChanged(decodedToken.iat)) {
-      
-      const err =  new CustomError(
-          "Password has been changed recently. Please login again!",
-          401
-        );
+
+      const err = new CustomError(
+        "Password has been changed recently. Please login again!",
+        401
+      );
       return next(err);
     }
 
@@ -135,7 +135,7 @@ exports.protect = asyncErrorHandler(async (req, res, next) => {
 
     // 4. Check if the admin changed the password after the token was issued
     if (await admin.isPasswordChanged(decodedToken.iat)) {
-      const err =  new CustomError(
+      const err = new CustomError(
         "Password has been changed recently. Please login again!",
         401
       );

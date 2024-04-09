@@ -55,7 +55,7 @@
       <p class="text-h4 text-center font-weight-bold mb-5 text-grey-darken-3">Our Team</p>
       <v-row class="ma-0 ma-xs-6 mx-md-16 my-md-11">
         <v-col v-for="member in teamMembers" :key="member.id" cols="12" sm="6" md="4">
-          <v-card color="justify-center align-center d-flex " flat>
+          <v-card class="justify-center align-center d-flex " flat>
             <div class="user-container">
               <img :src="member.photo" alt="Profile photo" class="user-img" />
             </div>
