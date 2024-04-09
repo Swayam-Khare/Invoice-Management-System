@@ -39,19 +39,24 @@
 
 <script setup>
 import { ref } from 'vue'
-import randomColor from 'randomcolor'
+// import randomColor from 'randomcolor'
 import { onMounted } from 'vue';
 import { useVendorStore } from '../stores/vendorStore.js';
+import { onBeforeMount } from 'vue';
 const vendorStore = useVendorStore();
-
+let data = ref(null);
+onBeforeMount(() => {
+    vendorStore.getAllVendors();
+    data.value = vendorStore.vendors
+    console.log('', vendorStore.vendors);
+})
 
 const page = ref(1)
 onMounted(() => {
-    const color = randomColor()
-    document.getElementById('random-color').style.backgroundColor = color;
-    vendorStore.getAllVendors();
-    const data = vendorStore.vendors
-    console.log('', vendorStore.vendors);
+    alert('hi')
+    // const color = randomColor()
+    document.getElementById('random-color').style.backgroundColor = 'red';
+
 
 })
 

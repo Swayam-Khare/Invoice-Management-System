@@ -2,7 +2,7 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios';
 export const useVendorStore = defineStore('vendorStore', () => {
-    let vendors = ref([{name:'chandan'}]);
+    let vendors = ref([{name:'chandan kr '}]);
     let loading = ref(false);
 
     const getAllVendors = async () => {
