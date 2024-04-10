@@ -101,7 +101,7 @@
               :onmouseenter="activeHover"
               :onmouseleave="cancelHover"
               title="Admin"
-              @click="(showLoginDialog = true), (titleValue = 'Admin Login')"
+              @click="(showLoginDialog = true), (titleValue = 'Admin Login'),  (adminStore.typelogin = 'admin')"
               class="text-left"
             >
             </v-list-item>
@@ -113,7 +113,7 @@
               :onmouseenter="activeHover"
               :onmouseleave="cancelHover"
               title="Vendor"
-              @click="(showLoginDialog = true), (titleValue = 'Vendor Login')"
+              @click="(showLoginDialog = true), (titleValue = 'Vendor Login') , (adminStore.typelogin = 'vendor')"
               class="text-left"
             ></v-list-item>
           </v-list>
@@ -151,7 +151,7 @@
         link
         prepend-icon="login"
         title="Login"
-        @click="(showLoginDialog = true), (titleValue = 'Admin Login')"
+        @click="(showLoginDialog = true), (titleValue = 'Admin Login') ,  (adminStore.typelogin = 'admin')"
       >
       </v-list-item>
       <v-list-item link prepend-icon="person_add" title="Signup" @click="showSignupDialog = true">
@@ -175,16 +175,18 @@
 import { ref } from 'vue'
 import Signup from './signUp.vue'
 import Login from './LoginComponent.vue'
+import { useAdminStore } from '../stores/admin';
 import { computed } from 'vue'
 import { onMounted } from 'vue'
 import { onBeforeUnmount } from 'vue'
+const adminStore = useAdminStore();
 // const selected = ref('home')
 const drawer = ref(false)
 const showLoginDialog = ref(false)
 const showSignupDialog = ref(false)
 const itemVariant = ref('none')
 const scrollPosition = ref(0)
-const titleValue = ref('Admin Login')
+const titleValue = ref('Vendor Login')
 
 // const changeSelection = (event) => {
 //  selected.value = event.currentTarget.id
