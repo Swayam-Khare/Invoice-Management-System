@@ -74,7 +74,10 @@
     <div class="bg-white rounded-lg mx-4 elevation-3 mb-7">
       <div class="d-flex flex-wrap justify-space-between align-center py-4 px-6">
         <h3>Customer Info</h3>
-        <v-btn color="#112D4E" @click="showSelectCustomer = true" class="text-capitalize mt-2 mt-sm-0"
+        <v-btn
+          color="#112D4E"
+          @click="showSelectCustomer = true"
+          class="text-capitalize mt-2 mt-sm-0"
           >Select Customer</v-btn
         >
       </div>
@@ -203,7 +206,9 @@
           <span>Discount: </span> <span>$0.00</span>
         </div>
         <div class="d-flex justify-space-between w-100"><span>Tax: </span> <span> $0.00</span></div>
-        <div class="d-flex justify-space-between w-100"><span>Total: </span> <span> $0.00</span></div>
+        <div class="d-flex justify-space-between w-100">
+          <span>Total: </span> <span> $0.00</span>
+        </div>
         <div class="mt-5 d-flex justify-center">
           <v-btn color="#006c53" class="text-capitalize">Create Invoice</v-btn>
         </div>
@@ -211,10 +216,10 @@
     </div>
 
     <!-- Select Customer Dialog -->
-    <SelectCustomer v-model="showSelectCustomer" @close="showSelectCustomer = false"/>
+    <SelectCustomer v-model="showSelectCustomer" @close="showSelectCustomer = false" />
 
     <!-- Select Product Dialog -->
-    <SelectProduct v-model="showSelectProduct" @close="showSelectProduct = false"/>
+    <SelectProduct v-model="showSelectProduct" @close="showSelectProduct = false" />
   </div>
 </template>
 
