@@ -11,7 +11,7 @@
         <v-menu v-model="showDuePicker">
           <template v-slot:activator="{ props }">
             <div class="d-flex justify-space-around align-center">
-              <v-icon color="#112D4E" class="mb-7 mr-4" icon="calendar_month"></v-icon>
+              <v-icon color="#112D4E" class="mb-7 mr-1" icon="calendar_month"></v-icon>
               <v-text-field
                 color="#112d4e"
                 variant="outlined"
@@ -36,7 +36,7 @@
         <v-menu v-model="showPurchasePicker">
           <template v-slot:activator="{ props }">
             <div class="d-flex justify-space-around align-center">
-              <v-icon color="#112D4E" class="mb-7 mr-4" icon="calendar_month"></v-icon>
+              <v-icon color="#112D4E" class="mb-7 mr-1" icon="calendar_month"></v-icon>
               <v-text-field
                 variant="outlined"
                 @click="showPurchasePicker = !showPurchasePicker"
@@ -57,7 +57,7 @@
 
       <!-- Status Select -->
       <div style="width: 300px" class="d-flex align-center">
-        <v-icon color="#112D4E" class="mb-7 mr-4" icon="pending_actions"></v-icon>
+        <v-icon color="#112D4E" class="mb-7 mr-1" icon="pending_actions"></v-icon>
         <v-select variant="outlined" color="#112D4E" label="Status" :items="status"></v-select>
       </div>
     </div>
@@ -68,7 +68,7 @@
         <h3>Customer Info</h3>
         <v-btn color="#112D4E" class="text-capitalize">Select Customer</v-btn>
       </div>
-      <v-divider class="mb-4 mx-4"></v-divider>
+      <v-divider class="mb-4 mx-4"></v-divider> 
       <div class="d-flex justify-space-around">
         <div class="d-flex flex-column" style="width: 700px">
           <v-text-field variant="outlined" label="First Name" color="#112D4E"></v-text-field>

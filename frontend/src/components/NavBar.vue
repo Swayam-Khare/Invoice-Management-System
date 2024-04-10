@@ -103,7 +103,7 @@
               :onmouseenter="activeHover"
               :onmouseleave="cancelHover"
               title="Admin"
-              @click="(showLoginDialog = true), (titleValue = 'Admin Login')"
+              @click=";(showLoginDialog = true), (titleValue = 'Admin Login')"
               class="text-left"
             >
             </v-list-item>
@@ -115,17 +115,31 @@
               :onmouseenter="activeHover"
               :onmouseleave="cancelHover"
               title="Vendor"
-              @click="(showLoginDialog = true), (titleValue = 'Vendor Login')"
+              @click=";(showLoginDialog = true), (titleValue = 'Vendor Login')"
               class="text-left"
             ></v-list-item>
           </v-list>
         </v-menu>
-        <Login v-model="showLoginDialog" @close="showLoginDialog = false" @vendor ="titleValue = 'Vendor Login', showLoginDialog = true" @signup="showSignupDialog = true" :myTitle="titleValue"/>
+        <Login
+          v-model="showLoginDialog"
+          @close="showLoginDialog = false"
+          @vendor=";(titleValue = 'Vendor Login'), (showLoginDialog = true)"
+          @signup="showSignupDialog = true"
+          :myTitle="titleValue"
+        />
 
-        <v-btn class="h-100 rounded-lg text-capitalize" color="#112D4E" @click="showSignupDialog = true">
+        <v-btn
+          class="h-100 rounded-lg text-capitalize"
+          color="#112D4E"
+          @click="showSignupDialog = true"
+        >
           Sign Up
         </v-btn>
-        <Signup v-model="showSignupDialog" @close="showSignupDialog = false" @login="showLoginDialog = true" />
+        <Signup
+          v-model="showSignupDialog"
+          @close="showSignupDialog = false"
+          @login="showLoginDialog = true"
+        />
       </span>
     </div>
   </div>
@@ -153,7 +167,7 @@
         link
         prepend-icon="login"
         title="Login"
-        @click="(showLoginDialog = true), (titleValue = 'Admin Login')"
+        @click=";(showLoginDialog = true), (titleValue = 'Admin Login')"
       >
       </v-list-item>
       <v-list-item link prepend-icon="person_add" title="Signup" @click="showSignupDialog = true">
