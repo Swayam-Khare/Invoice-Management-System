@@ -21,21 +21,19 @@
     </div> -->
   </div>
   <div class="list px-2 px-sm-0 overflow-auto">
-    <table class="mx-auto my-5 my-sm-5 elevation-5">
+
+    <!-- Old Table Start-->
+    <!-- <table class="mx-auto my-5 my-sm-5 elevation-5">
       <tr>
         <th>
           Invoice no.
-          <!-- <v-icon icon="swap_vert" class="cursor-pointer"></v-icon> -->
-          <!-- <v-icon icon="arrow_downward" size="small"></v-icon> -->
         </th>
         <th>
           Customer Name
           <v-icon icon="swap_vert" class="cursor-pointer"></v-icon>
-          <!-- <v-icon icon="arrow_downward" size="small"></v-icon> -->
         </th>
         <th>
           Purchase Date
-          <!-- <v-icon icon="swap_vert" class="cursor-pointer"></v-icon> -->
         </th>
         <th>Due Date</th>
 
@@ -72,28 +70,30 @@
           >
         </td>
         <td class="d-flex align-center">
-          <!-- <img
-            src="../assets/edit_square.svg"
-            class="hover-scale"
-            style="width: 25px; height: 25px"
-          /> -->
-
-          <!-- <v-icon icon="edit_note" color="#000" class="hover-scale" size="25"></v-icon> -->
           <img width="25" height="25" class="hover-scale mr-2" src="https://img.icons8.com/color/48/edit-file.png" alt="edit-file"/>
-          <!-- <v-icon icon="mail" color="#2196f3" class="hover-scale" size="25"></v-icon> -->
+
           <img width="25" height="25" class="hover-scale mr-2" src="https://img.icons8.com/color/48/gmail--v1.png" alt="gmail--v1"/>
           
           <v-icon icon="download" color="#1565c0" class="hover-scale" size="25"></v-icon>
-           <img
+          
+          <img
             src="../assets/delete.svg"
             class="hover-scale"
             style="width: 25px; height: 25px"
           />
-          <!-- <v-icon icon="delete" color="#e13d33" class="hover-scale" size="25"></v-icon> -->
           
         </td>
       </tr>
-    </table>
+    </table> -->
+    <!-- Old Table End -->
+
+    <!-- New Table Start -->
+    <v-data-table
+      :headers="headers"
+      :items="vendors"
+      class="elevation-5"
+      hide-default-footer></v-data-table>
+
   </div>
   <v-pagination
     v-model="page"

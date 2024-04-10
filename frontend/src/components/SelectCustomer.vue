@@ -63,7 +63,7 @@ import { ref } from 'vue'
 const emit = defineEmits(['close'])
 
 const headers = [
-  { title: 'Name', value: 'name' },
+  { title: 'Name', value: 'name', sortable: true },
   { title: 'Email', value: 'email' },
   { title: 'Contact no.', value: 'contact' },
   { title: 'Actions', value: 'action' }
@@ -74,17 +74,17 @@ const page = ref(1)
 const customers = ref([
   {
     contact: 1234567890,
-    name: 'John Doe',
+    name: 'A Doe',
     email: 'Hello@gmail.com'
   },
   {
     contact: 1234567890,
-    name: 'John Doe',
+    name: 'B Doe',
     email: 'Hello@gmail.com'
   },
   {
     contact: 1234567890,
-    name: 'John Doe',
+    name: 'C Doe',
     email: 'Hello@gmail.com'
   }
 ])
