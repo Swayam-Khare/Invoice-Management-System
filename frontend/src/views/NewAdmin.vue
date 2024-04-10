@@ -51,7 +51,8 @@
         <td :colspan="headers.length">
           <div class="px-4 py-2">
             <!-- Custom expansion content here -->
-            <p>Hello {{ item }}</p>
+            <Profile :data="item" />
+            <!-- <p>Hello {{ item }}</p> -->
           </div>
         </td>
       </template>
@@ -71,6 +72,7 @@ import randomColor from 'randomcolor'
 import { onMounted } from 'vue'
 import { useVendorStore } from '../stores/vendorStore.js'
 import { onBeforeMount } from 'vue'
+import Profile from '../components/VendorProfile.vue'
 let data = ref([])
 const vendorStore = useVendorStore()
 onBeforeMount(async () => {
