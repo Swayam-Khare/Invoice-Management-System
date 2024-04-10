@@ -148,7 +148,7 @@ exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
   }
 
 
-  const attributes = limitFields ? limitFields : ["id", "firstName", "lastName", "shopName", "email"];
+  const attributes = limitFields ? limitFields : ["id", "firstName", "lastName", "shopName", "email","status"];
   const vendors = await Vendor.findAll({
     include: [
       {

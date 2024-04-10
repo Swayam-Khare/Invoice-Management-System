@@ -16,20 +16,18 @@
       <span class="h-100 d-flex align-center">
         <v-btn
           id="home"
-          color="#112D4E"
           :ripple="false"
           variant="text"
-          class="text-capitalize h-100"
+          class="text-capitalize h-100 nav-btn"
         >
           Home
         </v-btn>
         <v-btn
           id="contact"
           :ripple="false"
-          color="#112D4E"
           @click="scroll('formContainer')"
           variant="text"
-          class="text-capitalize h-100"
+          class="text-capitalize h-100 nav-btn"
         >
           Contact
         </v-btn>
@@ -103,7 +101,7 @@
               :onmouseenter="activeHover"
               :onmouseleave="cancelHover"
               title="Admin"
-              @click=";(showLoginDialog = true), (titleValue = 'Admin Login')"
+              @click="(showLoginDialog = true), (titleValue = 'Admin Login'),  (adminStore.typelogin = 'admin')"
               class="text-left"
             >
             </v-list-item>
@@ -115,7 +113,7 @@
               :onmouseenter="activeHover"
               :onmouseleave="cancelHover"
               title="Vendor"
-              @click=";(showLoginDialog = true), (titleValue = 'Vendor Login')"
+              @click="(showLoginDialog = true), (titleValue = 'Vendor Login') , (adminStore.typelogin = 'vendor')"
               class="text-left"
             ></v-list-item>
           </v-list>
@@ -158,7 +156,7 @@
       <v-list-item title="Invoice Management System" subtitle="IMS"></v-list-item>
       <v-divider></v-divider>
       <v-list-item link prepend-icon="home" title="Home"></v-list-item>
-      <v-list-item link prepend-icon="account_box" title="Contact"></v-list-item>
+      <v-list-item link prepend-icon="account_box" title="Contact" @click="scroll('formContainer')"></v-list-item>
       <v-list-item link prepend-icon="info" title="About" @click="scroll('product')"></v-list-item>
       <v-list-item link prepend-icon="groups" title="Team" @click="scroll('team')"></v-list-item>
       <v-divider></v-divider>
@@ -167,7 +165,7 @@
         link
         prepend-icon="login"
         title="Login"
-        @click=";(showLoginDialog = true), (titleValue = 'Admin Login')"
+        @click="(showLoginDialog = true), (titleValue = 'Admin Login') ,  (adminStore.typelogin = 'admin')"
       >
       </v-list-item>
       <v-list-item link prepend-icon="person_add" title="Signup" @click="showSignupDialog = true">
@@ -191,16 +189,18 @@
 import { ref } from 'vue'
 import Signup from './signUp.vue'
 import Login from './LoginComponent.vue'
+import { useAdminStore } from '../stores/admin';
 import { computed } from 'vue'
 import { onMounted } from 'vue'
 import { onBeforeUnmount } from 'vue'
+const adminStore = useAdminStore();
 // const selected = ref('home')
 const drawer = ref(false)
 const showLoginDialog = ref(false)
 const showSignupDialog = ref(false)
 const itemVariant = ref('none')
 const scrollPosition = ref(0)
-const titleValue = ref('Admin Login')
+const titleValue = ref('Vendor Login')
 
 // const changeSelection = (event) => {
 //  selected.value = event.currentTarget.id

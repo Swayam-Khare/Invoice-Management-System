@@ -13,7 +13,7 @@ const connectDB = new Sequelize(database, user, password, {
 
 // ==== TO CONNECT TO REMOTE DATABASE ====
 // const connectDB = new Sequelize(
-//   "postgres://invoice_db_v42o_user:QIAZyxp8hRZmEtlSTK17jYpAsNin4Az0@dpg-cnnvqr021fec73arfgvg-a.singapore-postgres.render.com/invoice_db_v42o?ssl=true"
+//   "postgres://invoice_db_v42o_user:QIAZyxp8hRZmEtlSTK17jYpAsNin4Az0@dpg-cnnvqr021fec73arfgvg-a.singapore-postgres.render.com/invoice_db_v42o?ssl=true",{logging:false}
 // );
 
 const db = {};
@@ -88,7 +88,7 @@ const check = async () => {
   try {
     await connectDB.authenticate();
     console.log("Connection has been established successfully.");
-    await db.connectDB.sync({ force: false  });
+    await db.connectDB.sync({alter:true, force: false });
     console.log("All models were synchronized successfully.");
   } catch (error) {
     console.error("Unable to connect to the database:", error);

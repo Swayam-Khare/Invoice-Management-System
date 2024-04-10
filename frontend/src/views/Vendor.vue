@@ -50,7 +50,7 @@
               :title="title"
               color="#112d4ef1"
               :value="title"
-              @click="(isActiveTab = tab), (showSignupDialog = isShow)"
+              @click="(isActiveTab = tab), (showProductDialog = isShow)"
             ></v-list-item>
           </v-list-group>
 
@@ -73,12 +73,13 @@
             </template>
 
             <v-list-item
-              v-for="([title, icon], i) in invoice"
+            v-for="([title, icon, tab], i) in invoice"
               :key="i"
               :prepend-icon="icon"
               :title="title"
               color="#112d4ef1"
               :value="title"
+              @click="(isActiveTab = tab)"
             ></v-list-item>
           </v-list-group>
 
@@ -91,7 +92,11 @@
         </v-list>
       </v-navigation-drawer>
       <v-main>
-        <component :is="isActiveTab" v-model="showSignupDialog" @close="showSignupDialog = false" />
+        <component
+          :is="isActiveTab"
+          v-model="showProductDialog"
+          @close="showProductDialog = false"
+        />
       </v-main>
     </v-layout>
   </v-card>
@@ -101,17 +106,19 @@ import { ref } from 'vue'
 import Customer from '../components/Customer.vue'
 import Product from '../components/Product.vue'
 import CreateProduct from '../components/CreateProduct.vue'
+import CreateInvoice from '../components/CreateInvoice.vue'
+import AllInvoice from '../components/AllInvoice.vue'
 
 const drawer = ref(true)
 const rail = ref(true)
 const isActiveTab = ref('')
-const showSignupDialog = ref(false)
+const showProductDialog = ref(false)
 const product = ref([
   ['All Products', 'local_mall', Product, false],
-  ['Create Product', 'add_circle', CreateProduct, true]
+  ['Create Product', 'add_circle', CreateProduct, true],
 ])
 const invoice = ref([
-  ['All Invoices', 'local_mall'],
-  ['Create Invoice', 'add_circle']
+  ['All Invoices', 'local_mall', AllInvoice],
+  ['Create Invoice', 'add_circle', CreateInvoice],
 ])
 </script>

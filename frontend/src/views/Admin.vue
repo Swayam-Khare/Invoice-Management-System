@@ -87,16 +87,17 @@
         </td>
       </tr>
     </table>
+
+    <v-pagination
+      v-model="page"
+      :length="10"
+      next-icon="arrow_forward_ios"
+      prev-icon="arrow_back_ios"
+      class="pagination mx-auto mt-0"
+      :total-visible="4"
+      size="x-small"
+    ></v-pagination>
   </div>
-  <v-pagination
-    v-model="page"
-    :length="10"
-    next-icon="arrow_forward_ios"
-    prev-icon="arrow_back_ios"
-    class="pagination mx-auto mt-0"
-    :total-visible="4"
-    size="x-small"
-  ></v-pagination>
 </template>
 
 <script setup>
@@ -247,7 +248,7 @@ tr:hover {
   color: green;
   border-radius: 20px;
   padding: 5px 10px;
-  border: 1px solid green;
+  /* border: 1px solid green; */
 }
 
 .pending {
@@ -255,7 +256,7 @@ tr:hover {
   color: red;
   border-radius: 20px;
   padding: 5px 10px;
-  border: 1px solid red;
+  /* border: 1px solid red; */
 }
 
 .hover-scale {

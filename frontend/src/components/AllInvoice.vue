@@ -3,39 +3,44 @@
     <div class="mobile-search pt-4 px-2 px-sm-10 px-md-14 px-lg-16 ml-lg-3 ml-xxl-16">
       <input
         type="text"
-        placeholder="Search..."
+        placeholder="Search invoice no."
         class="elevation-6 pa-3 mx-auto search bg-grey-lighten-2"
       />
     </div>
 
-    <div class="d-flex justify-end mx-md-16 px-2 my-1">
+    <!-- <div class="d-flex justify-end mx-md-16 px-2 my-1">
       <v-btn
         class="text-capitalize hover-btn mx-0 mx-sm-8 mx-md-0 elevation-6"
-        @click="showProductDialog = true"
-        >Add product</v-btn
+        @click=""
+        >Add Invoice</v-btn
       >
       <CreateProduct
         v-model="showProductDialog"
         @close="showProductDialog = false"
       />
-    </div>
+    </div> -->
   </div>
   <div class="list px-2 px-sm-0 overflow-auto">
     <table class="mx-auto my-5 my-sm-5 elevation-5">
       <tr>
         <th>
-          Name
+          Invoice no.
+          <!-- <v-icon icon="swap_vert" class="cursor-pointer"></v-icon> -->
+          <!-- <v-icon icon="arrow_downward" size="small"></v-icon> -->
+        </th>
+        <th>
+          Customer Name
           <v-icon icon="swap_vert" class="cursor-pointer"></v-icon>
           <!-- <v-icon icon="arrow_downward" size="small"></v-icon> -->
         </th>
         <th>
-          Price
-          <v-icon icon="swap_vert" class="cursor-pointer"></v-icon>
+          Purchase Date
+          <!-- <v-icon icon="swap_vert" class="cursor-pointer"></v-icon> -->
         </th>
-        <th>Discount</th>
+        <th>Due Date</th>
 
         <th>
-          Stock
+          Status
           <v-menu>
             <template v-slot:activator="{ props }">
               <button v-bind="props">
@@ -52,25 +57,40 @@
         <th>Actions</th>
       </tr>
       <tr v-for="(item, index) in vendors" :key="index" :value="index">
-        <td>{{ item.name }}</td>
-        <td>{{ item.price }}</td>
-        <td>{{ item.discount }}</td>
+        <td>{{ item.invoice }}</td>
+        <td>{{ item.customerName }}</td>
+        <td>{{ item.purchaseDate }}</td>
+        <td>{{ item.dueDate }}</td>
         <td class="">
           <span
             :class="{
-              approved: item.stock > 0,
-              pending: item.stock == 0
+              paid: item.status === 'paid',
+              overdue: item.status === 'overdue',
+              due: item.status === 'due',
             }"
-            >{{ item.stock > 0 ? item.stock : 'Out of Stock' }}</span
+            >{{ item.status  }}</span
           >
         </td>
-        <td class="d-flex align-center ga-5">
-          <img
+        <td class="d-flex align-center">
+          <!-- <img
             src="../assets/edit_square.svg"
             class="hover-scale"
             style="width: 25px; height: 25px"
+          /> -->
+
+          <!-- <v-icon icon="edit_note" color="#000" class="hover-scale" size="25"></v-icon> -->
+          <img width="25" height="25" class="hover-scale mr-2" src="https://img.icons8.com/color/48/edit-file.png" alt="edit-file"/>
+          <!-- <v-icon icon="mail" color="#2196f3" class="hover-scale" size="25"></v-icon> -->
+          <img width="25" height="25" class="hover-scale mr-2" src="https://img.icons8.com/color/48/gmail--v1.png" alt="gmail--v1"/>
+          
+          <v-icon icon="download" color="#1565c0" class="hover-scale" size="25"></v-icon>
+           <img
+            src="../assets/delete.svg"
+            class="hover-scale"
+            style="width: 25px; height: 25px"
           />
-          <v-icon icon="delete" color="#FF204E" class="hover-scale" size="25"></v-icon>
+          <!-- <v-icon icon="delete" color="#e13d33" class="hover-scale" size="25"></v-icon> -->
+          
         </td>
       </tr>
     </table>
@@ -89,7 +109,6 @@
 <script setup>
 import { ref } from 'vue'
 // import randomColor from 'randomcolor'
-import CreateProduct from './CreateProduct.vue'
 
 const page = ref(1)
 // onMounted(() => {
@@ -99,77 +118,77 @@ const page = ref(1)
 
 // const items = ref([{ title: 'Update Profile' }, { title: 'Logout' }])
 
-const status = ref([{ title: 'All' }, { title: 'Out of Stock' }])
+const status = ref([{ title: 'Paid' }, { title: 'Overdue' }, { title: 'Due' }])
 const vendors = ref([
   {
-    name: 'product 1',
-    description: 'lsdkfjl skdjflsdk fslkjfls dkk',
-    stock: 0,
-    price: 200,
-    discount: 3
+    invoice: 'INV-001',
+    customerName: 'John Doe',
+    purchaseDate: '2021-09-01',
+    dueDate: '2021-09-30',
+    status: 'paid',
   },
   {
-    name: 'product 1',
-    description: 'lsdkfjl skdjflsdk fslkjfls dkk',
-    stock: 52,
-    price: 0,
-    discount: 3
+    invoice: 'INV-002',
+    customerName: 'Jane Doe',
+    purchaseDate: '2021-09-01',
+    dueDate: '2021-09-30',
+    status: 'overdue',
   },
   {
-    name: 'product 1',
-    description: 'lsdkfjl skdjflsdk fslkjfls dkk',
-    stock: 52,
-    price: 200,
-    discount: 3
+    invoice: 'INV-003',
+    customerName: 'John Doe',
+    purchaseDate: '2021-09-01',
+    dueDate: '2021-09-30',
+    status: 'due',
   },
   {
-    name: 'product 1',
-    description: 'lsdkfjl skdjflsdk fslkjfls dkk',
-    stock: 52,
-    price: 200,
-    discount: 3
+    invoice: 'INV-004',
+    customerName: 'Jane Doe',
+    purchaseDate: '2021-09-01',
+    dueDate: '2021-09-30',
+    status: 'paid',
   },
   {
-    name: 'product 1',
-    description: 'lsdkfjl skdjflsdk fslkjfls dkk',
-    stock: 0,
-    price: 200,
-    discount: 3
+    invoice: 'INV-005',
+    customerName: 'John Doe',
+    purchaseDate: '2021-09-01',
+    dueDate: '2021-09-30',
+    status: 'overdue',
   },
   {
-    name: 'product 1',
-    description: 'lsdkfjl skdjflsdk fslkjfls dkk',
-    stock: 0,
-    price: 200,
-    discount: 3
+    invoice: 'INV-006',
+    customerName: 'Jane Doe',
+    purchaseDate: '2021-09-01',
+    dueDate: '2021-09-30',
+    status: 'due',
   },
   {
-    name: 'product 1',
-    description: 'lsdkfjl skdjflsdk fslkjfls dkk',
-    stock: 20552,
-    price: 200,
-    discount: 3
+    invoice: 'INV-007',
+    customerName: 'John Doe',
+    purchaseDate: '2021-09-01',
+    dueDate: '2021-09-30',
+    status: 'paid',
   },
   {
-    name: 'product 1',
-    description: 'lsdkfjl skdjflsdk fslkjfls dkk',
-    stock: 0,
-    price: 200,
-    discount: 3
+    invoice: 'INV-008',
+    customerName: 'Jane Doe',
+    purchaseDate: '2021-09-01',
+    dueDate: '2021-09-30',
+    status: 'overdue',
   },
   {
-    name: 'product 1',
-    description: 'lsdkfjl skdjflsdk fslkjfls dkk',
-    stock: 0,
-    price: 200,
-    discount: 3
+    invoice: 'INV-009',
+    customerName: 'John Doe',
+    purchaseDate: '2021-09-01',
+    dueDate: '2021-09-30',
+    status: 'due',
   },
   {
-    name: 'product 1',
-    description: 'lsdkfjl skdjflsdk fslkjfls dkk',
-    stock: 52,
-    price: 200,
-    discount: 3
+    invoice: 'INV-010',
+    customerName: 'Jane Doe',
+    purchaseDate: '2021-09-01',
+    dueDate: '2021-09-30',
+    status: 'paid',
   }
 ])
 
@@ -240,16 +259,23 @@ tr:hover {
   scale: 1.01;
 }
 
-.approved {
+.paid {
   background-color: rgba(0, 128, 0, 0.066);
   color: green;
   border-radius: 20px;
   padding: 5px 10px;
 }
 
-.pending {
+.overdue {
   background-color: rgba(255, 0, 0, 0.066);
   color: red;
+  border-radius: 20px;
+  padding: 5px 10px;
+}
+
+.due {
+  background-color: rgba(178, 206, 17, 0.119);
+  color: rgb(178, 206, 17);
   border-radius: 20px;
   padding: 5px 10px;
 }
