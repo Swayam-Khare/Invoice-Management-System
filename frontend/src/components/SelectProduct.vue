@@ -31,7 +31,7 @@
         :headers="headers"
         :items="products"
         :items-per-page="5"
-        class="elevation-3 mx-6 w-auto mb-4"
+        class="elevation-3 mx-6 w-auto mb-4 custom-data-table"
         hide-default-footer
       >
         <template v-slot:item.action="{ item }">
@@ -103,5 +103,14 @@ function closeDialog() {
   .pagination {
     width: 70% !important;
   }
+}
+
+.custom-data-table >>> .v-data-table__th {
+  background-color: #112d4e;
+  color: white;
+}
+
+.custom-data-table >>> th.v-data-table__th--sortable:hover {
+  color: white !important;
 }
 </style>

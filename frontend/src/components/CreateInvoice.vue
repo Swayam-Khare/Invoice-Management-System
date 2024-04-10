@@ -8,7 +8,7 @@
     <!-- Due Date -->
     <div style="width: fit-content" class="d-flex flex-wrap ga-md-6 ml-auto mr-4">
       <div style="width: 300px">
-        <v-menu v-model="showDuePicker">
+        <v-menu v-model="showDuePicker" :close-on-content-click="false">
           <template v-slot:activator="{ props }">
             <div class="d-flex justify-space-around align-center">
               <v-icon color="#112D4E" class="mb-7 mr-4 ml-4 ml-md-0" icon="calendar_month"></v-icon>
@@ -34,7 +34,7 @@
 
       <!-- Purchase Date -->
       <div style="width: 300px">
-        <v-menu v-model="showPurchasePicker">
+        <v-menu v-model="showPurchasePicker" :close-on-content-click="false">
           <template v-slot:activator="{ props }">
             <div class="d-flex justify-space-around align-center">
               <v-icon color="#112D4E" class="mb-7 mr-4 ml-4 ml-md-0" icon="calendar_month"></v-icon>
