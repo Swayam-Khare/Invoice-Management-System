@@ -77,7 +77,9 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import axios from 'axios'
+
 const isOpen = ref(true)
 const emit = defineEmits(['close'])
 
@@ -98,16 +100,40 @@ const contactNoRules = computed(() => [
   (v) => (v && v.length >= 10) || 'Contact number must be at least 10 digits.'
 ])
 
-const firstName = ref('Jetha laal')
-const lastName = ref('Gada')
-const shopName = ref('Gada Electronics')
-const contact = ref('9601038130')
+const firstName = ref('')
+const lastName = ref('')
+const shopName = ref('')
+const contact = ref('')
 
-const addressLane1 = ref('kadodara')
-const addressLane2 = ref('palsana')
-const landmark = ref('surat')
-const pincode = ref('394327')
-const state = ref('Gujarat')
+const addressLane1 = ref('')
+const addressLane2 = ref('')
+const landmark = ref('')
+const pincode = ref('')
+const state = ref('')
+
+const fetchVendorData = async () => {
+  try {
+    const response = await axios.get(`http://127.0.0.1:7000/api/v1/vendors/1`)
+    const vendorData = response.data
+
+    // Update the form fields with the fetched data
+    firstName.value = vendorData.firstName
+    lastName.value = vendorData.lastName
+    shopName.value = vendorData.shopName
+    contact.value = vendorData.contact
+    addressLane1.value = vendorData.addressLane1
+    addressLane2.value = vendorData.addressLane2
+    landmark.value = vendorData.landmark
+    pincode.value = vendorData.pincode
+    state.value = vendorData.state
+  } catch (error) {
+    console.error('Error fetching vendor data:', error)
+  }
+}
+
+onMounted(() => {
+  fetchVendorData()
+})
 
 const goToAddressPage = () => {
   currentPage.value = 'address'
@@ -117,11 +143,26 @@ const goToPersonalPage = () => {
   currentPage.value = 'personal'
 }
 
-const updateProfile = () => {
-  // Logic for updating the profile
-  console.log('Update profile:', { firstName: firstName.value, lastName: lastName.value })
-  // ... (additional logic)
-  closeForm()
+const updateProfile = async () => {
+  try {
+    const vendorData = {
+      firstName: firstName.value,
+      lastName: lastName.value,
+      shopName: shopName.value,
+      contact: contact.value,
+      addressLane1: addressLane1.value,
+      addressLane2: addressLane2.value,
+      landmark: landmark.value,
+      pincode: pincode.value,
+      state: state.value
+    }
+
+    await axios.put(`http://127.0.0.1:7000/api/v1/vendors/1`, vendorData)
+    console.log('Profile updated successfully')
+    closeForm()
+  } catch (error) {
+    console.error('Error updating profile:', error)
+  }
 }
 
 const closeForm = () => {
