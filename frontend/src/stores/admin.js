@@ -3,10 +3,12 @@ import { defineStore } from 'pinia'
 import axios from 'axios'
 
 export const useAdminStore = defineStore('adminStore', () => {
-  const adminArr = ref([])
-  let isloading = ref(false)
-  let token = ref(null)
-  const stateVariable = ref(10)
+    const adminArr = ref([]);
+    let isloading = ref(false);
+    let token = ref(null);
+    let typelogin = ref("admin");
+    const stateVariable = ref(10);
+
 
   async function loginAdmin(formData) {
     isloading = true
@@ -23,6 +25,5 @@ export const useAdminStore = defineStore('adminStore', () => {
     } finally {
       isloading = false
     }
-  }
-  return { adminArr, loginAdmin, token, stateVariable }
+    return { adminArr, loginAdmin,  token, stateVariable, typelogin };
 })
