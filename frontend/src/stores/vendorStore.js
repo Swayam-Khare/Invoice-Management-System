@@ -9,13 +9,14 @@ export const useVendorStore = defineStore('vendorStore', () => {
 
     const getAllVendors = async () => {
         try {
+            loading.value = true;
             const res = await axios.get('http://localhost:3500/api/v1/vendors', { withCredentials: true });
             vendors.value = res.data.data.vendors;
 
         } catch (error) {
             console.log(error.message)
         } finally {
-            loading = false;
+            loading.value = false;
         }
     }
 
@@ -47,7 +48,8 @@ export const useVendorStore = defineStore('vendorStore', () => {
     //             loading = false;
     //         }
     //     });
-    return { vendors, getAllVendors, loginVendor,  token, stateVariable  }
+    return { vendors, loading, getAllVendors, loginVendor,  token, stateVariable  }
+
 
 
 
