@@ -38,15 +38,14 @@
   </div>
   <div>
     <v-data-table-server
-      v-model:items-per-page="itemsPerPage"
+      items-per-page="10"
       :headers="headers"
       :items="data"
-      :items-length="totalItems"
+      :items-length="data.length"
       :loading="vendorStore.loading"
       loading-text="Loading, please wait..."
-      item-value="name"
       @update:options="loadItems"
-      show-expand
+      expand-on-click
     >
       <template v-slot:expanded-row="{ item }">
         <td :colspan="headers.length">
@@ -54,6 +53,12 @@
             <!-- Custom expansion content here -->
             <p>Hello {{ item }}</p>
           </div>
+        </td>
+      </template>
+
+      <template v-slot:item.status="{ item }">
+        <td :class="{ pending: item.status === 'pending', approved: item.status === 'approved' }">
+          {{ item.status }}
         </td>
       </template>
     </v-data-table-server>
@@ -78,11 +83,16 @@ onBeforeMount(async () => {
   }
 })
 
-// const page = ref(1)
 onMounted(() => {
   const color = randomColor()
   document.getElementById('random-color').style.backgroundColor = color
 })
+const expanded = ref([])
+
+function singleSelect(item) {
+  // expanded.value.push(item)
+  console.log(item)
+}
 
 const items = ref([
   {
@@ -94,10 +104,11 @@ const items = ref([
 ])
 
 const headers = ref([
+  { key: 'data-table-expand' },
   { title: 'Name', value: 'fullName' },
   { title: 'E-mail', value: 'email' },
   { title: 'Contact no', value: 'Address_Details.contact' },
-  { title: 'Status', value: 'status' }
+  { title: 'Status', value: 'status', class: 'pending' }
 ])
 </script>
 
