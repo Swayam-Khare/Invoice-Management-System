@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
 export const useVendorStore = defineStore('vendorStore', () => {
@@ -20,22 +20,21 @@ export const useVendorStore = defineStore('vendorStore', () => {
   }
 
   const loginVendor = async (formData) => {
-    loading = true
+    loading.value = true
     try {
       const config = { headers: { 'Content-Type': 'application/json' }, withCredentials: true }
       const res = await axios.post(
-        'http://localhost:7000/api/v1/auth/login/vendor',
+        'http://localhost:3500/api/v1/auth/login/vendor',
         formData,
         config
       )
       console.log(res)
       token.value = res.data.token
       console.log(token.value)
-      localStorage.setItem('vendorToken', res.data.token)
     } catch (error) {
       console.log(error)
     } finally {
-      loading = false
+      loading.value = false
     }
   }
 

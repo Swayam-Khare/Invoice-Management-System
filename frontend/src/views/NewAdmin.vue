@@ -3,7 +3,10 @@
     class="navbar d-flex justify-space-between px-2 px-sm-7 py-0 py-md-3 elevation-7"
     style="background-color: #112d4edd"
   >
+  <div class="d-flex align-center ga-3">
     <img src="../assets/logo.svg" alt="Logo" />
+    <span class="text-h4 text-white">Invoice Management System</span>
+  </div>
     <div class="d-flex align-center">
       <div class="search pr-10">
         <!-- <v-text-field label="Search" class="w-auto" variant="solo-filled"></v-text-field> -->
@@ -37,7 +40,7 @@
     />
   </div>
   <div>
-    <v-data-table-server
+    <!-- <v-data-table-server
       items-per-page="10"
       :headers="headers"
       :items="data"
@@ -50,9 +53,9 @@
       <template v-slot:expanded-row="{ item }">
         <td :colspan="headers.length">
           <div class="px-4 py-2">
-            <!-- Custom expansion content here -->
+            Custom expansion content here
             <Profile :data="item" />
-            <!-- <p>Hello {{ item }}</p> -->
+             <p>Hello {{ item }}</p> 
           </div>
         </td>
       </template>
@@ -61,6 +64,41 @@
         <td :class="{ pending: item.status === 'pending', approved: item.status === 'approved' }">
           {{ item.status }}
         </td>
+      </template>
+    </v-data-table-server> -->
+
+    <v-data-table-server
+      v-model:expanded="expanded"
+      :headers="headers"
+      :items="data"
+      :items-per-page="5"
+      item-key="id"
+      :loading="vendorStore.loading"
+      loading-text="Loading, please wait..."
+      show-expand
+      @update:options="loadItems"
+    >
+
+    <template v-slot:item.status="{ item }">
+        <td :class="{ pending: item.status === 'pending', approved: item.status === 'approved' }">
+          {{ item.status }}
+        </td>
+      </template>
+      <template v-slot:item.data-table-expand="{ toggleExpand, internalItem, isExpanded }">
+        <v-btn
+          :icon="icon(isExpanded, internalItem)"
+          variant="text"
+          @click="toggleExpansion(internalItem, toggleExpand, isExpanded)"
+        ></v-btn>
+      </template>
+      <template v-slot:expanded-row="{ item }">
+        <tr>
+          <td :colspan="headers.length">
+            <div class="transition-slot overflow-hidden" id="details">
+              <Profile :data="item" />
+            </div>
+          </td>
+        </tr>
       </template>
     </v-data-table-server>
   </div>
@@ -91,11 +129,6 @@ onMounted(() => {
 })
 const expanded = ref([])
 
-function singleSelect(item) {
-  // expanded.value.push(item)
-  console.log(item)
-}
-
 const items = ref([
   {
     title: 'Update Profile'
@@ -112,6 +145,44 @@ const headers = ref([
   { title: 'Contact no', value: 'Address_Details.contact' },
   { title: 'Status', value: 'status', class: 'pending' }
 ])
+
+function icon(expand, item) {
+  if (expand(item)) {
+    return 'expand_less'
+  } else {
+    return 'expand_more'
+  }
+}
+
+function toggleExpansion(item, expand, isExpanded) {
+  console.log(expand)
+  // this.expanded = []
+  if (isExpanded(item)) {
+    let id = null
+    var pos = 350
+    const ele = document.getElementById('details')
+    clearInterval(id)
+    const frame = () => {
+      if (pos == 0) {
+        clearInterval(id)
+        expand(item)
+      } else {
+        pos = pos - 10
+        ele.style.height = pos + 'px'
+      }
+    }
+    id = setInterval(frame, 4)
+  } else {
+    expand(item)
+  }
+
+  if (expanded.value.length > 1) {
+    const temp = expanded.value[1]
+    expanded.value = []
+    expanded.value.push(temp)
+  }
+  console.log(expanded.value)
+}
 </script>
 
 <style scoped>
@@ -201,5 +272,21 @@ tr:hover {
 .hover-scale:hover {
   scale: 1.3;
   cursor: pointer;
+}
+
+.transition-slot {
+  margin: 30px;
+  animation: trans 0.2s linear;
+  height:350px;
+}
+
+@keyframes trans {
+  from {
+    height: 0;
+  }
+
+  to {
+    height: 350px;
+  }
 }
 </style>
