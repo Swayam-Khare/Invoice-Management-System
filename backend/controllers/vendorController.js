@@ -16,7 +16,7 @@ const VendorProduct = db.VendorProduct;
 
 // ------------- CREATE A VENDOR --------------
 exports.createVendor = asyncErrorHandler(async (req, res, next) => {
-  const { firstName, lastName, shopName, email, contact,  address_lane1, address_lane2, landmark, pincode, state } =
+  const { firstName, lastName, shopName, email, contact, address_lane1, address_lane2, landmark, pincode, state } =
     req.body;
 
   // const vendor = await Vendor.create({
@@ -48,7 +48,7 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
 
   //  Genertaing the random password as a string
   const password = randomstring.generate(12);
-  const confirmPassword = password ;
+  const confirmPassword = password;
   const role = "vendor";
 
   const vendor = await Vendor.findOne({ where: { email }, paranoid: false });
@@ -131,7 +131,7 @@ exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
   let orderBy = null;
   let limitFields = null;
   let offset = null;
-  const limit = req.query.limit || 10;
+  const limit = req.query.limit || 100;
   let name = req.query.search || '%';
   if (req.query.sort) {
     orderBy = apiFeatures.sorting(req.query.sort);
@@ -148,7 +148,7 @@ exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
   }
 
 
-  const attributes = limitFields ? limitFields : ["id", "firstName", "lastName", "shopName", "email"];
+  const attributes = limitFields ? limitFields : ["id", "firstName", "lastName", "shopName", "email", "status"];
   const vendors = await Vendor.findAll({
     include: [
       {
@@ -294,7 +294,7 @@ exports.updateVendor = asyncErrorHandler(async (req, res, next) => {
         as: "Address_Details",
       },
     ],
-    
+
     where: {
       id,
     },
