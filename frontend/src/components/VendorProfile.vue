@@ -85,6 +85,8 @@ defineProps({
 
 .user-info {
   text-align: left;
+  padding-right: 20px;
+  border-right:2px solid #aaaaaa; 
 }
 
 .user-info p {
@@ -93,12 +95,12 @@ defineProps({
 }
 
 .approve {
-  background-color: #4ccd99;
+  background-color: #00FF00dd;
   color: white;
   transition: 0.5s;
 }
 .approve:hover {
-  color: #4ccd99;
+  color: #00ff00dd;
   background-color: white;
   transition: 0.5s;
 }
@@ -119,7 +121,7 @@ defineProps({
   top: 57%;
   left: 19%;
   box-shadow: 0 0 0 2px #fff;
-  background-color: #2bd893;
+  background-color: #00FF00dd;
   border-radius: 50%;
 }
 

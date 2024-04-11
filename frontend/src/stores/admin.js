@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
@@ -8,9 +8,14 @@ export const useAdminStore = defineStore('adminStore', () => {
   let token = ref(null)
   let typelogin = ref('admin')
   const stateVariable = ref(10)
+  const adminArr = ref([])
+  let loading = ref(false)
+  let token = ref(null)
+  let typelogin = ref('admin')
+  const stateVariable = ref(10)
 
   async function loginAdmin(formData) {
-    isloading.value = true
+    loading.value = true
     try {
       const config = { headers: { 'Content-Type': 'application/json' }, withCredentials: true }
       const res = await axios.post(
@@ -22,8 +27,8 @@ export const useAdminStore = defineStore('adminStore', () => {
     } catch (error) {
       console.log(error)
     } finally {
-      isloading.value = false
+      loading.value = false
     }
   }
-  return { adminArr, loginAdmin, token, stateVariable, typelogin, isloading }
+  return { adminArr, loginAdmin, token, stateVariable, typelogin, loading }
 })
