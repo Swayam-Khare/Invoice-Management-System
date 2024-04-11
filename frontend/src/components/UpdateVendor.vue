@@ -157,7 +157,7 @@ const updateProfile = async () => {
       state: state.value
     }
 
-    await axios.put(`http://127.0.0.1:7000/api/v1/vendors/1`, vendorData)
+    await axios.put(`/api/v1/vendors/:id`, vendorData)
     console.log('Profile updated successfully')
     closeForm()
   } catch (error) {

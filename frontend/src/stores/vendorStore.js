@@ -30,6 +30,7 @@ export const useVendorStore = defineStore('vendorStore', () => {
       console.log(res)
       token.value = res.data.token
       console.log(token.value)
+      localStorage.setItem('vendorToken', res.data.token)
     } catch (error) {
       console.log(error)
     } finally {
