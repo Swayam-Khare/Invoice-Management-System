@@ -1,7 +1,8 @@
 <template>
+  <RouterView />
   <!-- <Home /> -->
-  <Profile />
-  <!-- <Admin /> -->
+  <!-- <Profile /> -->
+  <!-- <Admin />/ -->
   <!-- <Vendor /> -->
   <!-- <Product /> -->
   <!-- <CreateInvoice /> -->
@@ -9,8 +10,8 @@
 </template>
 
 <script setup>
-// import { RouterLink, RouterView } from 'vue-router'
-// import Home from './views/Home.vue'
+import { RouterLink, RouterView } from 'vue-router'
+import Home from './views/Home.vue'
 // import Admin from './views/Admin.vue'
 
 import Profile from './components/Profile.vue'

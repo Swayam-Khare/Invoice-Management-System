@@ -10,7 +10,7 @@ export const useVendorStore = defineStore('vendorStore', () => {
   const getAllVendors = async () => {
     try {
       loading.value = true
-      const res = await axios.get('http://localhost:3500/api/v1/vendors', { withCredentials: true })
+      const res = await axios.get('http://localhost:7000/api/v1/vendors', { withCredentials: true })
       vendors.value = res.data.data.vendors
     } catch (error) {
       console.log(error.message)
@@ -24,7 +24,7 @@ export const useVendorStore = defineStore('vendorStore', () => {
     try {
       const config = { headers: { 'Content-Type': 'application/json' }, withCredentials: true }
       const res = await axios.post(
-        'http://localhost:3500/api/v1/auth/login/vendor',
+        'http://localhost:7000/api/v1/auth/login/vendor',
         formData,
         config
       )
