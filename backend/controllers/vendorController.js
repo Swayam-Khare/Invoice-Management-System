@@ -131,7 +131,15 @@ exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
   let orderBy = null;
   let limitFields = null;
   let offset = null;
-  const limit = req.query.limit || 100;
+  let status = [];
+  if(!req.query.status){
+    status = ['approved','pending'];
+  }
+  else{
+
+    status = [req.query.status];
+  }
+  const limit = req.query.limit;
   let name = req.query.search || '%';
   if (req.query.sort) {
     orderBy = apiFeatures.sorting(req.query.sort);
@@ -140,7 +148,7 @@ exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
     limitFields = apiFeatures.limitFields(req.query.fields);
   }
   if (req.query.page) {
-    offset = apiFeatures.paginate(req.query.page, limit, totalRows.count, next);
+    offset = apiFeatures.paginate(req.query.page, limit, next);
 
   }
   if (req.query.search) {
@@ -176,10 +184,13 @@ exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
           }
         }
 
-      ]
+      ],
+      status: {
+        [Op.in]:status
+      },
     },
     order: orderBy,
-    limit: limit,
+    limit:limit,
     offset: offset,
   });
   res.status(200).json({
@@ -187,6 +198,7 @@ exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
     count: vendors.length,
     data: {
       vendors,
+      totalRows
     }
   });
 });

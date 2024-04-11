@@ -9,35 +9,35 @@
     </div>
     <div class="card-body d-flex align-start justify-space-between">
       <img class="user-photo" src="@/assets/imgs/User/1.png" alt="User Photo" />
-      <div class="user-info d-flex flex-column ga-2">
+      <div class="user-info d-flex flex-column ">
         <!-- <p class="text-h5">Personal Details</p> -->
         <div>
-          <span class="text-h6">Name: </span>
-          <span class="text-subtitle-1">{{ data.fullName }}</span>
+          <span class="text-subtitle-1">Name: </span>
+          <span class="text-subtitle-2">{{ data.fullName }}</span>
         </div>
 
         <div>
-          <span class="text-h6">Email: </span>
-          <span class="text-subtitle-1">{{ data.email }}</span>
+          <span class="text-subtitle-1">Email: </span>
+          <span class="text-subtitle-2">{{ data.email }}</span>
         </div>
         <div>
-          <span class="text-h6">Shop Name: </span>
-          <span class="text-subtitle-1">{{ data.shopName }}</span>
+          <span class="text-subtitle-1">Shop Name: </span>
+          <span class="text-subtitle-2">{{ data.shopName }}</span>
         </div>
         <div>
-          <span class="text-h6">Contact: </span>
-          <span class="text-subtitle-1">{{ data.Address_Details.contact }}</span>
+          <span class="text-subtitle-1">Contact: </span>
+          <span class="text-subtitle-2">{{ data.Address_Details.contact }}</span>
         </div>
       </div>
       <div class="adddress">
-        <p class="text-h6">Address</p>
-        <p class="text-subtitle-1">
+        <p class="text-subtitle-1">Address</p>
+        <p class="text-subtitle-2">
           {{ data.Address_Details.address_lane1 }}, {{ data.Address_Details.address_lane2 }},
         </p>
-        <p class="text-subtitle-1">
+        <p class="text-subtitle-2">
           {{ data.Address_Details.landmark }} - {{ data.Address_Details.pincode }},
         </p>
-        <p class="text-subtitle-1">
+        <p class="text-subtitle-2">
           {{ data.Address_Details.state }}
         </p>
       </div>
@@ -86,7 +86,7 @@ defineProps({
 .user-info {
   text-align: left;
   padding-right: 20px;
-  border-right:2px solid #aaaaaa; 
+  /* border-right:2px solid #aaaaaa;  */
 }
 
 .user-info p {
@@ -119,7 +119,7 @@ defineProps({
 .approved-icon {
   position: absolute;
   top: 57%;
-  left: 19%;
+  left: 22%;
   box-shadow: 0 0 0 2px #fff;
   background-color: #00FF00dd;
   border-radius: 50%;
@@ -128,7 +128,7 @@ defineProps({
 .pending-icon {
   position: absolute;
   top: 57%;
-  left: 19%;
+  left: 22%;
   box-shadow: 0 0 0 2px #fff;
   background-color: #ff204e;
   border-radius: 50%;
