@@ -60,7 +60,8 @@
 
     <v-data-table-server v-model:expanded="expanded" :headers="headers" :items="data" :items-per-page="10" item-key="id"
       :loading="vendorStore.loading" loading-text="Loading, please wait..." show-expand
-      @update:options="loadItems($event)" :items-per-page-options="itemsPerPageOption" :items-length="vendorStore.rowCount.count">
+      @update:options="loadItems($event)" :items-per-page-options="itemsPerPageOption"
+      :items-length="vendorStore.rowCount.count">
 
       <template v-slot:item.status="{ item }">
         <td :class="{ pending: item.status === 'pending', approved: item.status === 'approved' }">
@@ -159,7 +160,7 @@ async function loadItems(event) {
     d.firstName = d.firstName + ' ' + d.lastName
   }
   // }
-  console.log('loading',vendorStore.rowCount.count)
+  console.log('loading', vendorStore.rowCount.count)
 }
 
 function toggleExpansion(item, expand, isExpanded) {
