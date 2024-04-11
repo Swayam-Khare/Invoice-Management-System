@@ -92,13 +92,13 @@
         ></v-btn>
       </template>
       <template v-slot:expanded-row="{ item }">
-        <tr>
+        <!-- <tr> -->
           <td :colspan="headers.length">
             <div class="transition-slot overflow-hidden" id="details">
               <Profile :data="item" />
             </div>
           </td>
-        </tr>
+        <!-- </tr> -->
       </template>
     </v-data-table-server>
   </div>
