@@ -1,10 +1,10 @@
 <template>
-  <Home />
+  <!-- <Home /> -->
 
- <RouterView/>
+ <!-- <RouterView/> -->
 
   <!-- <Admin /> -->
-  <!-- <Vendor /> -->
+  <Vendor />
   <!-- <Product /> -->
   <!-- <CreateInvoice /> -->
   <!-- <SelectCustomer /> -->
