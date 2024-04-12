@@ -13,7 +13,8 @@ const password = process.env.DB_PASSWORD;
 
 // ==== TO CONNECT TO REMOTE DATABASE ====
 const connectDB = new Sequelize(
-  "postgres://invoice_db_v42o_user:QIAZyxp8hRZmEtlSTK17jYpAsNin4Az0@dpg-cnnvqr021fec73arfgvg-a.singapore-postgres.render.com/invoice_db_v42o?ssl=true",{logging:false}
+  "postgres://invoice_db_v42o_user:QIAZyxp8hRZmEtlSTK17jYpAsNin4Az0@dpg-cnnvqr021fec73arfgvg-a.singapore-postgres.render.com/invoice_db_v42o?ssl=true",
+  { logging: false }
 );
 
 const db = {};
