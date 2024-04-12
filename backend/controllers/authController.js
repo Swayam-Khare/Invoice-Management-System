@@ -25,9 +25,7 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
   let token;
 
   if (!email || !password) {
-    return next(
-      CustomError("Please provide email ID & Password for login in!", 400)
-    );
+    return next(CustomError("Please provide email ID & Password for login in!", 400));
   }
 
   if (role === "admin") {
@@ -81,7 +79,7 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
 exports.protect = asyncErrorHandler(async (req, res, next) => {
   // 1. Read the token and check if it exists
   // const testToken = req.headers.authorization;
- const {jwtAuth} = req.cookies;
+  const { jwtAuth } = req.cookies;
   let token = jwtAuth;
 
   // if (testToken && testToken.startsWith("Bearer ")) {
@@ -92,31 +90,21 @@ exports.protect = asyncErrorHandler(async (req, res, next) => {
   }
 
   // 2. Validate the token
-  const decodedToken = await util.promisify(jwt.verify)(
-    token,
-    process.env.SECRET_STR
-  );
+  const decodedToken = await util.promisify(jwt.verify)(token, process.env.SECRET_STR);
 
   if (decodedToken.role === "vendor") {
     // 3. Check if the vendor exists
     const vendor = await Vendor.findByPk(decodedToken.id);
 
     if (!vendor) {
-      const error = new CustomError(
-        "Vendor with the given credential does not exist!",
-        401
-      );
+      const error = new CustomError("Vendor with the given credential does not exist!", 401);
       return next(error);
     }
 
     // 4.Check if the vendor changed the password after the token was issued
 
     if (await vendor.isPasswordChanged(decodedToken.iat)) {
-
-      const err = new CustomError(
-        "Password has been changed recently. Please login again!",
-        401
-      );
+      const err = new CustomError("Password has been changed recently. Please login again!", 401);
       return next(err);
     }
 
@@ -127,19 +115,13 @@ exports.protect = asyncErrorHandler(async (req, res, next) => {
     const admin = await Admin.findByPk(decodedToken.id);
 
     if (!admin) {
-      const error = new CustomError(
-        "Admin with the given credential does not exist!",
-        401
-      );
+      const error = new CustomError("Admin with the given credential does not exist!", 401);
       return next(error);
     }
 
     // 4. Check if the admin changed the password after the token was issued
     if (await admin.isPasswordChanged(decodedToken.iat)) {
-      const err = new CustomError(
-        "Password has been changed recently. Please login again!",
-        401
-      );
+      const err = new CustomError("Password has been changed recently. Please login again!", 401);
       return next(err);
     }
 
@@ -151,6 +133,21 @@ exports.protect = asyncErrorHandler(async (req, res, next) => {
   next();
 });
 
+exports.logout = asyncErrorHandler(async (req, res, next) => {
+  const role = req.params.role;
+
+  if (role === "admin" || role === "vendor") {
+    // Clear the JWT token cookie
+    res.clearCookie("jwtAuth");
+    res.status(200).json({
+      status: "Success",
+      message: `${role} logged out successfully`,
+    });
+  } else {
+    return next(new CustomError("Page not Found!", 404));
+  }
+});
+
 exports.forgotPassword = asyncErrorHandler(async (req, res, next) => {
   // 1. GET VENDOR BASED ON POSTED EMAIL
   const vendor = await Vendor.findOne({
@@ -160,9 +157,7 @@ exports.forgotPassword = asyncErrorHandler(async (req, res, next) => {
   });
 
   if (!vendor) {
-    return next(
-      new CustomError("Vendor with the given credential does not exist!", 401)
-    );
+    return next(new CustomError("Vendor with the given credential does not exist!", 401));
   }
 
   // 2. GENERATE A RANDOM RESET TOKEN
@@ -171,9 +166,7 @@ exports.forgotPassword = asyncErrorHandler(async (req, res, next) => {
   await vendor.save({ validateBeforeSave: false });
 
   // 3. SEND THE TOKEN BACK TO VENDOR'S EMAIL
-  const resetUrl = `${req.protocol}://${req.get(
-    "host"
-  )}/api/v1/auth/resetPassword/${resetToken}`;
+  const resetUrl = `${req.protocol}://${req.get("host")}/api/v1/auth/resetPassword/${resetToken}`;
   const message = `We have recieved a password reset request. Please use below link to reset your password.\n\n${resetUrl}\n\nThis reset password link will expire in 10 minutes`;
 
   try {
@@ -192,20 +185,12 @@ exports.forgotPassword = asyncErrorHandler(async (req, res, next) => {
     vendor.passwordResetTokenExpires = undefined;
     vendor.save({ validateBeforeSave: false });
 
-    return next(
-      new CustomError(
-        "There was an error sending password reset email. Please try again later!",
-        500
-      )
-    );
+    return next(new CustomError("There was an error sending password reset email. Please try again later!", 500));
   }
 });
 
 exports.resetPassword = asyncErrorHandler(async (req, res, next) => {
-  const token = crypto
-    .createHash("sha256")
-    .update(req.params.token)
-    .digest("hex");
+  const token = crypto.createHash("sha256").update(req.params.token).digest("hex");
 
   const vendor = await Vendor.findOne({
     where: {
@@ -245,12 +230,7 @@ exports.resetPassword = asyncErrorHandler(async (req, res, next) => {
 exports.restrict = (role) => {
   return (req, res, next) => {
     if (req.role !== role) {
-      return next(
-        new CustomError(
-          "You do not have permission to perform this action",
-          403
-        )
-      );
+      return next(new CustomError("You do not have permission to perform this action", 403));
     }
     next();
   };
