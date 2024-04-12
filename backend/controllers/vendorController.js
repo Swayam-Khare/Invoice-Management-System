@@ -126,7 +126,7 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
 
 exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
   // console.log(req.query)
-  const totalRows = await Vendor.findAndCountAll();
+  
   // console.log(totalRows.count)
   let orderBy = null;
   let limitFields = null;
@@ -155,6 +155,26 @@ exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
     name = apiFeatures.search(name);
   }
 
+  const totalRows = await Vendor.findAndCountAll({
+    where: {
+      [Op.or]: [
+        {
+          firstName: {
+            [Op.iLike]: name
+          }
+        },
+        {
+          lastName: {
+            [Op.iLike]: name
+          }
+        }
+
+      ],
+      status: {
+        [Op.in]: status
+      },
+    }
+  });
 
   const attributes = limitFields ? limitFields : ["id", "firstName", "lastName", "shopName", "email", "status"];
   const vendors = await Vendor.findAll({
@@ -175,11 +195,6 @@ exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
         },
         {
           lastName: {
-            [Op.iLike]: name
-          }
-        },
-        {
-          email: {
             [Op.iLike]: name
           }
         }

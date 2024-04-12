@@ -79,7 +79,7 @@
       :loading="vendorStore.loading"
       loading-text="Loading, please wait..."
       show-expand
-      @update:options="($event.filter = status), loadItems($event)"
+      @update:options="(options = $event), loadItems($event)"
       :items-per-page-options="itemsPerPageOption"
       :items-length="vendorStore.rowCount.count"
     >
@@ -95,12 +95,11 @@
             <v-btn
               id="status"
               :ripple="false"
-              append-icon="filter_list"
               v-bind="props"
               variant="text"
               class="nav-btn text-capitalize h-100"
             >
-              Status {{ status }}
+              Status <v-icon :icon="clearFilter()" @click="closeFilter()"></v-icon>
             </v-btn>
           </template>
 
@@ -114,7 +113,7 @@
               variant="flat"
               :onmouseenter="activeHover"
               :onmouseleave="cancelHover"
-              @click="status = ['approved']"
+              @click="(options.status = 'approved'), loadItems(options)"
               title="Approved"
               value="approved"
               class="text-left"
@@ -128,7 +127,7 @@
               variant="flat"
               :onmouseenter="activeHover"
               :onmouseleave="cancelHover"
-              @click="status = ['pending']"
+              @click="(options.status = 'pending'), loadItems(options)"
               title="Pending"
               value="pending"
               class="text-left"
@@ -170,6 +169,7 @@ const itemsPerPageOption = ref([
 ])
 
 let status = ref(undefined)
+let options = ref({})
 let search = ref(undefined)
 let itemVariant = ref(null)
 const vendorStore = useVendorStore()
@@ -184,6 +184,22 @@ const activeHover = (event) => {
 
 const cancelHover = () => {
   itemVariant.value = 'none'
+}
+
+function closeFilter() {
+  if (options.value.status) {
+    options.value.status = undefined;
+    loadItems(options.value);
+  }
+}
+
+function clearFilter() {
+  if (options.value.status) {
+    return 'close'
+  }
+  else {
+    return 'filter_list'
+  }
 }
 
 onMounted(() => {
@@ -219,7 +235,7 @@ function icon(expand, item) {
 
 async function loadItems(event) {
   console.log(event)
-  const { page, itemsPerPage, sortBy, search } = event
+  const { page, itemsPerPage, sortBy, search, status } = event
   let sortingStr = ''
   if (sortBy.length) {
     sortBy.forEach((i) => {
@@ -237,6 +253,7 @@ async function loadItems(event) {
   queryStr.limit = itemsPerPage
   queryStr.sort = sortingStr
   queryStr.search = search
+  queryStr.status = status
   console.log(queryStr)
 
   // if (data.value.length === 0) {
