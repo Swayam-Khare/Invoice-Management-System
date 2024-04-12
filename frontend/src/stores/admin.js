@@ -8,11 +8,8 @@ export const useAdminStore = defineStore('adminStore', () => {
   let token = ref(null)
   let typelogin = ref('admin')
   const stateVariable = ref(10)
-  const adminArr = ref([])
+
   let loading = ref(false)
-  let token = ref(null)
-  let typelogin = ref('admin')
-  const stateVariable = ref(10)
 
   async function loginAdmin(formData) {
     loading.value = true
@@ -30,5 +27,5 @@ export const useAdminStore = defineStore('adminStore', () => {
       loading.value = false
     }
   }
-  return { adminArr, loginAdmin, token, stateVariable, typelogin, loading }
+  return { adminArr, loginAdmin, token, stateVariable, typelogin, isloading }
 })
