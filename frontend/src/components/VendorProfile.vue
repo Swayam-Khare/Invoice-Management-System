@@ -2,10 +2,31 @@
   <!-- <h1>{{ imageUrl }}</h1> -->
   <div class="card elevation-6 pa-4 rounded-lg w-50 ma-auto position-relative">
     <div class="approved-icon" v-if="data.status === 'approved'">
-      <v-icon color="#fff" size="lg">check</v-icon>
+      
+      <v-tooltip
+          v-model="show"
+          location="bottom"
+        >
+          <template v-slot:activator="{ props }">
+              <v-icon v-bind="props" color="#fff" size="lg">
+                  check
+              </v-icon>
+          </template>
+          <span class="approved">User is approved</span>
+        </v-tooltip>
     </div>
     <div class="pending-icon" v-if="data.status === 'pending'">
-      <v-icon color="#fff" size="lg">priority_high</v-icon>
+      <v-tooltip
+          v-model="show"
+          location="bottom"
+        >
+          <template v-slot:activator="{ props }">
+              <v-icon v-bind="props" color="#fff" size="lg">
+                  priority_high
+              </v-icon>
+          </template>
+          <span>Approval is pending</span>
+        </v-tooltip>
     </div>
     <div class="card-body d-flex align-start justify-space-between">
       <img class="user-photo" src="@/assets/imgs/User/1.png" alt="User Photo" />
@@ -50,12 +71,17 @@
 </template>
 
 <script setup>
+import {ref} from 'vue' 
 defineProps({
   data: Object
 })
+
+const show = ref(false);
 </script>
 
 <style scoped>
+
+
 .card {
   background-color: #fff;
   border-radius: 8px;

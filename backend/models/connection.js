@@ -20,7 +20,6 @@ const db = {};
 db.Sequelize = Sequelize;
 db.connectDB = connectDB;
 
-
 db.Product = require("./productModel")(connectDB, DataTypes);
 db.Invoice = require("./invoiceModel")(connectDB, DataTypes);
 db.Order = require("./orderModel")(connectDB, DataTypes);
@@ -95,7 +94,6 @@ const check = async () => {
   }
 };
 module.exports = { db, check };
-
 
 // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzEwNzUxMTMyLCJleHAiOjE3MTMzNDMxMzJ9.ZJIWQ3cORCOuwC6d2M2TQcOvjf5LMUa-rhbkiZvBRBI
 // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzEwNzUxMTMyLCJleHAiOjE3MTMzNDMxMzJ9.ZJIWQ3cORCOuwC6d2M2TQcOvjf5LMUa-rhbkiZvBRBI
