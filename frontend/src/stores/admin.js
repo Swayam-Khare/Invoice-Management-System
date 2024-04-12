@@ -4,15 +4,12 @@ import axios from 'axios'
 
 export const useAdminStore = defineStore('adminStore', () => {
   const adminArr = ref([])
-  let isloading = ref(false)
+
   let token = ref(null)
   let typelogin = ref('admin')
   const stateVariable = ref(10)
-  const adminArr = ref([])
+
   let loading = ref(false)
-  let token = ref(null)
-  let typelogin = ref('admin')
-  const stateVariable = ref(10)
 
   async function loginAdmin(formData) {
     loading.value = true

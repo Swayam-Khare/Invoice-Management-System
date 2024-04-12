@@ -104,35 +104,30 @@ const isFormValid = computed(() => {
 const submitForm = async () => {
   if (isFormValid.value) {
     console.log(myTitle)
-    try {
-      if (adminStore.typelogin === 'admin') {
-        await adminStore.loginAdmin({ email: email.value, password: password.value })
-        emit('close')
-        console.log('line 97', adminStore.token)
-        if (adminStore.token) {
-          console.log('true')
-          router.replace('/admin')
-        } else {
-          console.log('false')
-        }
-        console.log('in line 97', adminStore.stateVariable)
-      } else if (adminStore.typelogin === 'vendor') {
-        await vendorStore.loginVendor({ email: email.value, password: password.value })
-        emit('close')
-        console.log('line 108', vendorStore.token)
-
-        if (vendorStore.token) {
-          console.log('true')
-          router.push('/profile')
-        } else {
-          console.log('false')
-        }
-        console.log('in line 108', vendorStore.stateVariable)
-      }
-    } catch (error) {
-      console.error('Login error:', error)
-    } finally {
+    if (adminStore.typelogin === 'admin') {
+      await adminStore.loginAdmin({ email: email.value, password: password.value })
       emit('close')
+      console.log('line 97', adminStore.token)
+      if (adminStore.token) {
+        console.log('true')
+        router.replace('/admin')
+      } else {
+        console.log('false')
+      }
+      console.log('in line 97', adminStore.stateVariable)
+    } else if (adminStore.typelogin === 'vendor') {
+      await vendorStore.loginVendor({ email: email.value, password: password.value })
+      emit('close')
+      console.log('line 108', vendorStore.token)
+      if (vendorStore.token) {
+        console.log('true')
+        router.replace('/profile')
+      } else {
+        console.log('false')
+      }
+      console.log('in line 108', vendorStore.stateVariable)
+    } else {
+      console.log('false')
     }
   }
 }
