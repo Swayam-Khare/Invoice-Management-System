@@ -69,6 +69,13 @@
       </template>
     </v-data-table-server> -->
 
+
+    <!-- <v-skeleton-loader
+      v-if="vendorStore.loading"
+      :loading="vendorStore.loading"
+      type="table"
+    ></v-skeleton-loader> -->
+
     <v-data-table-server
       v-model:expanded="expanded"
       :headers="headers"
@@ -77,7 +84,7 @@
       :search="search"
       item-key="id"
       :loading="vendorStore.loading"
-      loading-text="Loading, please wait..."
+      loading-text="Please wait..."
       show-expand
       @update:options="(options = $event), loadItems($event)"
       :items-per-page-options="itemsPerPageOption"
@@ -150,6 +157,7 @@
         </td>
       </template>
     </v-data-table-server>
+    
   </div>
 </template>
 
