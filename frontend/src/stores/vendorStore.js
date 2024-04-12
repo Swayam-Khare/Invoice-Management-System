@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import axios from 'axios';
+import axios from 'axios'
 export const useVendorStore = defineStore('vendorStore', () => {
     let vendors = ref([]);
     let rowCount = ref({count:0});

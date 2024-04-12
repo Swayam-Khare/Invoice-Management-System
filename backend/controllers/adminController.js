@@ -3,6 +3,7 @@ const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const CustomError = require("../utils/customError");
 const Admin = db.Admin;
 const Vendor = db.Vendor;
+const connectDB = db.connectDB;
 const randomstring = require("randomstring");
 const sendEmail = require("../utils/email");
 
@@ -88,58 +89,64 @@ exports.approveVendor = asyncErrorHandler(async (req, res, next) => {
       return next(error);
     }
   }
-  if(vendor.status === "approved") {
+
+  if (vendor.status === "approved") {
     const err = new CustomError("Vendor has been already approved", 400);
     return next(err);
   }
-  const password = randomstring.generate(12);
-  
-  const [rows, updatedVendor] = await Vendor.update(
-    { status : 'approved' , password },
+  try {
+    const result = await connectDB.transaction(async (t) => {
+      const password = randomstring.generate(12);
 
-    {
-      where: { id },
-      returning: true,
-      individualHooks: true
-      // plain: true,
-    })
+      const [rows, updatedVendor] = await Vendor.update(
+        { status: 'approved', password },
 
-    if(rows){
-      const message = `Hello ${vendor.firstName}! , Your request for using our application has been approved. You can login with the following credentials \n\n\n\n Email : ${vendor.email} \n Password : ${password} `
+        {
+          where: { id },
+          returning: true,
+          individualHooks: true,
+          // plain: true,
+          transaction: t
+        })
 
-      try {
+      if (rows) {
+        const message = `Hello ${vendor.firstName}! , Your request for using our application has been approved. You can login with the following credentials \n\n\n\n Email : ${vendor.email} \n Password : ${password} `
+
+
         await sendEmail({
           email: vendor.email,
           subject: "Approval of vendor",
           message: message,
         });
-      }catch(err){
-        res.status(400).json({
-          status: "Fail",
-          message: err.message
-        })
       }
-      res.status(200).json({
-        status: "Success",
-        message: "Vendor has been Approved",
-      })
-
-
-
-    // console.log(rows , updatedVendor);
-    // res.status(200).json({
-    //   status : "success",
-    //   data : {
-    //     message : "Status approved"
-    //   }
-
-      
-    // })
-
-    } 
-    else{
-      const err = new CustomError('User not found!', 404);
-      next (err);
-    }
+      else {
+        const err = new CustomError('User not found!', 404);
+        next(err);
+      }
+    })
+  } catch (err) {
+    return res.status(400).json({
+      status: "Fail",
+      message: err.message
+    })
   }
-);
+  res.status(200).json({
+    status: "Success",
+    message: "Vendor has been Approved",
+  })
+
+
+
+  // console.log(rows , updatedVendor);
+  // res.status(200).json({
+  //   status : "success",
+  //   data : {
+  //     message : "Status approved"
+  //   }
+
+
+  // })
+
+
+
+});
