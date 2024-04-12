@@ -3,10 +3,10 @@
     class="navbar d-flex justify-space-between px-2 px-sm-7 py-0 py-md-3 elevation-7"
     style="background-color: #112d4edd"
   >
-  <div class="d-flex align-center ga-3">
-    <img src="../assets/logo.svg" alt="Logo" />
-    <span class="text-h4 text-white">Invoice Management System</span>
-  </div>
+    <div class="d-flex align-center ga-3">
+      <img src="../assets/logo.svg" alt="Logo" />
+      <span class="text-h4 text-white">Invoice Management System</span>
+    </div>
     <div class="d-flex align-center">
       <div class="search pr-10">
         <!-- <v-text-field label="Search" class="w-auto" variant="solo-filled"></v-text-field> -->
@@ -73,13 +73,11 @@
       :items="data"
       :items-per-page="5"
       item-key="id"
-      :loading="vendorStore.loading"
-      loading-text="Loading, please wait..."
       show-expand
+      v-if="!vendorStore.loading"
       @update:options="loadItems"
     >
-
-    <template v-slot:item.status="{ item }">
+      <template v-slot:item.status="{ item }">
         <td :class="{ pending: item.status === 'pending', approved: item.status === 'approved' }">
           {{ item.status }}
         </td>
@@ -93,14 +91,20 @@
       </template>
       <template v-slot:expanded-row="{ item }">
         <!-- <tr> -->
-          <td :colspan="headers.length">
-            <div class="transition-slot overflow-hidden" id="details">
-              <Profile :data="item" />
-            </div>
-          </td>
+        <td :colspan="headers.length">
+          <div class="transition-slot overflow-hidden" id="details">
+            <Profile :data="item" />
+          </div>
+        </td>
         <!-- </tr> -->
       </template>
     </v-data-table-server>
+
+    <v-skeleton-loader
+      v-if="vendorStore.loading"
+      :loading="vendorStore.loading"
+      type="table"
+    ></v-skeleton-loader>
   </div>
 </template>
 
@@ -172,16 +176,18 @@ function toggleExpansion(item, expand, isExpanded) {
       }
     }
     id = setInterval(frame, 4)
+    
   } else {
     expand(item)
   }
-
+  
+  // document.getElementById('scroll').scrollIntoView(true)
   if (expanded.value.length > 1) {
     const temp = expanded.value[1]
     expanded.value = []
     expanded.value.push(temp)
   }
-  console.log(expanded.value)
+  // console.log(expanded.value)
 }
 </script>
 
@@ -277,7 +283,7 @@ tr:hover {
 .transition-slot {
   margin: 30px;
   animation: trans 0.2s linear;
-  height:350px;
+  height: 350px;
 }
 
 @keyframes trans {
