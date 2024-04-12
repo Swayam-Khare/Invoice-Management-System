@@ -1,6 +1,8 @@
 <template>
-  <div class="navbar d-flex justify-space-between px-2 px-sm-7 py-0 py-md-3 elevation-7"
-    style="background-color: #112d4edd">
+  <div
+    class="navbar d-flex justify-space-between px-2 px-sm-7 py-0 py-md-3 elevation-7"
+    style="background-color: #112d4edd"
+  >
     <div class="d-flex align-center ga-3">
       <img src="../assets/logo.svg" alt="Logo" />
       <span class="text-h4 text-white">Invoice Management System</span>
@@ -8,7 +10,12 @@
     <div class="d-flex align-center">
       <div class="search pr-10">
         <!-- <v-text-field label="Search" class="w-auto" variant="solo-filled"></v-text-field> -->
-        <input type="text" placeholder="Search..." class="elevation-6 pa-3 search bg-grey-lighten-2 d-none d-sm-flex" />
+        <input
+          type="text"
+          placeholder="Search..."
+          class="elevation-6 pa-3 search bg-grey-lighten-2 d-none d-sm-flex"
+          v-model="search"
+        />
         <!-- <v-icon icon="search" class="bg-grey-lighten-2 d-flex d-md-none"></v-icon> -->
       </div>
       <v-menu>
@@ -27,8 +34,12 @@
     </div>
   </div>
   <div class="mobile-search pt-4">
-    <input type="text" placeholder="Search..."
-      class="elevation-6 pa-3 mx-auto search bg-grey-lighten-2 d-flex d-sm-none" />
+    <input
+      type="text"
+      placeholder="Search..."
+      class="elevation-6 pa-3 mx-auto search bg-grey-lighten-2 d-flex d-sm-none"
+      v-model="search"
+    />
   </div>
   <div>
     <!-- <v-data-table-server
@@ -58,37 +69,86 @@
       </template>
     </v-data-table-server> -->
 
-    <v-data-table-server v-model:expanded="expanded" :headers="headers" :items="data" :items-per-page="10" item-key="id"
-      :loading="vendorStore.loading" loading-text="Loading, please wait..." show-expand
-      @update:options="loadItems($event)" :items-per-page-options="itemsPerPageOption"
-      :items-length="vendorStore.rowCount.count">
-
+    <v-data-table-server
+      v-model:expanded="expanded"
+      :headers="headers"
+      :items="data"
+      :items-per-page="10"
+      :search="search"
+      item-key="id"
+      :loading="vendorStore.loading"
+      loading-text="Loading, please wait..."
+      show-expand
+      @update:options="($event.filter = status), loadItems($event)"
+      :items-per-page-options="itemsPerPageOption"
+      :items-length="vendorStore.rowCount.count"
+    >
       <template v-slot:item.status="{ item }">
         <td :class="{ pending: item.status === 'pending', approved: item.status === 'approved' }">
           {{ item.status }}
         </td>
       </template>
 
-      <template v-slot:header.status="{ column }">
-        <td class="pa-0">
-          <p>Status</p>
-          <v-select class="vSelect" base-color="black" v-model="status"  chips flat :items="['approved', 'pending']" variant="solo" :clearable="true"></v-select>
-        </td>
+      <template v-slot:header.status="{}">
+        <v-menu :open-on-hover="true" offset="4">
+          <template v-slot:activator="{ props }">
+            <v-btn
+              id="status"
+              :ripple="false"
+              append-icon="filter_list"
+              v-bind="props"
+              variant="text"
+              class="nav-btn text-capitalize h-100"
+            >
+              Status {{ status }}
+            </v-btn>
+          </template>
 
-       
+          <!-- list item to show in menu -->
+          <v-list class="pa-0">
+            <v-list-item
+              v-model="status"
+              id="approved"
+              :active="itemVariant == 'approved'"
+              color="#112D4E"
+              variant="flat"
+              :onmouseenter="activeHover"
+              :onmouseleave="cancelHover"
+              @click="status = ['approved']"
+              title="Approved"
+              value="approved"
+              class="text-left"
+            >
+            </v-list-item>
+            <v-list-item
+              v-model="status"
+              id="pending"
+              :active="itemVariant == 'pending'"
+              color="#112D4E"
+              variant="flat"
+              :onmouseenter="activeHover"
+              :onmouseleave="cancelHover"
+              @click="status = ['pending']"
+              title="Pending"
+              value="pending"
+              class="text-left"
+            ></v-list-item>
+          </v-list>
+        </v-menu>
       </template>
       <template v-slot:item.data-table-expand="{ toggleExpand, internalItem, isExpanded }">
-        <v-btn :icon="icon(isExpanded, internalItem)" variant="text"
-          @click="toggleExpansion(internalItem, toggleExpand, isExpanded)"></v-btn>
+        <v-btn
+          :icon="icon(isExpanded, internalItem)"
+          variant="text"
+          @click="toggleExpansion(internalItem, toggleExpand, isExpanded)"
+        ></v-btn>
       </template>
       <template v-slot:expanded-row="{ item }">
-
         <td :colspan="headers.length">
           <div class="transition-slot overflow-hidden" id="details">
             <Profile :data="item" />
           </div>
         </td>
-
       </template>
     </v-data-table-server>
   </div>
@@ -101,12 +161,30 @@ import { onMounted } from 'vue'
 import { useVendorStore } from '../stores/vendorStore.js'
 import Profile from '../components/VendorProfile.vue'
 let data = ref([])
-const itemsPerPageOption = ref([{ title: '10', value: 10 }, { title: '15', value: 15 }, { title: '20', value: 20 }, { title: '50', value: 50 }, { title: '100', value: 100 }]);
+const itemsPerPageOption = ref([
+  { title: '10', value: 10 },
+  { title: '15', value: 15 },
+  { title: '20', value: 20 },
+  { title: '50', value: 50 },
+  { title: '100', value: 100 }
+])
 
-let status = ref(undefined);
-
+let status = ref(undefined)
+let search = ref(undefined)
+let itemVariant = ref(null)
 const vendorStore = useVendorStore()
 
+const activeHover = (event) => {
+  if (event.currentTarget.id == 'pending') {
+    itemVariant.value = 'pending'
+  } else if (event.currentTarget.id == 'approved') {
+    itemVariant.value = 'approved'
+  }
+}
+
+const cancelHover = () => {
+  itemVariant.value = 'none'
+}
 
 onMounted(() => {
   const color = randomColor()
@@ -141,28 +219,25 @@ function icon(expand, item) {
 
 async function loadItems(event) {
   console.log(event)
-  const { page, itemsPerPage, sortBy, search } = event;
-  let sortingStr = '';
+  const { page, itemsPerPage, sortBy, search } = event
+  let sortingStr = ''
   if (sortBy.length) {
     sortBy.forEach((i) => {
       if (i.order == 'asc') {
-
-        sortingStr += i.key + ',';
-      }
-      else {
+        sortingStr += i.key + ','
+      } else {
         sortingStr += '-' + i.key + ','
       }
     })
   }
   sortingStr = sortingStr.slice(0, sortingStr.length - 1)
-  console.log(sortingStr);
-  const queryStr = {};
-  queryStr.page = page;
-  queryStr.limit = itemsPerPage;
-  queryStr.sort = sortingStr;
-  queryStr.search = search;
+  console.log(sortingStr)
+  const queryStr = {}
+  queryStr.page = page
+  queryStr.limit = itemsPerPage
+  queryStr.sort = sortingStr
+  queryStr.search = search
   console.log(queryStr)
-
 
   // if (data.value.length === 0) {
   await vendorStore.getAllVendors(queryStr)
@@ -309,18 +384,14 @@ tr:hover {
     height: 350px;
   }
 }
-.vSelect{
-position: absolute;
-/* width: 180px; */
-transform: translate(50px,-40px);
-
-
+.vSelect {
+  position: absolute;
+  /* width: 180px; */
+  transform: translate(50px, -40px);
 }
-.v-field__input{
+.v-field__input {
   background-color: red !important;
-  padding:0px  !important ;
+  padding: 0px !important ;
   height: 0px !important;
 }
-
-
 </style>
