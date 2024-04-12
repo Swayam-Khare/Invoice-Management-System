@@ -1,17 +1,18 @@
 <template>
   <RouterView />
   <!-- <Admin /> -->
-  <Vendor />
+  <!-- <Vendor /> -->
   <!-- <Product /> -->
   <!-- <CreateInvoice /> -->
   <!-- <SelectCustomer /> -->
 </template>
 
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import Home from './views/Home.vue'
+import { RouterView } from 'vue-router'
+// import { RouterLink, } from 'vue-router'
+// import Home from './views/Home.vue'
 // import Admin from './views/Admin.vue'
-import Vendor from './views/Vendor.vue'
+// import Vendor from './views/Vendor.vue'
 // import { onMounted } from 'vue';
 // import router from './router'
 // import Customer from './components/Customer.vue'
