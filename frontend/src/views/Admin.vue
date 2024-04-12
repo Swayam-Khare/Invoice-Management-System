@@ -68,6 +68,15 @@
           {{ item.status }}
         </td>
       </template>
+
+      <template v-slot:header.status="{ column }">
+        <td class="pa-0">
+          <p>Status</p>
+          <v-select class="vSelect" base-color="black" v-model="status"  chips flat :items="['approved', 'pending']" variant="solo" :clearable="true"></v-select>
+        </td>
+
+       
+      </template>
       <template v-slot:item.data-table-expand="{ toggleExpand, internalItem, isExpanded }">
         <v-btn :icon="icon(isExpanded, internalItem)" variant="text"
           @click="toggleExpansion(internalItem, toggleExpand, isExpanded)"></v-btn>
@@ -94,6 +103,8 @@ import Profile from '../components/VendorProfile.vue'
 let data = ref([])
 const itemsPerPageOption = ref([{ title: '10', value: 10 }, { title: '15', value: 15 }, { title: '20', value: 20 }, { title: '50', value: 50 }, { title: '100', value: 100 }]);
 
+let status = ref(undefined);
+
 const vendorStore = useVendorStore()
 
 
@@ -117,7 +128,7 @@ const headers = ref([
   { title: 'Name', value: 'firstName', sortable: true },
   { title: 'E-mail', value: 'email' },
   { title: 'Contact no', value: 'Address_Details.contact' },
-  { title: 'Status', value: 'status', class: 'pending' }
+  { title: 'Status', value: 'status' }
 ])
 
 function icon(expand, item) {
@@ -298,4 +309,18 @@ tr:hover {
     height: 350px;
   }
 }
+.vSelect{
+position: absolute;
+/* width: 180px; */
+transform: translate(50px,-40px);
+
+
+}
+.v-field__input{
+  background-color: red !important;
+  padding:0px  !important ;
+  height: 0px !important;
+}
+
+
 </style>
