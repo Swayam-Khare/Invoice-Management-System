@@ -16,7 +16,7 @@ const VendorProduct = db.VendorProduct;
 
 // ------------- CREATE A VENDOR --------------
 exports.createVendor = asyncErrorHandler(async (req, res, next) => {
-  const { firstName, lastName, shopName, email, contact,  address_lane1, address_lane2, landmark, pincode, state } =
+  const { firstName, lastName, shopName, email, contact, address_lane1, address_lane2, landmark, pincode, state } =
     req.body;
 
   // const vendor = await Vendor.create({
@@ -48,7 +48,7 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
 
   //  Genertaing the random password as a string
   const password = randomstring.generate(12);
-  const confirmPassword = password ;
+  const confirmPassword = password;
   const role = "vendor";
 
   const vendor = await Vendor.findOne({ where: { email }, paranoid: false });
@@ -126,12 +126,20 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
 
 exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
   // console.log(req.query)
-  const totalRows = await Vendor.findAndCountAll();
+  
   // console.log(totalRows.count)
   let orderBy = null;
   let limitFields = null;
   let offset = null;
-  const limit = req.query.limit || 10;
+  let status = [];
+  if(!req.query.status){
+    status = ['approved','pending'];
+  }
+  else{
+
+    status = [req.query.status];
+  }
+  const limit = req.query.limit;
   let name = req.query.search || '%';
   if (req.query.sort) {
     orderBy = apiFeatures.sorting(req.query.sort);
@@ -140,15 +148,35 @@ exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
     limitFields = apiFeatures.limitFields(req.query.fields);
   }
   if (req.query.page) {
-    offset = apiFeatures.paginate(req.query.page, limit, totalRows.count, next);
+    offset = apiFeatures.paginate(req.query.page, limit, next);
 
   }
   if (req.query.search) {
     name = apiFeatures.search(name);
   }
 
+  const totalRows = await Vendor.findAndCountAll({
+    where: {
+      [Op.or]: [
+        {
+          firstName: {
+            [Op.iLike]: name
+          }
+        },
+        {
+          lastName: {
+            [Op.iLike]: name
+          }
+        }
 
-  const attributes = limitFields ? limitFields : ["id", "firstName", "lastName", "shopName", "email","status"];
+      ],
+      status: {
+        [Op.in]: status
+      },
+    }
+  });
+
+  const attributes = limitFields ? limitFields : ["id", "firstName", "lastName", "shopName", "email", "status"];
   const vendors = await Vendor.findAll({
     include: [
       {
@@ -169,17 +197,15 @@ exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
           lastName: {
             [Op.iLike]: name
           }
-        },
-        {
-          email: {
-            [Op.iLike]: name
-          }
         }
 
-      ] 
+      ],
+      status: {
+        [Op.in]:status
+      },
     },
     order: orderBy,
-    limit: limit,
+    limit:limit,
     offset: offset,
   });
   res.status(200).json({
@@ -187,6 +213,7 @@ exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
     count: vendors.length,
     data: {
       vendors,
+      totalRows
     }
   });
 });
@@ -294,7 +321,7 @@ exports.updateVendor = asyncErrorHandler(async (req, res, next) => {
         as: "Address_Details",
       },
     ],
-    
+
     where: {
       id,
     },
