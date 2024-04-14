@@ -56,7 +56,7 @@ export const useVendorStore = defineStore('vendorStore', () => {
             },
           };
           const res = await axios.post('http://localhost:3500/api/v1/vendors', formData, config);
-          console.log(res);
+        //   console.log(res);
           // Handle successful signup response here
         } catch (error) {
           console.log(error);
