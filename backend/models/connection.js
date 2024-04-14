@@ -8,18 +8,18 @@ const password = process.env.DB_PASSWORD;
 // const connectDB = new Sequelize(database, user, password, {
 //   host: "localhost",
 //   dialect: "postgres",
-//   logging: false,
+//   logging: false,s
 // });
 
 // ==== TO CONNECT TO REMOTE DATABASE ====
 const connectDB = new Sequelize(
-  "postgres://invoice_db_v42o_user:QIAZyxp8hRZmEtlSTK17jYpAsNin4Az0@dpg-cnnvqr021fec73arfgvg-a.singapore-postgres.render.com/invoice_db_v42o?ssl=true", { logging: false }
+  "postgres://invoice_db_v42o_user:QIAZyxp8hRZmEtlSTK17jYpAsNin4Az0@dpg-cnnvqr021fec73arfgvg-a.singapore-postgres.render.com/invoice_db_v42o?ssl=true",
+  { logging: false }
 );
 
 const db = {};
 db.Sequelize = Sequelize;
 db.connectDB = connectDB;
-
 
 db.Product = require("./productModel")(connectDB, DataTypes);
 db.Invoice = require("./invoiceModel")(connectDB, DataTypes);
@@ -95,7 +95,6 @@ const check = async () => {
   }
 };
 module.exports = { db, check };
-
 
 // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzEwNzUxMTMyLCJleHAiOjE3MTMzNDMxMzJ9.ZJIWQ3cORCOuwC6d2M2TQcOvjf5LMUa-rhbkiZvBRBI
 // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzEwNzUxMTMyLCJleHAiOjE3MTMzNDMxMzJ9.ZJIWQ3cORCOuwC6d2M2TQcOvjf5LMUa-rhbkiZvBRBI
