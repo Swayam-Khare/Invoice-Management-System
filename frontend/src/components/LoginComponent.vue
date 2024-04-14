@@ -71,6 +71,7 @@ import { useRouter } from 'vue-router'
 import { ref, computed } from 'vue'
 import { useAdminStore } from '../stores/admin'
 import { useVendorStore } from '../stores/vendorStore'
+
 // import router from '@/router';
 const router = useRouter()
 const adminStore = useAdminStore()
@@ -101,6 +102,12 @@ const isFormValid = computed(() => {
   return emailValid && passwordValid
 })
 
+const toast = useToast()
+
+onMounted(() => {
+  toast.info('Please login to continue.')
+})
+
 const submitForm = async () => {
   if (isFormValid.value) {
     console.log(myTitle)
@@ -111,8 +118,10 @@ const submitForm = async () => {
       if (adminStore.token) {
         console.log('true')
         router.replace('/admin')
+        toast.success('Admin logged in successfully!')
       } else {
         console.log('false')
+        toast.error('Admin does not logged in successfully!')
       }
       console.log('in line 97', adminStore.stateVariable)
     } else if (adminStore.typelogin === 'vendor') {
@@ -120,6 +129,8 @@ const submitForm = async () => {
       emit('close')
       console.log('line 108', vendorStore.token)
       if (vendorStore.token) {
+        toast.success('Admin logged in successfully!')
+
         console.log('true')
         router.replace('/profile')
       } else {
@@ -128,6 +139,7 @@ const submitForm = async () => {
       console.log('in line 108', vendorStore.stateVariable)
     } else {
       console.log('false')
+      toast.error('Admin logged in successfully!')
     }
   }
 }
