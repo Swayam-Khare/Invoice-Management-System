@@ -47,6 +47,34 @@ export const useVendorStore = defineStore('vendorStore', () => {
 
     }
 
+    const signupVendor = async(formData) => {
+        loading.value = true;
+        try {
+          const config = {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          };
+          const res = await axios.post('http://localhost:3500/api/v1/vendors', formData, config);
+          console.log(res);
+          // Handle successful signup response here
+        } catch (error) {
+          console.log(error);
+          // Handle error response here
+          if (error.response && error.response.data && error.response.data.message) {
+            // Display a user-friendly error message
+            alert(`Signup failed: ${error.response.data.message}`);
+          } else {
+            // Display a generic error message
+            alert('An error occurred during signup. Please try again later.');
+          }
+        } finally {
+          loading.value = false;
+        }
+    }
+
+
+
     //   const vendors = computed(async () => {
     //         try {
     //             const res =  await axios.get('http://localhost:3500/api/v1/vendors', { withCredentials: true });
@@ -58,7 +86,12 @@ export const useVendorStore = defineStore('vendorStore', () => {
     //             loading = false;
     //         }
     //     });
-    return { vendors, loading, getAllVendors, loginVendor, token, stateVariable,rowCount }
+
+    
+    
+    
+    return { vendors, loading, getAllVendors, loginVendor, signupVendor,   token, stateVariable  }
+
 
 
 
