@@ -88,7 +88,7 @@
             color="#112d4ef1"
             title="Update Profile"
             value="profile"
-            @click="$router.push('/profile')"
+            @click="isActiveTab=Profile"
           ></v-list-item>
         </v-list>
       </v-navigation-drawer>
@@ -110,6 +110,7 @@ import Product from '../components/Product.vue'
 import CreateProduct from '../components/CreateProduct.vue'
 import CreateInvoice from '../components/CreateInvoice.vue'
 import AllInvoice from '../components/AllInvoice.vue'
+import Profile from '../components/Profile.vue'
 
 const drawer = ref(true)
 const rail = ref(true)
