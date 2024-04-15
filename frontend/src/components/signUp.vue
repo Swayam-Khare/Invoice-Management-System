@@ -89,11 +89,12 @@
             <v-col cols="12" md="6" class="pt-1 pt-md-3">
               <v-text-field
                 label="State"
-                v-model="state"
+                v-model="fatchedState"
                 :rules="[required]"
                 variant="outlined"
                 color="#112d4e"
                 density="compact"
+                :disabled="true"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -119,9 +120,12 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useVendorStore } from '../stores/vendorStore'
+import axios from 'axios'
 import { toast } from 'vue3-toastify'
+
+const fatchedState = ref('')
 
 const vendorStore = useVendorStore()
 
@@ -155,6 +159,30 @@ const contactRules = computed(() => [
 
 const form = ref(null) // If you need a ref to the form for validation
 
+const fetchStateFromPincode = async (pincode) => {
+  try {
+    const response = await axios.get(`https://api.postalpincode.in/pincode/${pincode}`)
+    fatchedState.value = response.data[0].PostOffice[0].State
+  } catch (error) {
+    toast.error('Pincode is invalid!', {
+      autoClose: 1000,
+      pauseOnHover: false,
+      type: 'error',
+      position: 'bottom-center',
+      transition: 'zoom',
+      dangerouslyHTMLString: true
+    })
+  }
+}
+
+watch(pincode, async (newPincode) => {
+  if (newPincode && newPincode.length === 6) {
+    await fetchStateFromPincode(newPincode)
+  } else {
+    fatchedState.value = ''
+  }
+})
+
 async function submitForm() {
   const formData = {
     firstName: firstName.value,
@@ -165,7 +193,7 @@ async function submitForm() {
     address_lane1: address_lane1.value,
     address_lane2: address_lane2.value,
     pincode: pincode.value,
-    state: state.value
+    state: fatchedState.value
   }
   const check = await validate()
   // console.log(check.valid)
@@ -179,6 +207,7 @@ async function submitForm() {
       dangerouslyHTMLString: true
     })
   } else {
+    console.log('Please enter complete details')
     toast.error('Something went Wrong!.', {
       autoClose: 1000,
       type: 'error',
@@ -208,7 +237,7 @@ function resetForm() {
   address_lane1.value = null
   address_lane2.value = null
   pincode.value = null
-  state.value = null
+  fatchedState.value = ''
 }
 
 function closeDialog() {
