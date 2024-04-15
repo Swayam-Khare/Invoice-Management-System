@@ -131,7 +131,7 @@ const submitForm = async () => {
       console.log('in line 97', adminStore.stateVariable)
     } else if (adminStore.typelogin === 'vendor') {
       await vendorStore.loginVendor({ email: email.value, password: password.value })
-      
+
       console.log('line 108', vendorStore.token)
       if (vendorStore.token) {
         toast.success('Vendor Login Successfully.', {
@@ -141,7 +141,7 @@ const submitForm = async () => {
           transition: 'zoom',
           dangerouslyHTMLString: true
         })
-        router.replace('/profile')
+        router.replace('/vendor')
       } else {
         toast.error('Vendor Login failed.', {
           autoClose: 1000,
