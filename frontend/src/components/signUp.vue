@@ -120,7 +120,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import {useVendorStore} from '../stores/vendorStore'
+import { useVendorStore } from '../stores/vendorStore'
 
 const vendorStore = useVendorStore()
 
@@ -155,27 +155,30 @@ const contactRules = computed(() => [
 const form = ref(null) // If you need a ref to the form for validation
 
 async function submitForm() {
-  // const check = await validate()
-  // console.log(check.valid)
-  // if (check.valid) {
-    const formData = {
-      firstName: firstName.value,
-      lastName: lastName.value,
-      email: email.value,
-      contact: contact.value,
-      shopName: shopName.value,
-      addressLine1: addressLine1.value,
-      addressLine2: addressLine2.value,
-      pincode: pincode.value,
-      state: state.value
-    }
-
-    await vendorStore.signupVendor(formData);
-
-    // console.log('Form submitted!')
-    resetForm()
-    emit('close')
+  const formData = {
+    firstName: firstName.value,
+    lastName: lastName.value,
+    email: email.value,
+    contact: contact.value,
+    shopName: shopName.value,
+    addressLine1: addressLine1.value,
+    addressLine2: addressLine2.value,
+    pincode: pincode.value,
+    state: state.value
   }
+  const check = await validate()
+  // console.log(check.valid)
+  if (check.valid) {
+    await vendorStore.signupVendor(formData)
+  } else {
+    console.log("Please enter complete details");
+    return
+  }
+
+  // console.log('Form submitted!')
+  resetForm()
+  emit('close')
+}
 // }
 
 function validate() {

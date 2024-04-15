@@ -90,7 +90,7 @@ export const useVendorStore = defineStore('vendorStore', () => {
     
     
     
-    return { vendors, loading, getAllVendors, loginVendor, signupVendor,   token, stateVariable  }
+    return { vendors, loading, getAllVendors, loginVendor, signupVendor, rowCount,  token, stateVariable  }
 
 
 
