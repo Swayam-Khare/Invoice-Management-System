@@ -56,7 +56,7 @@ export const useVendorStore = defineStore('vendorStore', () => {
             console.log(error.message);
         }
         finally {
-            getAllVendors();
+            // getAllVendors();
             loading.value = false;
         }
     }
@@ -64,13 +64,13 @@ export const useVendorStore = defineStore('vendorStore', () => {
 
     const approveVendor = async (id) => {
         try {
-            loading = true;
-            const res = await axios.patch(`http://localhost:3500/api/v1/admin/vendorStatus/${id}`, { withCredentials: true });
+            loading.value = true;
+            const res = await axios.patch(`http://localhost:3500/api/v1/admin/vendorStatus/${id}`, {}, { withCredentials: true });
         } catch (error) {
             console.log(error.message)
         }
         finally {
-            loading = false;
+            loading.value = false;
         }
     }
 

@@ -77,17 +77,20 @@ const vendorStore = useVendorStore();
 defineProps({
   data: Object
 })
-
+const emit = defineEmits(['unmountProfile']);
 const show = ref(false);
 
 async  function deleteVendor(id){
- await vendorStore.deleteVendor(id)
-  console.log('vendor is deleted',id)
+ await vendorStore.deleteVendor(id);
+ emit('unmountProfile');
+  // console.log('vendor is deleted',id)
+
 
 }
 async function approveVendor(id){
-  console.log('id is ',id)
+  // console.log('id is ',id)
   await vendorStore.approveVendor(id);
+  emit('unmountProfile');
 }
 </script>
 

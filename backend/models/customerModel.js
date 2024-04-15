@@ -10,7 +10,7 @@ module.exports = (connectDB, DataTypes) => {
         allowNull: false,
         autoIncrement: true,
       },
-      firstName: {  
+      firstName: {
         type: DataTypes.STRING(100),
         allowNull: false,
       },
@@ -36,16 +36,16 @@ module.exports = (connectDB, DataTypes) => {
           len: {
             args: [10, 10],
             msg: "Contact must have exactly 10 digits",
-          }
+          },
         },
       },
     },
     {
       // Other model options go here
-      tableName: 'customer',
+      tableName: "customer",
       paranoid: true,
-      createdAt:false,
-      updatedAt:false,
+      createdAt: false,
+      updatedAt: true,
     }
   );
 
