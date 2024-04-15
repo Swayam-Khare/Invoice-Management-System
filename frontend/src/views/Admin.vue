@@ -69,7 +69,6 @@
       </template>
     </v-data-table-server> -->
 
-
     <!-- <v-skeleton-loader
       v-if="vendorStore.loading"
       :loading="vendorStore.loading"
@@ -86,7 +85,7 @@
       :loading="vendorStore.loading"
       loading-text="Please wait..."
       show-expand
-      @update:options="(options = $event), loadItems($event)"
+      @update:options="(options = $event), (options.status = approvalStatus), loadItems(options)"
       :items-per-page-options="itemsPerPageOption"
       :items-length="vendorStore.rowCount.count"
     >
@@ -106,21 +105,21 @@
               variant="text"
               class="nav-btn text-capitalize h-100"
             >
-              Status <v-icon :icon="clearFilter()" @click="closeFilter()"></v-icon>
+              {{ status }} Status <v-icon :icon="clearFilter()" @click="closeFilter()"></v-icon>
             </v-btn>
           </template>
 
           <!-- list item to show in menu -->
           <v-list class="pa-0">
             <v-list-item
-              v-model="status"
+             
               id="approved"
               :active="itemVariant == 'approved'"
               color="#112D4E"
               variant="flat"
               :onmouseenter="activeHover"
               :onmouseleave="cancelHover"
-              @click="(options.status = 'approved'), loadItems(options)"
+              @click="(approvalStatus = 'approved'),(options.status = approvalStatus), loadItems(options)"
               title="Approved"
               value="approved"
               class="text-left"
@@ -134,7 +133,7 @@
               variant="flat"
               :onmouseenter="activeHover"
               :onmouseleave="cancelHover"
-              @click="(options.status = 'pending'), loadItems(options)"
+              @click="(approvalStatus = 'pending'), (options.status = approvalStatus), loadItems(options)"
               title="Pending"
               value="pending"
               class="text-left"
@@ -152,12 +151,11 @@
       <template v-slot:expanded-row="{ item }">
         <td :colspan="headers.length">
           <div class="transition-slot overflow-hidden" id="details">
-            <Profile :data="item" />
+            <Profile :data="item" @unmount-profile="loadItems(options)" />
           </div>
         </td>
       </template>
     </v-data-table-server>
-    
   </div>
 </template>
 
@@ -168,6 +166,7 @@ import { onMounted } from 'vue'
 import { useVendorStore } from '../stores/vendorStore.js'
 import Profile from '../components/VendorProfile.vue'
 let data = ref([])
+let showComponent = ref(true)
 const itemsPerPageOption = ref([
   { title: '10', value: 10 },
   { title: '15', value: 15 },
@@ -176,7 +175,7 @@ const itemsPerPageOption = ref([
   { title: '100', value: 100 }
 ])
 
-let status = ref(undefined)
+let approvalStatus = ref(undefined)
 let options = ref({})
 let search = ref(undefined)
 let itemVariant = ref(null)
@@ -196,16 +195,15 @@ const cancelHover = () => {
 
 function closeFilter() {
   if (options.value.status) {
-    options.value.status = undefined;
-    loadItems(options.value);
+    options.value.status = undefined
+    loadItems(options.value)
   }
 }
 
 function clearFilter() {
   if (options.value.status) {
     return 'close'
-  }
-  else {
+  } else {
     return 'filter_list'
   }
 }
@@ -242,7 +240,7 @@ function icon(expand, item) {
 }
 
 async function loadItems(event) {
-  console.log(event)
+  console.log(event);
   const { page, itemsPerPage, sortBy, search, status } = event
   let sortingStr = ''
   if (sortBy.length) {
@@ -271,7 +269,8 @@ async function loadItems(event) {
     d.firstName = d.firstName + ' ' + d.lastName
   }
   // }
-  console.log('loading', vendorStore.rowCount.count)
+  expanded.value = [];
+
 }
 
 function toggleExpansion(item, expand, isExpanded) {
@@ -409,14 +408,16 @@ tr:hover {
     height: 350px;
   }
 }
+
 .vSelect {
   position: absolute;
   /* width: 180px; */
   transform: translate(50px, -40px);
 }
+
 .v-field__input {
   background-color: red !important;
-  padding: 0px !important ;
+  padding: 0px !important;
   height: 0px !important;
 }
 </style>

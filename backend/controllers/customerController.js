@@ -2,7 +2,7 @@ const { db } = require("../models/connection");
 const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const CustomError = require("../utils/customError");
 const { Op } = require("sequelize");
-const apiFeatures = require('../utils/apiFeatures');
+const apiFeatures = require("../utils/apiFeatures");
 
 const Customer = db.Customer;
 const Address = db.Address;
@@ -21,7 +21,7 @@ exports.createCustomer = asyncErrorHandler(async (req, res, next) => {
     address_lane2,
     landmark,
     pincode,
-    state
+    state,
   } = req.body;
 
   const role = "customer";
@@ -36,7 +36,7 @@ exports.createCustomer = asyncErrorHandler(async (req, res, next) => {
 
   //create new customer if no record restored
   if (!existWithDeletedAt || !customer) {
-    try { 
+    try {
       const result = await connectDB.transaction(async (t) => {
         customer = await Customer.create(
           {
@@ -170,18 +170,20 @@ exports.getAllCustomers = asyncErrorHandler(async (req, res, next) => {
     (vendorCustomer) => vendorCustomer.CustomerId
   );
 
-  // APPLYING FILTERS SORTING SEARCHING ETC. IN CUSTOMER 
+  // APPLYING FILTERS SORTING SEARCHING ETC. IN CUSTOMER
 
   const totalRows = await VendorCustomer.findAndCountAll();
 
   let orderBy = null;
   let limitFields = null;
   let offset = null;
-  const limit = req.query.limit || 10 ;
-  let name = req.query.search || '%';
+  const limit = req.query.limit || 10;
+  let name = req.query.search || "%";
 
   if (req.query.sort) {
     orderBy = apiFeatures.sorting(req.query.sort);
+  } else {
+    orderBy = apiFeatures.sorting("-updatedAt");
   }
   if (req.query.fields) {
     limitFields = apiFeatures.limitFields(req.query.fields);
@@ -193,46 +195,46 @@ exports.getAllCustomers = asyncErrorHandler(async (req, res, next) => {
     name = apiFeatures.search(name);
   }
 
-  const attribute = limitFields ? limitFields : ["id", "firstName", "lastName", "email", "contact"];
+  const attribute = limitFields
+    ? limitFields
+    : ["id", "firstName", "lastName", "email", "contact"];
 
   // FETCHING CUSTOMER DETAILS CORRESPONDING TO VENDOR
-  vendorCustomers = await Customer.findAll(
-      {
-      where: {
-        id: customerIds,
-        [Op.or]: [
-          {
-            firstName: {
-              [Op.iLike]: name
-            }
-          },
-          {
-            lastName: {
-              [Op.iLike]: name
-            }
-          },
-          {
-            email: {
-              [Op.iLike]: name
-            }
-          }
-        ]
-      },
-      attributes: attribute,
-      include: [
+  vendorCustomers = await Customer.findAll({
+    where: {
+      id: customerIds,
+      [Op.or]: [
         {
-          model: Address,
-          as: "Address_Details",
-          attributes: {
-            exclude: ["deletedAt"],
+          firstName: {
+            [Op.iLike]: name,
+          },
+        },
+        {
+          lastName: {
+            [Op.iLike]: name,
+          },
+        },
+        {
+          email: {
+            [Op.iLike]: name,
           },
         },
       ],
-      order: orderBy,
-      limit: limit,
-      offset: offset
-    }
-  );
+    },
+    attributes: attribute,
+    include: [
+      {
+        model: Address,
+        as: "Address_Details",
+        attributes: {
+          exclude: ["deletedAt"],
+        },
+      },
+    ],
+    order: orderBy,
+    limit: limit,
+    offset: offset,
+  });
 
   res.status(200).json({
     status: "Success",
@@ -284,7 +286,7 @@ exports.getCustomer = asyncErrorHandler(async (req, res, next) => {
 // ------------- DELETE CUSTOMER --------------
 
 exports.deleteCustomer = asyncErrorHandler(async (req, res, next) => {
-  const customer = await Customer.findByPk(req.params.id)
+  const customer = await Customer.findByPk(req.params.id);
 
   if (!req.params.id) {
     return next(new CustomError("Please provide id in parameters!", 400));
@@ -313,7 +315,7 @@ exports.deleteCustomer = asyncErrorHandler(async (req, res, next) => {
 // ------------- UPDATE CUSTOMER --------------
 
 exports.updateCustomer = asyncErrorHandler(async (req, res, next) => {
-  const customer = await Customer.findByPk(req.params.id)
+  const customer = await Customer.findByPk(req.params.id);
 
   if (!req.params.id) {
     return next(new CustomError("Please provide id in parameters!", 400));

@@ -25,6 +25,8 @@ exports.getInvoices = asyncErrorHandler(async (req, res, next) => {
   let search = req.query.search || '%';
   if (req.query.sort) {
     orderBy = apiFeatures.sorting(req.query.sort);
+  } else {
+    orderBy = apiFeatures.sorting('-updatedAt');
   }
   if (req.query.fields) {
     limitFields = apiFeatures.limitFields(req.query.fields);
