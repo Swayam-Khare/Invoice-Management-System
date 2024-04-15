@@ -121,6 +121,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useVendorStore } from '../stores/vendorStore'
+import { toast } from 'vue3-toastify'
 
 const vendorStore = useVendorStore()
 
@@ -170,8 +171,21 @@ async function submitForm() {
   // console.log(check.valid)
   if (check.valid) {
     await vendorStore.signupVendor(formData)
+    toast.success('Your request has been sent successfully. Our team will contact you soon ', {
+      autoClose: 3000,
+      type: 'success',
+      position: 'bottom-center',
+      transition: 'zoom',
+      dangerouslyHTMLString: true
+    })
   } else {
-    console.log("Please enter complete details");
+    toast.error('Something went Wrong!.', {
+      autoClose: 1000,
+      type: 'error',
+      position: 'bottom-center',
+      transition: 'zoom',
+      dangerouslyHTMLString: true
+    })
     return
   }
 
