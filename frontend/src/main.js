@@ -14,15 +14,16 @@ import * as directives from 'vuetify/directives'
 import { aliases, md } from 'vuetify/iconsets/md'
 
 const vuetify = createVuetify({
-    components,
-    directives,
-    icons: {
-        defaultSet: 'md',
-        aliases,
-        sets: {
-            md,
-        },
-    },
+  components,
+  directives,
+
+  icons: {
+    defaultSet: 'md',
+    aliases,
+    sets: {
+      md
+    }
+  }
 })
 
 const app = createApp(App)
@@ -30,4 +31,5 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(router)
 app.use(vuetify)
+
 app.mount('#app')
