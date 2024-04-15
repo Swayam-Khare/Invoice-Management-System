@@ -50,6 +50,36 @@ export const useVendorStore = defineStore('vendorStore', () => {
     }
   }
 
+  const deleteVendor = async (id) => {
+    try {
+      console.log('in 52', id)
+      loading.value = true
+      const res = await axios.delete(`http://localhost:3500/api/v1/vendors/${id}`, {
+        withCredentials: true
+      })
+    } catch (error) {
+      console.log(error.message)
+    } finally {
+      // getAllVendors();
+      loading.value = false
+    }
+  }
+
+  const approveVendor = async (id) => {
+    try {
+      loading.value = true
+      const res = await axios.patch(
+        `http://localhost:3500/api/v1/admin/vendorStatus/${id}`,
+        {},
+        { withCredentials: true }
+      )
+    } catch (error) {
+      console.log(error.message)
+    } finally {
+      loading.value = false
+    }
+  }
+
   const signupVendor = async (formData) => {
     loading.value = true
     try {
@@ -87,14 +117,17 @@ export const useVendorStore = defineStore('vendorStore', () => {
   //             loading = false;
   //         }
   //     });
+
   return {
     vendors,
     loading,
     getAllVendors,
-    loginVendor,
     signupVendor,
-    rowCount,
+    loginVendor,
     token,
-    stateVariable
+    stateVariable,
+    rowCount,
+    deleteVendor,
+    approveVendor
   }
 })
