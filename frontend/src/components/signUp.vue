@@ -61,7 +61,7 @@
           ></v-text-field>
           <v-text-field
             label="Address Line 1"
-            v-model="addressLine1"
+            v-model="address_lane1"
             :rules="[required]"
             variant="outlined"
             color="#112d4e"
@@ -69,7 +69,7 @@
           ></v-text-field>
           <v-text-field
             label="Address Line 2"
-            v-model="addressLine2"
+            v-model="address_lane2"
             variant="outlined"
             color="#112d4e"
             density="compact"
@@ -136,8 +136,8 @@ const lastName = ref('')
 const email = ref('')
 const contact = ref('')
 const shopName = ref('')
-const addressLine1 = ref('')
-const addressLine2 = ref('')
+const address_lane1 = ref('')
+const address_lane2 = ref('')
 const pincode = ref('')
 const state = ref('')
 const alphabetOnlyRule = (v) => /^[A-Za-z\s]*$/.test(v) || 'Alphabets only.'
@@ -190,8 +190,8 @@ async function submitForm() {
     email: email.value,
     contact: contact.value,
     shopName: shopName.value,
-    addressLine1: addressLine1.value,
-    addressLine2: addressLine2.value,
+    address_lane1: address_lane1.value,
+    address_lane2: address_lane2.value,
     pincode: pincode.value,
     state: fatchedState.value
   }
@@ -199,8 +199,22 @@ async function submitForm() {
   // console.log(check.valid)
   if (check.valid) {
     await vendorStore.signupVendor(formData)
+    toast.success('Your request has been sent successfully. Our team will contact you soon ', {
+      autoClose: 3000,
+      type: 'success',
+      position: 'bottom-center',
+      transition: 'zoom',
+      dangerouslyHTMLString: true
+    })
   } else {
     console.log('Please enter complete details')
+    toast.error('Something went Wrong!.', {
+      autoClose: 1000,
+      type: 'error',
+      position: 'bottom-center',
+      transition: 'zoom',
+      dangerouslyHTMLString: true
+    })
     return
   }
 
@@ -220,8 +234,8 @@ function resetForm() {
   email.value = null
   contact.value = null
   shopName.value = null
-  addressLine1.value = null
-  addressLine2.value = null
+  address_lane1.value = null
+  address_lane2.value = null
   pincode.value = null
   fatchedState.value = ''
 }
