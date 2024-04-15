@@ -61,7 +61,7 @@
           ></v-text-field>
           <v-text-field
             label="Address Line 1"
-            v-model="addressLine1"
+            v-model="address_lane1"
             :rules="[required]"
             variant="outlined"
             color="#112d4e"
@@ -69,7 +69,7 @@
           ></v-text-field>
           <v-text-field
             label="Address Line 2"
-            v-model="addressLine2"
+            v-model="address_lane2"
             variant="outlined"
             color="#112d4e"
             density="compact"
@@ -131,8 +131,8 @@ const lastName = ref('')
 const email = ref('')
 const contact = ref('')
 const shopName = ref('')
-const addressLine1 = ref('')
-const addressLine2 = ref('')
+const address_lane1 = ref('')
+const address_lane2 = ref('')
 const pincode = ref('')
 const state = ref('')
 const alphabetOnlyRule = (v) => /^[A-Za-z\s]*$/.test(v) || 'Alphabets only.'
@@ -161,8 +161,8 @@ async function submitForm() {
     email: email.value,
     contact: contact.value,
     shopName: shopName.value,
-    addressLine1: addressLine1.value,
-    addressLine2: addressLine2.value,
+    address_lane1: address_lane1.value,
+    address_lane2: address_lane2.value,
     pincode: pincode.value,
     state: state.value
   }
@@ -191,8 +191,8 @@ function resetForm() {
   email.value = null
   contact.value = null
   shopName.value = null
-  addressLine1.value = null
-  addressLine2.value = null
+  address_lane1.value = null
+  address_lane2.value = null
   pincode.value = null
   state.value = null
 }
