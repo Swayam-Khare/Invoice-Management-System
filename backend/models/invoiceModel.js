@@ -7,23 +7,23 @@ module.exports = (connectDB, DataTypes) => {
         primaryKey: true,
         autoIncrement: true,
         allowNull: false,
-        default: 1
+        default: 1,
       },
 
       invoice_no: {
         type: DataTypes.STRING,
         allowNull: false,
-        validate: { 
+        validate: {
           len: {
             args: [12, 12],
             msg: "Invoice id length must be 12 letters only",
           },
         },
-        unique: true
+        unique: true,
       },
 
       // invoice_no: {
-      //   type: DataTypes.STRING,  // needs to be string to maintain the structure of leading zeroes 
+      //   type: DataTypes.STRING,  // needs to be string to maintain the structure of leading zeroes
       //   allowNull: false,
       // },
 
@@ -54,8 +54,8 @@ module.exports = (connectDB, DataTypes) => {
 
       status: {
         type: DataTypes.ENUM,
-        defaultValue : 'due',
-        values: ['due', 'overdue', 'paid']
+        defaultValue: "due",
+        values: ["due", "overdue", "paid"],
       },
 
       subtotal: {
@@ -86,7 +86,8 @@ module.exports = (connectDB, DataTypes) => {
     {
       modelName: "Invoice",
       tableName: "invoice",
-      timestamps: false,
+      createdAt: false,
+      updatedAt: true,
     }
   );
 
