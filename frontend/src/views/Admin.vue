@@ -47,16 +47,14 @@
             >
             </v-list-item>
             <v-list-item
-              v-model="status"
-              id="pending"
-              :active="itemVariant == 'pending'"
+              id="update-password"
+              :active="itemVariant == 'update-password'"
               color="#112D4E"
               variant="flat"
               :onmouseenter="activeHover"
               :onmouseleave="cancelHover"
-              @click="(approvalStatus = 'pending'), (options.status = approvalStatus), loadItems(options)"
-              title="Pending"
-              value="pending"
+              title="Update Password"
+              value="updatePassword"
               class="text-left"
             ></v-list-item>
           </v-list>
