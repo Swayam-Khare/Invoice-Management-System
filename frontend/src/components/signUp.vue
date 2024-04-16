@@ -3,7 +3,7 @@
     <v-card class="rounded-lg remove-scrollbar">
       <v-card-title
         class="d-flex justify-space-between align-center"
-        style="background-color: #112d4ef1"
+        style="background-color: #112d4ef1; height:56px"
       >
         <p style="color: #f5f5f5" class="text-h5 pl-5">Sign Up</p>
         <v-btn icon="close" variant="text" color="#f5f5f5" @click="closeDialog"></v-btn>
@@ -64,6 +64,7 @@
             v-model="address_lane1"
             :rules="[required]"
             variant="outlined"
+            class="mt-1"
             color="#112d4e"
             density="compact"
           ></v-text-field>
@@ -71,6 +72,7 @@
             label="Address Line 2"
             v-model="address_lane2"
             variant="outlined"
+            class="mt-1"
             color="#112d4e"
             density="compact"
           ></v-text-field>
@@ -82,7 +84,6 @@
                 :rules="pincodeRules"
                 variant="outlined"
                 color="#112d4e"
-                class="mb-1"
                 density="compact"
               ></v-text-field>
             </v-col>

@@ -1,5 +1,3 @@
-
-
 exports.uniqueInvoice = () => {
     const timestamp = Date.now();
     const invoice_id =
