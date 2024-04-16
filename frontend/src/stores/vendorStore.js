@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import axios from 'axios'
 export const useVendorStore = defineStore('vendorStore', () => {
     let vendors = ref([]);
-    let rowCount = ref({count:0});
+    let rowCount = ref({ count: 0 });
     let loading = ref(false);
     let token = ref(null);
     const stateVariable = ref(10);
@@ -47,6 +47,62 @@ export const useVendorStore = defineStore('vendorStore', () => {
 
     }
 
+
+    const deleteVendor = async (id) => {
+        try {
+            console.log('in 52', id)
+            loading.value = true;
+            const res = await axios.delete(`http://localhost:3500/api/v1/vendors/${id}`, { withCredentials: true })
+        } catch (error) {
+            console.log(error.message);
+        }
+        finally {
+            // getAllVendors();
+            loading.value = false;
+        }
+    }
+
+
+    const approveVendor = async (id) => {
+        try {
+            loading.value = true;
+            const res = await axios.patch(`http://localhost:3500/api/v1/admin/vendorStatus/${id}`, {}, { withCredentials: true });
+        } catch (error) {
+            console.log(error.message)
+        }
+        finally {
+            loading.value = false;
+        }
+    }
+
+    const signupVendor = async(formData) => {
+        loading.value = true;
+        try {
+          const config = {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          };
+          const res = await axios.post('http://localhost:3500/api/v1/vendors', formData, config);
+        //   console.log(res);
+          // Handle successful signup response here
+        } catch (error) {
+          console.log(error);
+          // Handle error response here
+          if (error.response && error.response.data && error.response.data.message) {
+            // Display a user-friendly error message
+            alert(`Signup failed: ${error.response.data.message}`);
+          } else {
+            // Display a generic error message
+            alert('An error occurred during signup. Please try again later.');
+          }
+        } finally {
+          loading.value = false;
+        }
+    }
+
+
+
     //   const vendors = computed(async () => {
     //         try {
     //             const res =  await axios.get('http://localhost:3500/api/v1/vendors', { withCredentials: true });
@@ -58,8 +114,8 @@ export const useVendorStore = defineStore('vendorStore', () => {
     //             loading = false;
     //         }
     //     });
-    return { vendors, loading, getAllVendors, loginVendor, token, stateVariable,rowCount }
 
+    return { vendors, loading, getAllVendors, signupVendor, loginVendor, token, stateVariable, rowCount, deleteVendor, approveVendor }
 
 
 

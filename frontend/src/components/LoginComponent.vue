@@ -68,9 +68,11 @@
 <script setup>
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { toast } from 'vue3-toastify'
 import { ref, computed } from 'vue'
 import { useAdminStore } from '../stores/admin'
 import { useVendorStore } from '../stores/vendorStore'
+
 // import router from '@/router';
 const router = useRouter()
 const adminStore = useAdminStore()
@@ -106,24 +108,48 @@ const submitForm = async () => {
     console.log(myTitle)
     if (adminStore.typelogin === 'admin') {
       await adminStore.loginAdmin({ email: email.value, password: password.value })
-      emit('close')
+
       console.log('line 97', adminStore.token)
       if (adminStore.token) {
-        console.log('true')
+        toast.success('Admin Login Successfully.', {
+          autoClose: 2000,
+          type: 'success',
+          position: 'top-right',
+          transition: 'zoom',
+          dangerouslyHTMLString: true
+        })
         router.replace('/admin')
       } else {
-        console.log('false')
+        toast.error('Admin Login failed.', {
+          autoClose: 1000,
+          type: 'error',
+          position: 'top-right',
+          transition: 'zoom',
+          dangerouslyHTMLString: true
+        })
       }
       console.log('in line 97', adminStore.stateVariable)
     } else if (adminStore.typelogin === 'vendor') {
       await vendorStore.loginVendor({ email: email.value, password: password.value })
-      emit('close')
+      
       console.log('line 108', vendorStore.token)
       if (vendorStore.token) {
-        console.log('true')
+        toast.success('Vendor Login Successfully.', {
+          autoClose: 2000,
+          type: 'success',
+          position: 'top-right',
+          transition: 'zoom',
+          dangerouslyHTMLString: true
+        })
         router.replace('/profile')
       } else {
-        console.log('false')
+        toast.error('Vendor Login failed.', {
+          autoClose: 1000,
+          type: 'error',
+          position: 'top-right',
+          transition: 'zoom',
+          dangerouslyHTMLString: true
+        })
       }
       console.log('in line 108', vendorStore.stateVariable)
     } else {
