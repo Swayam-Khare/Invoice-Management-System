@@ -18,7 +18,7 @@
         />
         <!-- <v-icon icon="search" class="bg-grey-lighten-2 d-flex d-md-none"></v-icon> -->
       </div>
-      <v-menu>
+      <!-- <v-menu>
         <template v-slot:activator="{ props }">
           <button v-bind="props" class="elevation-6 logo-btn" id="random-color">
             <span class="logo-char">A</span>
@@ -30,7 +30,37 @@
             <v-list-item-title>{{ item.title }}</v-list-item-title>
           </v-list-item>
         </v-list>
-      </v-menu>
+      </v-menu> -->
+      <v-menu :open-on-hover="true" offset="4">
+          <template v-slot:activator="{ props }">
+            <button v-bind="props" class="elevation-6 logo-btn" id="random-color">
+            <span class="logo-char">A</span>
+          </button>
+          </template>
+
+          <!-- list item to show in menu -->
+          <v-list class="pa-0">
+            <v-list-item
+              variant="flat"
+              title="Hi, Admin"
+              class="text-left"
+            >
+            </v-list-item>
+            <v-list-item
+              v-model="status"
+              id="pending"
+              :active="itemVariant == 'pending'"
+              color="#112D4E"
+              variant="flat"
+              :onmouseenter="activeHover"
+              :onmouseleave="cancelHover"
+              @click="(approvalStatus = 'pending'), (options.status = approvalStatus), loadItems(options)"
+              title="Pending"
+              value="pending"
+              class="text-left"
+            ></v-list-item>
+          </v-list>
+        </v-menu>
     </div>
   </div>
   <div class="mobile-search pt-4">
@@ -105,7 +135,7 @@
               variant="text"
               class="nav-btn text-capitalize h-100"
             >
-              {{ status }} Status <v-icon :icon="clearFilter()" @click="closeFilter()"></v-icon>
+              Status <v-icon :icon="clearFilter()" @click="closeFilter()"></v-icon>
             </v-btn>
           </template>
 
