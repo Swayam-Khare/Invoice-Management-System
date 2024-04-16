@@ -33,7 +33,7 @@
         </v-btn>
 
         <!-- menu for about page -->
-        <v-menu :open-on-hover="true" offset="4">
+        <v-menu offset="4">
           <template v-slot:activator="{ props }">
             <v-btn
               id="about"
@@ -78,7 +78,7 @@
         </v-menu>
       </span>
       <span class="h-100 d-flex align-center">
-        <v-menu :open-on-hover="true" offset="4">
+        <v-menu offset="4">
           <template v-slot:activator="{ props }">
             <v-btn
               id="login"
