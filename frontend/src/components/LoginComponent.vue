@@ -69,6 +69,7 @@
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
+import { toast } from 'vue3-toastify'
 import { ref, computed } from 'vue'
 import { useAdminStore } from '../stores/admin'
 import { useVendorStore } from '../stores/vendorStore'

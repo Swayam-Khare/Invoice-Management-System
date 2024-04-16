@@ -64,19 +64,34 @@
       </div>
     </div>
     <div class="d-flex justify-center ga-5">
-      <v-btn class="delete">Delete</v-btn>
-      <v-btn v-if="data.status === 'pending'" class="approve">Approve</v-btn>
+      <v-btn class="delete" @click="deleteVendor(data.id)">Delete</v-btn>
+      <v-btn v-if="data.status === 'pending'" class="approve" @click="approveVendor(data.id)">Approve</v-btn>
     </div>
   </div>
 </template>
 
 <script setup>
-import {ref} from 'vue' 
+import {ref} from 'vue';
+import {useVendorStore} from '../stores/vendorStore';
+const vendorStore = useVendorStore();
 defineProps({
   data: Object
 })
-
+const emit = defineEmits(['unmountProfile']);
 const show = ref(false);
+
+async  function deleteVendor(id){
+ await vendorStore.deleteVendor(id);
+ emit('unmountProfile');
+  // console.log('vendor is deleted',id)
+
+
+}
+async function approveVendor(id){
+  // console.log('id is ',id)
+  await vendorStore.approveVendor(id);
+  emit('unmountProfile');
+}
 </script>
 
 <style scoped>
