@@ -139,6 +139,8 @@ exports.readProducts = asyncErrorHandler(async (req, res, next) => {
     }
     if (req.query.sort) {
         orderBy = apiFeatures.sorting(req.query.sort);
+    } else{
+        orderBy = apiFeatures.sorting('-updatedAt');
     }
     if (req.query.fields) {
         limitFields = apiFeatures.limitFields(req.query.fields);

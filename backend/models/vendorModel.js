@@ -20,6 +20,7 @@ module.exports = (connectDB, DataTypes) => {
       },
       lastName: {
         type: DataTypes.STRING,
+        defaultValue:'',
       },
       shopName: {
         type: DataTypes.STRING,
@@ -80,7 +81,7 @@ module.exports = (connectDB, DataTypes) => {
       tableName: "vendor",
       paranoid: true,
       createdAt: false,
-      updatedAt: false,
+      updatedAt: true,
       hooks: {
         beforeCreate: async (vendor) => {
           // console.log("vendor is ", vendor);
