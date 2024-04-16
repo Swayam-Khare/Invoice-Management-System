@@ -1,30 +1,32 @@
 <template>
-  <v-container fluid style="height: 100vh" v-model="isOpen">
+  <v-container fluid style="height: fit-content" v-model="isOpen">
     <v-row justify="center" align="center" class="text-center">
       <v-col cols="12" md="4">
-        <v-card v-if="currentPage === 'personal'">
-          <v-card-title class="text-center mb-4 text-white" style="background-color: #112d4e"
+        <v-card v-if="currentPage === 'personal'" style="border-radius: 10px" class="mt-8">
+          <v-card-title class="text-center mb-10 text-white" style="background-color: #112d4ecc"
             >Personal Details</v-card-title
           >
-          <v-divider></v-divider>
-          <v-card-text class="w-50 mx-auto">
+          <v-card-text class="w-100 mx-auto px-10">
             <v-text-field
               v-model="firstName"
               label="First Name"
               :rules="[alphabetOnlyRule]"
               variant="outlined"
+              density="compact"
             ></v-text-field>
             <v-text-field
               v-model="lastName"
               label="Last Name"
               :rules="[alphabetOnlyRule]"
               variant="outlined"
+              density="compact"
             ></v-text-field>
             <v-text-field
               v-model="shopName"
               label="Shop Name"
               :rules="[alphabetOnlyRule]"
               variant="outlined"
+              density="compact"
             ></v-text-field>
 
             <v-text-field
@@ -32,47 +34,71 @@
               label="Contact"
               :rules="contactNoRules"
               variant="outlined"
+              density="compact"
             ></v-text-field>
           </v-card-text>
-          <v-card-actions class="d-flex justify-center">
-            <v-btn @click="goToAddressPage"><v-icon icon="arrow_forward_ios" /></v-btn>
+          <v-card-actions class="d-flex justify-center mb-4">
+            <v-btn style="background-color: #112d4e" class="text-white mx-6" @click="updateProfile"
+              >Update</v-btn
+            >
+            <v-btn style="background-color: #112d4e" class="text-white mx-6" @click="closeForm"
+              >Close</v-btn
+            >
           </v-card-actions>
         </v-card>
 
-        <v-card v-else>
-          <v-card-title class="text-center mb-4 text-white" style="background-color: #112d4e"
+        <v-card v-else style="border-radius: 10px">
+          <v-card-title class="text-center mb-10 text-white" style="background-color: #112d4ecc"
             >Address Details</v-card-title
           >
-          <v-divider></v-divider>
-          <v-card-text class="w-50 mx-auto" justify="center">
+          <v-card-text class="w-100 mx-auto px-10" justify="center">
             <v-text-field
               v-model="addressLane1"
               label="Address Lane 1"
               variant="outlined"
+              density="compact"
             ></v-text-field>
             <v-text-field
               v-model="addressLane2"
               label="Address Lane 2"
               variant="outlined"
+              density="compact"
             ></v-text-field>
-            <v-text-field v-model="landmark" label="Landmark" variant="outlined"></v-text-field>
-            <v-text-field v-model="pincode" label="Pincode" variant="outlined"></v-text-field>
-            <v-text-field v-model="state" label="State" variant="outlined"></v-text-field>
+            <v-text-field
+              v-model="landmark"
+              label="Landmark"
+              variant="outlined"
+              density="compact"
+            ></v-text-field>
+            <v-text-field
+              v-model="pincode"
+              label="Pincode"
+              variant="outlined"
+              density="compact"
+            ></v-text-field>
+            <v-text-field
+              v-model="state"
+              label="State"
+              variant="outlined"
+              density="compact"
+            ></v-text-field>
           </v-card-text>
-          <v-card-actions class="d-flex justify-center">
-            <v-btn @click="goToPersonalPage"><v-icon icon="arrow_back_ios" /></v-btn>
+          <v-card-actions class="d-flex justify-center mb-4">
+            <div justify="center" align="center">
+              <v-btn
+                style="background-color: #112d4e"
+                class="text-white mx-6"
+                @click="updateProfile"
+                >Update</v-btn
+              >
+              <v-btn style="background-color: #112d4e" class="text-white mx-6" @click="closeForm"
+                >Close</v-btn
+              >
+            </div>
           </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
-    <div justify="center" align="center">
-      <v-btn style="background-color: #112d4e" class="text-white mt-16" @click="updateProfile"
-        >Update</v-btn
-      >
-      <v-btn style="background-color: #112d4e" class="text-white mt-16 ml-16" @click="closeForm"
-        >Close</v-btn
-      >
-    </div>
   </v-container>
 </template>
 
