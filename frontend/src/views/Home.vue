@@ -34,7 +34,6 @@ import ContactUs from '../components/ContactUs.vue'
 // import { ref } from 'vue';
 import Login from '@/components/LoginComponent.vue'
 import About from '@/components/About.vue'
-import Profile from '@/components/Profile.vue'
 import { ref } from 'vue'
 
 const dialog = ref(false)
