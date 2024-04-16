@@ -27,7 +27,9 @@
         <v-list class="mt-4">
           <v-list-item class="font-weight-bold"> Hi, Admin </v-list-item>
           <v-list-item height="40" v-for="(item, index) in items" :key="index" :value="index">
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
+            <v-list-item-title @click="handleMenuItemClick(item.title)">{{
+              item.title
+            }}</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -112,14 +114,15 @@
           <!-- list item to show in menu -->
           <v-list class="pa-0">
             <v-list-item
-             
               id="approved"
               :active="itemVariant == 'approved'"
               color="#112D4E"
               variant="flat"
               :onmouseenter="activeHover"
               :onmouseleave="cancelHover"
-              @click="(approvalStatus = 'approved'),(options.status = approvalStatus), loadItems(options)"
+              @click="
+                (approvalStatus = 'approved'), (options.status = approvalStatus), loadItems(options)
+              "
               title="Approved"
               value="approved"
               class="text-left"
@@ -133,7 +136,9 @@
               variant="flat"
               :onmouseenter="activeHover"
               :onmouseleave="cancelHover"
-              @click="(approvalStatus = 'pending'), (options.status = approvalStatus), loadItems(options)"
+              @click="
+                (approvalStatus = 'pending'), (options.status = approvalStatus), loadItems(options)
+              "
               title="Pending"
               value="pending"
               class="text-left"
@@ -161,10 +166,16 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
 import randomColor from 'randomcolor'
 import { onMounted } from 'vue'
 import { useVendorStore } from '../stores/vendorStore.js'
+import { useAdminStore } from '@/stores/admin'
 import Profile from '../components/VendorProfile.vue'
+
+const router = useRouter()
+
 let data = ref([])
 let showComponent = ref(true)
 const itemsPerPageOption = ref([
@@ -180,6 +191,7 @@ let options = ref({})
 let search = ref(undefined)
 let itemVariant = ref(null)
 const vendorStore = useVendorStore()
+const adminStore = useAdminStore()
 
 const activeHover = (event) => {
   if (event.currentTarget.id == 'pending') {
@@ -223,6 +235,26 @@ const items = ref([
   }
 ])
 
+function handleMenuItemClick(title) {
+  if (title === 'Logout') {
+    logout()
+  }
+}
+
+async function logout() {
+  try {
+    const success = await adminStore.logoutAdmin()
+    if (success) {
+      // Redirect to the home page
+      router.push('/')
+    } else {
+      console.error('Logout failed')
+    }
+  } catch (error) {
+    console.error('Logout failed:', error)
+  }
+}
+
 const headers = ref([
   { key: 'data-table-expand' },
   { title: 'Name', value: 'firstName', sortable: true },
@@ -240,7 +272,7 @@ function icon(expand, item) {
 }
 
 async function loadItems(event) {
-  console.log(event);
+  console.log(event)
   const { page, itemsPerPage, sortBy, search, status } = event
   let sortingStr = ''
   if (sortBy.length) {
@@ -269,8 +301,7 @@ async function loadItems(event) {
     d.firstName = d.firstName + ' ' + d.lastName
   }
   // }
-  expanded.value = [];
-
+  expanded.value = []
 }
 
 function toggleExpansion(item, expand, isExpanded) {
