@@ -118,12 +118,26 @@
             ></v-list-item>
           </v-list>
         </v-menu>
-        <Login v-model="showLoginDialog" @close="showLoginDialog = false" @vendor ="titleValue = 'Vendor Login', showLoginDialog = true" @signup="showSignupDialog = true" :myTitle="titleValue"/>
+        <Login
+          v-model="showLoginDialog"
+          @close="showLoginDialog = false"
+          @vendor=";(titleValue = 'Vendor Login'), (showLoginDialog = true)"
+          @signup="showSignupDialog = true"
+          :myTitle="titleValue"
+        />
 
-        <v-btn class="h-100 rounded-lg text-capitalize" color="#112D4E" @click="showSignupDialog = true">
+        <v-btn
+          class="h-100 rounded-lg text-capitalize"
+          color="#112D4E"
+          @click="showSignupDialog = true"
+        >
           Sign Up
         </v-btn>
-        <Signup v-model="showSignupDialog" @close="showSignupDialog = false" @login="showLoginDialog = true" />
+        <Signup
+          v-model="showSignupDialog"
+          @close="showSignupDialog = false"
+          @login="showLoginDialog = true"
+        />
       </span>
     </div>
   </div>
