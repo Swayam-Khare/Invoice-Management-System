@@ -5,7 +5,8 @@
   >
     <div class="d-flex align-center ga-3">
       <img src="../assets/logo.svg" alt="Logo" />
-      <span class="text-h4 text-white">Invoice Management System</span>
+      <span class="text-h4 d-none d-md-flex text-white">Invoice Management System</span>
+      <span class="text-h4 d-flex d-md-none text-white">IMS</span>
     </div>
     <div class="d-flex align-center">
       <div class="search pr-10">
@@ -18,7 +19,7 @@
         />
         <!-- <v-icon icon="search" class="bg-grey-lighten-2 d-flex d-md-none"></v-icon> -->
       </div>
-      <v-menu>
+      <!-- <v-menu>
         <template v-slot:activator="{ props }">
           <button v-bind="props" class="elevation-6 logo-btn" id="random-color">
             <span class="logo-char">A</span>
@@ -31,6 +32,40 @@
               item.title
             }}</v-list-item-title>
           </v-list-item>
+        </v-list>
+      </v-menu> -->
+      <v-menu offset="4">
+        <template v-slot:activator="{ props }">
+          <button v-bind="props" class="elevation-6 logo-btn" id="random-color">
+            <span class="logo-char">A</span>
+          </button>
+        </template>
+
+        <!-- list item to show in menu -->
+        <v-list class="pa-0">
+          <v-list-item variant="flat" class="text-left font-weight-bold"> Hi, Admin </v-list-item>
+          <v-list-item
+            id="update-password"
+            :active="itemVariant == 'update-password'"
+            color="#112D4E"
+            variant="flat"
+            :onmouseenter="activeHover"
+            :onmouseleave="cancelHover"
+            title="Update Password"
+            value="updatePassword"
+            class="text-left"
+          ></v-list-item>
+          <v-list-item
+            id="logout"
+            :active="itemVariant == 'logout'"
+            color="#112D4E"
+            variant="flat"
+            :onmouseenter="activeHover"
+            :onmouseleave="cancelHover"
+            title="Logout"
+            value="logout"
+            class="text-left"
+          ></v-list-item>
         </v-list>
       </v-menu>
     </div>
@@ -107,7 +142,7 @@
               variant="text"
               class="nav-btn text-capitalize h-100"
             >
-              {{ status }} Status <v-icon :icon="clearFilter()" @click="closeFilter()"></v-icon>
+              Status <v-icon :icon="clearFilter()" @click="closeFilter()"></v-icon>
             </v-btn>
           </template>
 
@@ -155,7 +190,7 @@
       </template>
       <template v-slot:expanded-row="{ item }">
         <td :colspan="headers.length">
-          <div class="transition-slot overflow-hidden" id="details">
+          <div class="transition-slot" id="details">
             <Profile :data="item" @unmount-profile="loadItems(options)" />
           </div>
         </td>
@@ -178,7 +213,6 @@ import Profile from '../components/VendorProfile.vue'
 const router = useRouter()
 
 let data = ref([])
-let showComponent = ref(true)
 const itemsPerPageOption = ref([
   { title: '10', value: 10 },
   { title: '15', value: 15 },
@@ -199,6 +233,10 @@ const activeHover = (event) => {
     itemVariant.value = 'pending'
   } else if (event.currentTarget.id == 'approved') {
     itemVariant.value = 'approved'
+  } else if (event.currentTarget.id == 'update-password') {
+    itemVariant.value = 'update-password'
+  } else if (event.currentTarget.id == 'logout') {
+    itemVariant.value = 'logout'
   }
 }
 
@@ -227,14 +265,6 @@ onMounted(() => {
 })
 const expanded = ref([])
 
-const items = ref([
-  {
-    title: 'Update Profile'
-  },
-  {
-    title: 'Logout'
-  }
-])
 
 function handleMenuItemClick(title) {
   if (title === 'Logout') {
@@ -312,8 +342,11 @@ async function loadItems(event) {
   expanded.value = []
 }
 
+
 function toggleExpansion(item, expand, isExpanded) {
   console.log(expand)
+
+  
   // this.expanded = []
   if (isExpanded(item)) {
     let id = null
@@ -344,9 +377,10 @@ function toggleExpansion(item, expand, isExpanded) {
 </script>
 
 <style scoped>
-@media only screen and (max-width: 690) {
-  .pagination {
-    width: 70% !important;
+@media only screen and (max-width: 690px) {
+  .transition-slot{
+  animation: transSmall 0.2s linear !important;
+  height: 550px !important;
   }
 }
 
@@ -445,6 +479,16 @@ tr:hover {
 
   to {
     height: 350px;
+  }
+}
+
+@keyframes transSmall {
+  from {
+    height: 0;
+  }
+
+  to {
+    height: 550px;
   }
 }
 
