@@ -1,9 +1,12 @@
 <template>
-  <v-container fluid>
-    <v-row no-gutters class="fill-height">
-      <v-col cols="12" md="6" class="d-flex justify-center">
-        <v-card class="d-flex flex-column fill-height w-50" style="border-radius: 10px">
-          <v-card-title style="background-color: #112d4ef1; color: #f5f5f5">
+  <v-container fluid style="background-color: #112d4e14; min-height: 100vh; height: auto">
+    <v-row no-gutters class="pt-10">
+      <v-col cols="12" md="6" class="d-flex justify-end" v-if="!showForm && !showFormPass">
+        <v-card
+          class="d-flex flex-column fill-height w-50"
+          style="border-radius: 10px; height: fit-content"
+        >
+          <v-card-title style="background-color: #112d4ecc; color: #f5f5f5">
             My Profile
           </v-card-title>
           <v-card-text class="flex-grow-1 justify-space-between pa-5">
@@ -36,7 +39,7 @@
           </v-card-text>
           <v-card-actions>
             <v-btn
-              style="background-color: #112d4ef1; color: #f5f5f5; border-radius: 10px"
+              style="background-color: #112d4e; color: #f5f5f5; border-radius: 10px"
               block
               dark
               @click="showFormAndScrollToAddress"
@@ -46,10 +49,10 @@
           </v-card-actions>
         </v-card>
       </v-col>
-      <v-col cols="12" md="6" class="d-flex justify-center">
-        <v-row no-gutters align="center" class="flex-column">
-          <v-card class="w-50" style="max-height: 70%; border-radius: 10px">
-            <v-card-title style="background-color: #112d4ef1; color: #f5f5f5">
+      <v-col cols="12" md="6" class="d-flex pl-5" v-if="!showForm && !showFormPass">
+        <v-row no-gutters align="left" class="flex-column">
+          <v-card class="w-50" style="height: fit-content; border-radius: 10px">
+            <v-card-title style="background-color: #112d4ecc; color: #f5f5f5">
               Address Details
             </v-card-title>
             <v-card-text class="pa-3">
@@ -68,7 +71,7 @@
             </v-card-text>
             <v-card-actions>
               <v-btn
-                style="background-color: #112d4ef1; color: #f5f5f5; border-radius: 10px"
+                style="background-color: #112d4e; color: #f5f5f5; border-radius: 10px"
                 block
                 dark
                 @click="showFormAndScroll"
@@ -77,8 +80,8 @@
               </v-btn>
             </v-card-actions>
           </v-card>
-          <v-card class="mt-5 w-50" style="max-height: 70%; border-radius: 10px">
-            <v-card-title style="background-color: #112d4ef1; color: #f5f5f5">
+          <v-card class="mt-5 w-50" style="height: fit-content; border-radius: 10px">
+            <v-card-title style="background-color: #112d4ecc; color: #f5f5f5">
               Credentials
             </v-card-title>
             <v-card-text class="pa-3">
@@ -93,7 +96,7 @@
             </v-card-text>
             <v-card-actions>
               <v-btn
-                style="background-color: #112d4ef1; color: #f5f5f5; border-radius: 10px"
+                style="background-color: #112d4e; color: #f5f5f5; border-radius: 10px"
                 block
                 dark
                 @click="showFormAndScrollToPassword"
@@ -110,6 +113,7 @@
       @close="showForm = false"
       ref="updateVendorRef"
       :initialPage="initialPage"
+      class="mt-n8"
     />
     <UpdateVendorPassword
       v-if="showFormPass && initialPage === 'password'"
@@ -126,32 +130,32 @@ import UpdateVendorPassword from '@/components/UpdateVendorPassword.vue'
 
 const showForm = ref(false)
 const showFormPass = ref(false)
-const updateVendorRef = ref(null)
-const updateVendorPasswordRef = ref(null)
+// const updateVendorRef = ref(null)
+// const updateVendorPasswordRef = ref(null)
 const initialPage = ref('personal')
 
 const showFormAndScroll = () => {
   showForm.value = true
   initialPage.value = 'address'
-  nextTick(() => {
-    updateVendorRef.value?.$el.scrollIntoView({ behavior: 'smooth' })
-  })
+  // nextTick(() => {
+  //   updateVendorRef.value?.$el.scrollIntoView({ behavior: 'smooth' })
+  // })
 }
 
 const showFormAndScrollToAddress = () => {
   showForm.value = true
   initialPage.value = 'personal'
-  nextTick(() => {
-    updateVendorRef.value?.$el.scrollIntoView({ behavior: 'smooth' })
-  })
+  // nextTick(() => {
+  //   updateVendorRef.value?.$el.scrollIntoView({ behavior: 'smooth' })
+  // })
 }
 
 const showFormAndScrollToPassword = () => {
   showFormPass.value = true
   initialPage.value = 'password'
-  nextTick(() => {
-    updateVendorPasswordRef.value?.$el.scrollIntoView({ behavior: 'smooth' })
-  })
+  // nextTick(() => {
+  //   updateVendorPasswordRef.value?.$el.scrollIntoView({ behavior: 'smooth' })
+  // })
 }
 </script>
 <style scoped>
