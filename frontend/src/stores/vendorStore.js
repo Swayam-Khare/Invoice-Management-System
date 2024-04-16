@@ -106,6 +106,27 @@ export const useVendorStore = defineStore('vendorStore', () => {
     }
   }
 
+  async function logoutVendor() {
+    try {
+      const response = await axios.get('http://localhost:3500/api/v1/auth/logout/vendor', {
+        withCredentials: true
+      })
+
+      if (response.status === 200) {
+        // Clear the token and any other admin-related state
+        token.value = null // Logout successful
+
+        return true
+      } else {
+        console.error('Logout failed:', response)
+        return false // Logout failed
+      }
+    } catch (error) {
+      console.error('Logout failed:', error)
+      return false // Logout failed
+    }
+  }
+
   //   const vendors = computed(async () => {
   //         try {
   //             const res =  await axios.get('http://localhost:3500/api/v1/vendors', { withCredentials: true });
@@ -128,6 +149,7 @@ export const useVendorStore = defineStore('vendorStore', () => {
     stateVariable,
     rowCount,
     deleteVendor,
-    approveVendor
+    approveVendor,
+    logoutVendor
   }
 })

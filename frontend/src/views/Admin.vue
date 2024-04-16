@@ -167,6 +167,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { toast } from 'vue3-toastify'
 
 import randomColor from 'randomcolor'
 import { onMounted } from 'vue'
@@ -246,9 +247,16 @@ async function logout() {
     const success = await adminStore.logoutAdmin()
     if (success) {
       // Redirect to the home page
-      router.push('/')
+      router.replace('/')
     } else {
       console.error('Logout failed')
+      toast.error('admin logout failed!', {
+        autoClose: 2000,
+        type: 'error',
+        position: 'top-right',
+        transition: 'zoom',
+        dangerouslyHTMLString: true
+      })
     }
   } catch (error) {
     console.error('Logout failed:', error)
