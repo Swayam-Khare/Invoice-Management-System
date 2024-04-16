@@ -28,7 +28,9 @@
         <v-list class="mt-4">
           <v-list-item class="font-weight-bold"> Hi, Admin </v-list-item>
           <v-list-item height="40" v-for="(item, index) in items" :key="index" :value="index">
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
+            <v-list-item-title @click="handleMenuItemClick(item.title)">{{
+              item.title
+            }}</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu> -->
@@ -199,10 +201,17 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { toast } from 'vue3-toastify'
+
 import randomColor from 'randomcolor'
 import { onMounted } from 'vue'
 import { useVendorStore } from '../stores/vendorStore.js'
+import { useAdminStore } from '@/stores/admin'
 import Profile from '../components/VendorProfile.vue'
+
+const router = useRouter()
+
 let data = ref([])
 const itemsPerPageOption = ref([
   { title: '10', value: 10 },
@@ -217,6 +226,7 @@ let options = ref({})
 let search = ref(undefined)
 let itemVariant = ref(null)
 const vendorStore = useVendorStore()
+const adminStore = useAdminStore()
 
 const activeHover = (event) => {
   if (event.currentTarget.id == 'pending') {
@@ -255,6 +265,33 @@ onMounted(() => {
 })
 const expanded = ref([])
 
+
+function handleMenuItemClick(title) {
+  if (title === 'Logout') {
+    logout()
+  }
+}
+
+async function logout() {
+  try {
+    const success = await adminStore.logoutAdmin()
+    if (success) {
+      // Redirect to the home page
+      router.replace('/')
+    } else {
+      console.error('Logout failed')
+      toast.error('admin logout failed!', {
+        autoClose: 2000,
+        type: 'error',
+        position: 'top-right',
+        transition: 'zoom',
+        dangerouslyHTMLString: true
+      })
+    }
+  } catch (error) {
+    console.error('Logout failed:', error)
+  }
+}
 
 const headers = ref([
   { key: 'data-table-expand' },
