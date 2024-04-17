@@ -1,31 +1,32 @@
 <template>
   <v-container fluid style="background-color: #112d4e14; min-height: 100vh; height: auto">
-    <!-- <div class="pl-6 " style="width: fit-content">
-      <h1>UPDATE PROFILE</h1>
-      <v-divider class="mb-4"></v-divider>
-    </div> -->
+    <!-- Heading -->
     <div v-if="!showForm" class="d-flex flex-wrap justify-space-between align-center px-6">
       <div>
         <h1>Vendor Profile</h1>
         <v-divider></v-divider>
       </div>
+
+      <!-- update button -->
       <v-btn
         color="#112D4E"
-        @click="showFormAndScroll"
+        @click="showForm = true"
         class="text-capitalize mt-2"
         style="font-size: 19px"
         >UPDATE</v-btn
       >
     </div>
 
+    <!-- Profile info -->
     <v-row no-gutters class="pt-10">
-      <v-col cols="12" md="6" class="d-flex justify-end pr-4" v-if="!showForm && !showFormPass">
+      <v-col cols="12" md="6" class="d-flex justify-end pr-4" v-if="!showForm">
+        <!-- Personal Details card -->
         <v-card
           class="d-flex flex-column fill-height"
           style="border-radius: 10px; height: fit-content; min-width: 70%"
         >
           <v-card-title style="background-color: #112d4ecc; color: #f5f5f5; font-size: 24px">
-            My Profile
+            Personal Details
           </v-card-title>
           <v-card-text class="flex-grow-1 justify-space-between pa-5">
             <div>
@@ -41,32 +42,33 @@
                 <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
                   >First Name</span
                 >
-                <p class="body-1" style="font-size: 16px">{{firstName}}</p>
+                <p style="font-size: 16px">{{ firstName }}</p>
               </div>
               <div class="mb-2">
                 <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
                   >Last Name</span
                 >
-                <p class="body-1" style="font-size: 16px">{{lastName}}</p>
+                <p style="font-size: 16px">{{ lastName }}</p>
               </div>
               <div class="mb-2">
                 <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
                   >Shop Name</span
                 >
-                <p class="body-1" style="font-size: 16px">{{shopName}}</p>
+                <p style="font-size: 16px">{{ shopName }}</p>
               </div>
               <div class="mb-0">
                 <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
                   >Contact</span
                 >
-                <p class="body-1" style="font-size: 16px">{{contact}}</p>
+                <p style="font-size: 16px">{{ contact }}</p>
               </div>
             </div>
           </v-card-text>
-
         </v-card>
       </v-col>
-      <v-col cols="12" md="6" class="d-flex pl-4" v-if="!showForm && !showFormPass">
+
+      <!-- Address Details card -->
+      <v-col cols="12" md="6" class="d-flex pl-4" v-if="!showForm">
         <v-row no-gutters align="left" class="flex-column">
           <v-card style="height: fit-content; width: 70%; border-radius: 10px">
             <v-card-title style="background-color: #112d4ecc; color: #f5f5f5; font-size: 24px">
@@ -77,7 +79,7 @@
                 <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
                   >Address Lane 1</span
                 >
-                <p class="body-1" style="font-size: 16px">{{addressLane1}}</p>
+                <p style="font-size: 16px">{{ addressLane1 }}</p>
               </div>
               <v-row>
                 <v-col cols="6" class="py-0 mt-3">
@@ -85,7 +87,7 @@
                     <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
                       >Address Lane 2</span
                     >
-                    <p class="body-1" style="font-size: 16px">{{addressLane2}}</p>
+                    <p style="font-size: 16px">{{ addressLane2 }}</p>
                   </div>
                 </v-col>
                 <v-col cols="6" class="py-0 mt-3">
@@ -93,18 +95,17 @@
                     <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
                       >Landmark</span
                     >
-                    <p class="body-1" style="font-size: 16px">{{landmark}}</p>
+                    <p style="font-size: 16px">{{ landmark }}</p>
                   </div>
                 </v-col>
               </v-row>
-
               <v-row>
                 <v-col cols="6" class="py-0 mt-0 mb-2">
                   <div class="mb-0">
                     <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
                       >State</span
                     >
-                    <p class="body-1" style="font-size: 16px">{{state}}</p>
+                    <p style="font-size: 16px">{{ state }}</p>
                   </div>
                 </v-col>
                 <v-col cols="6" class="py-0 mt-0 mb-2">
@@ -112,14 +113,14 @@
                     <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
                       >Pincode</span
                     >
-                    <p class="body-1" style="font-size: 16px">{{pincode}}</p>
+                    <p style="font-size: 16px">{{ pincode }}</p>
                   </div>
                 </v-col>
               </v-row>
             </v-card-text>
-
           </v-card>
 
+          <!-- Credentials card -->
           <v-card class="mt-8" style="height: fit-content; width: 70%; border-radius: 10px">
             <v-card-title style="background-color: #112d4ecc; color: #f5f5f5; font-size: 24px">
               Credentials
@@ -129,39 +130,29 @@
                 <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
                   >Email</span
                 >
-                <p class="body-1" style="font-size: 16px">{{email}}</p>
+                <p style="font-size: 16px">{{ email }}</p>
               </div>
               <div class="mb-0">
                 <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
                   >Password</span
                 >
-                <p class="body-1" style="font-size: 16px">{{password2}}</p>
+                <p style="font-size: 16px">{{ password2 }}</p>
               </div>
             </v-card-text>
-
           </v-card>
         </v-row>
       </v-col>
     </v-row>
-    <!-- <UpdateVendor
-      v-if="showFormp"
-      @close="showForm = false"
-      ref="updateVendorRef"
-      :initialPage="initialPage"
-      class="mt-n8"
-    />
-    <UpdateVendorPassword
-      v-if="showFormPass && initialPage === 'password'"
-      @close="showFormPass = false"
-      ref="updateVendorPasswordRef"
-    /> -->
 
-    <div v-if="showForm" class="pa-2" id="invoice-container">
+    <!-- update profile page -->
+    <div v-if="showForm" class="pa-2">
+      <!-- update profile page heading -->
       <div class="pb-8 pl-4 mt-n5" style="width: fit-content">
         <h1>UPDATE PROFILE</h1>
         <v-divider class="mb-4"></v-divider>
       </div>
 
+      <!-- Personal Details fields -->
       <div class="bg-white rounded-lg mx-4 elevation-3 mb-7">
         <div class="py-4 px-6">
           <h3>Personal Details</h3>
@@ -201,8 +192,10 @@
             ></v-text-field>
           </div>
         </div>
+
         <v-divider class="mb-6 mx-4"></v-divider>
 
+        <!-- Address Details fields -->
         <div class="py-4 px-6">
           <h3>Address Details</h3>
         </div>
@@ -252,8 +245,10 @@
             </div>
           </div>
         </div>
+
         <v-divider class="mb-6 mx-4"></v-divider>
 
+        <!-- credentials field -->
         <div class="py-4 px-6">
           <h3>Credentials</h3>
         </div>
@@ -287,6 +282,7 @@
           <v-divider class="mb-4 mx-4"></v-divider>
         </div>
 
+        <!-- update and close buttons -->
         <div justify="center" align="center" class="pb-6 pt-6">
           <v-btn style="background-color: #112d4e" class="text-white mx-6" @click="showForm = false"
             >Update</v-btn
@@ -302,16 +298,12 @@
 
 <script setup>
 import { ref, nextTick } from 'vue'
-import UpdateVendor from '@/components/UpdateVendor.vue'
-import UpdateVendorPassword from '@/components/UpdateVendorPassword.vue'
 
 const showForm = ref(false)
-const showFormPass = ref(false)
-// const updateVendorRef = ref(null)
-// const updateVendorPasswordRef = ref(null)
+
 const firstName = ref('John')
 const lastName = ref('Doe')
-const shopName = ref('John\'s Grocery')
+const shopName = ref("John's Grocery")
 const contact = ref('+1-202-555-0173')
 
 const addressLane1 = ref('123 Main Street')
@@ -323,18 +315,7 @@ const email = ref('john.doe@example.com')
 const password = ref('asdf123456')
 const password2 = ref('**********')
 const confirmPassword = ref('asdf123456')
-const initialPage = ref('personal')
 const states = ['Uttar Pradesh', 'Gujarat', 'Rajasthan', 'Maharashtra', 'West Bengal']
-
-
-
-const showFormAndScroll = () => {
-  showForm.value = true
-  initialPage.value = 'address'
-  // nextTick(() => {
-  //   updateVendorRef.value?.$el.scrollIntoView({ behavior: 'smooth' })
-  // })
-}
 </script>
 <style scoped>
 .custom-info {
@@ -350,10 +331,6 @@ const showFormAndScroll = () => {
 h1,
 h3 {
   color: #112d4e;
-}
-
-.name-heading {
-  font-size: 18px;
 }
 
 @media (max-width: 600px) {
