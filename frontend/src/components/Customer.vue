@@ -6,100 +6,32 @@
       class="elevation-6 pa-3 mx-auto search bg-grey-lighten-2"
     />
   </div>
-  <div class="list px-2 px-sm-0 overflow-auto">
-    <table class="mx-auto my-5 my-sm-8 elevation-5">
-      <tr>
-        <th>
-          Name
-          <v-icon icon="swap_vert" class="cursor-pointer"></v-icon>
-        </th>
-        <th>Email</th>
-        <th>Contact</th>
-        <th>Actions</th>
-      </tr>
-      <tr v-for="(item, index) in customers" :key="index" :value="index">
-        <td>{{ item.name }}</td>
-        <td>{{ item.email }}</td>
-        <td>{{ item.contact }}</td>
-        <td class="d-flex align-center ga-5">
-          <img
-            src="../assets/edit_square.svg"
-            class="hover-scale"
-            style="width: 25px; height: 25px"
-          />
-          <v-icon icon="delete" color="#FF204E" class="hover-scale" size="25"></v-icon>
-        </td>
-      </tr>
-    </table>
-  </div>
-  <v-pagination
-    v-model="page"
-    :length="10"
-    next-icon="arrow_forward_ios"
-    prev-icon="arrow_back_ios"
-    class="pagination mx-auto mt-0"
-    :total-visible="4"
-    size="x-small"
-  ></v-pagination>
+ 
+  <template>
+  <v-data-table-server
+    v-model:items-per-page="itemsPerPage"
+    :headers="headers"
+    :items="serverItems"
+    :items-length="totalItems"
+    :loading="loading"
+    :search="search"
+    item-value="name"
+    @update:options="loadItems"
+  ></v-data-table-server>
+</template>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 
-const page = ref(1)
-
-const customers = ref([
-  {
-    name: 'Chandan Kumar',
-    email: 'chandan@gmail.com',
-    contact: '9104324532'
-  },
-  {
-    name: 'Anant Patel',
-    email: 'anant@gmail.com',
-    contact: '9104324532'
-  },
-  {
-    name: 'Sumit Sharma',
-    email: 'sumit@gmail.com',
-    contact: '9104324532'
-  },
-  {
-    name: 'Anant Patel',
-    email: 'anant@gmail.com',
-    contact: '9104324532'
-  },
-  {
-    name: 'Sumit Sharma',
-    email: 'sumit@gmail.com',
-    contact: '9104324532'
-  },
-  {
-    name: 'Chandan Kumar',
-    email: 'chandan@gmail.com',
-    contact: '9104324532'
-  },
-  {
-    name: 'Anant Patel',
-    email: 'anant@gmail.com',
-    contact: '9104324532'
-  },
-  {
-    name: 'Sumit Sharma',
-    email: 'sumit@gmail.com',
-    contact: '9104324532'
-  },
-  {
-    name: 'Anant Patel',
-    email: 'anant@gmail.com',
-    contact: '9104324532'
-  },
-  {
-    name: 'Sumit Sharma',
-    email: 'sumit@gmail.com',
-    contact: '9104324532'
-  }
+const headers = ref([
+  { key: 'data-table-expand' },
+  { title: 'Name', value: 'firstName', sortable: true },
+  { title: 'E-mail', value: 'email' },
+  { title: 'Contact no', value: 'Address_Details.contact' },
+  { title: 'Status', value: 'status' }
 ])
+
 </script>
 
 <style scoped>
