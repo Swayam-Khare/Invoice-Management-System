@@ -24,15 +24,16 @@
           <v-text-field
             v-model="password"
             label="Password"
-            type="password"
             :rules="passwordRules"
             variant="outlined"
             color="#112d4e"
             class="mt-1"
             density="compact"
-            @blur="isFocused = false"
-            @focus="isFocused = true"
-          ></v-text-field>
+            :append-inner-icon="visible ? 'visibility_off' : 'visibility'"
+            :type="visible ? 'text' : 'password'"
+            @click:appendInner="visible = !visible"
+          >
+          </v-text-field>
           <v-card-actions class="pl-6 pt-0 pr-6">
             <v-btn color="#112D4E" type="submit" variant="elevated" block :disabled="!isFormValid"
               >Login</v-btn
@@ -80,6 +81,7 @@ const vendorStore = useVendorStore()
 const email = ref('')
 const password = ref('')
 const isFocused = ref(false)
+const visible = ref(false)
 
 const emit = defineEmits(['close', 'signup', 'vendor'])
 

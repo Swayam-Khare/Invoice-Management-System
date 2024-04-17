@@ -1,14 +1,36 @@
 <template>
-  <v-container fluid>
-    <v-row no-gutters class="fill-height">
-      <v-col cols="12" md="6" class="d-flex justify-center">
-        <v-card class="d-flex flex-column fill-height w-50" style="border-radius: 10px">
-          <v-card-title style="background-color: #112d4ef1; color: #f5f5f5">
-            My Profile
+  <v-container fluid style="background-color: #112d4e14; min-height: 100vh; height: auto">
+    <!-- Heading -->
+    <div v-if="!showForm" class="d-flex flex-wrap justify-space-between align-center px-6">
+      <div>
+        <h1>Vendor Profile</h1>
+        <v-divider></v-divider>
+      </div>
+
+      <!-- update button -->
+      <v-btn
+        color="#112D4E"
+        @click="showForm = true"
+        class="text-capitalize mt-2"
+        style="font-size: 19px"
+        >UPDATE</v-btn
+      >
+    </div>
+
+    <!-- Profile info -->
+    <v-row no-gutters class="pt-10">
+      <v-col cols="12" md="6" class="d-flex justify-end pr-4" v-if="!showForm">
+        <!-- Personal Details card -->
+        <v-card
+          class="d-flex flex-column fill-height"
+          style="border-radius: 10px; height: fit-content; min-width: 70%"
+        >
+          <v-card-title style="background-color: #112d4ecc; color: #f5f5f5; font-size: 24px">
+            Personal Details
           </v-card-title>
           <v-card-text class="flex-grow-1 justify-space-between pa-5">
             <div>
-              <v-avatar class="ma-5 ml-0" size="100">
+              <v-avatar class="ma-5 ml-0" size="120">
                 <img
                   class="my-auto mx-auto user-img"
                   src="../assets/imgs/User/2.png"
@@ -17,146 +39,298 @@
                 />
               </v-avatar>
               <div class="mb-2">
-                <span class="font-weight-bold caption text-uppercase">First Name</span>
-                <p class="body-1">John Doe</p>
+                <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
+                  >First Name</span
+                >
+                <p style="font-size: 16px">{{ firstName }}</p>
               </div>
               <div class="mb-2">
-                <span class="font-weight-bold caption text-uppercase">Location</span>
-                <p class="body-1">Windhoek, TN, New York, USA</p>
+                <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
+                  >Last Name</span
+                >
+                <p style="font-size: 16px">{{ lastName }}</p>
               </div>
               <div class="mb-2">
-                <span class="font-weight-bold caption text-uppercase">Phone Number</span>
-                <p class="body-1">+1-656-569-999-1230</p>
+                <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
+                  >Shop Name</span
+                >
+                <p style="font-size: 16px">{{ shopName }}</p>
               </div>
               <div class="mb-0">
-                <span class="font-weight-bold caption text-uppercase">Email</span>
-                <p class="body-1">johndoe@example.com</p>
+                <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
+                  >Contact</span
+                >
+                <p style="font-size: 16px">{{ contact }}</p>
               </div>
             </div>
           </v-card-text>
-          <v-card-actions>
-            <v-btn
-              style="background-color: #112d4ef1; color: #f5f5f5; border-radius: 10px"
-              block
-              dark
-              @click="showFormAndScrollToAddress"
-            >
-              Update
-            </v-btn>
-          </v-card-actions>
         </v-card>
       </v-col>
-      <v-col cols="12" md="6" class="d-flex justify-center">
-        <v-row no-gutters align="center" class="flex-column">
-          <v-card class="w-50" style="max-height: 70%; border-radius: 10px">
-            <v-card-title style="background-color: #112d4ef1; color: #f5f5f5">
+
+      <!-- Address Details card -->
+      <v-col cols="12" md="6" class="d-flex pl-4" v-if="!showForm">
+        <v-row no-gutters align="left" class="flex-column">
+          <v-card style="height: fit-content; width: 70%; border-radius: 10px">
+            <v-card-title style="background-color: #112d4ecc; color: #f5f5f5; font-size: 24px">
               Address Details
             </v-card-title>
-            <v-card-text class="pa-3">
+            <v-card-text class="px-5 py-6">
               <div class="mb-2">
-                <span class="font-weight-bold caption text-uppercase">Street</span>
-                <p class="body-1">123 Main Street, Apt 456</p>
+                <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
+                  >Address Lane 1</span
+                >
+                <p style="font-size: 16px">{{ addressLane1 }}</p>
               </div>
-              <div class="mb-2">
-                <span class="font-weight-bold caption text-uppercase">City</span>
-                <p class="body-1">Anytown, CA 12345</p>
-              </div>
-              <div class="mb-0">
-                <span class="font-weight-bold caption text-uppercase">Country</span>
-                <p class="body-1">United States</p>
-              </div>
+              <v-row>
+                <v-col cols="6" class="py-0 mt-3">
+                  <div class="mb-2">
+                    <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
+                      >Address Lane 2</span
+                    >
+                    <p style="font-size: 16px">{{ addressLane2 }}</p>
+                  </div>
+                </v-col>
+                <v-col cols="6" class="py-0 mt-3">
+                  <div class="mb-0">
+                    <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
+                      >Landmark</span
+                    >
+                    <p style="font-size: 16px">{{ landmark }}</p>
+                  </div>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="6" class="py-0 mt-0 mb-2">
+                  <div class="mb-0">
+                    <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
+                      >State</span
+                    >
+                    <p style="font-size: 16px">{{ state }}</p>
+                  </div>
+                </v-col>
+                <v-col cols="6" class="py-0 mt-0 mb-2">
+                  <div class="mb-0">
+                    <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
+                      >Pincode</span
+                    >
+                    <p style="font-size: 16px">{{ pincode }}</p>
+                  </div>
+                </v-col>
+              </v-row>
             </v-card-text>
-            <v-card-actions>
-              <v-btn
-                style="background-color: #112d4ef1; color: #f5f5f5; border-radius: 10px"
-                block
-                dark
-                @click="showFormAndScroll"
-              >
-                Update
-              </v-btn>
-            </v-card-actions>
           </v-card>
-          <v-card class="mt-5 w-50" style="max-height: 70%; border-radius: 10px">
-            <v-card-title style="background-color: #112d4ef1; color: #f5f5f5">
+
+          <!-- Credentials card -->
+          <v-card class="mt-8" style="height: fit-content; width: 70%; border-radius: 10px">
+            <v-card-title style="background-color: #112d4ecc; color: #f5f5f5; font-size: 24px">
               Credentials
             </v-card-title>
-            <v-card-text class="pa-3">
+            <v-card-text class="px-5 py-6">
               <div class="mb-2">
-                <span class="font-weight-bold caption text-uppercase">Email</span>
-                <p class="body-1">johndoe@example.com</p>
+                <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
+                  >Email</span
+                >
+                <p style="font-size: 16px">{{ email }}</p>
               </div>
               <div class="mb-0">
-                <span class="font-weight-bold caption text-uppercase">Password</span>
-                <p class="body-1">**********</p>
+                <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
+                  >Password</span
+                >
+                <p style="font-size: 16px">{{ password2 }}</p>
               </div>
             </v-card-text>
-            <v-card-actions>
-              <v-btn
-                style="background-color: #112d4ef1; color: #f5f5f5; border-radius: 10px"
-                block
-                dark
-                @click="showFormAndScrollToPassword"
-              >
-                Update
-              </v-btn>
-            </v-card-actions>
           </v-card>
         </v-row>
       </v-col>
     </v-row>
-    <UpdateVendor
-      v-if="showForm"
-      @close="showForm = false"
-      ref="updateVendorRef"
-      :initialPage="initialPage"
-    />
-    <UpdateVendorPassword
-      v-if="showFormPass && initialPage === 'password'"
-      @close="showFormPass = false"
-      ref="updateVendorPasswordRef"
-    />
+
+    <!-- update profile page -->
+    <div v-if="showForm" class="pa-2">
+      <!-- update profile page heading -->
+      <div class="pb-8 pl-4 mt-n5" style="width: fit-content">
+        <h1>UPDATE PROFILE</h1>
+        <v-divider class="mb-4"></v-divider>
+      </div>
+
+      <!-- Personal Details fields -->
+      <div class="bg-white rounded-lg mx-4 elevation-3 mb-7">
+        <div class="py-4 px-6">
+          <h3>Personal Details</h3>
+        </div>
+        <v-divider class="mb-4 mx-4"></v-divider>
+        <div class="d-flex flex-wrap flex-column flex-sm-row px-sm-2 justify-space-around">
+          <div class="d-flex flex-wrap flex-column px-4 px-sm-0 custom-info">
+            <v-text-field
+              density="compact"
+              variant="outlined"
+              label="First Name"
+              color="#112D4E"
+              v-model="firstName"
+            ></v-text-field>
+            <v-text-field
+              density="compact"
+              variant="outlined"
+              label="Last Name"
+              color="#112D4E"
+              v-model="lastName"
+            ></v-text-field>
+          </div>
+          <div class="d-flex flex-wrap flex-column px-4 px-sm-0 custom-info">
+            <v-text-field
+              density="compact"
+              variant="outlined"
+              label="Shop Name"
+              color="#112D4E"
+              v-model="shopName"
+            ></v-text-field>
+            <v-text-field
+              density="compact"
+              variant="outlined"
+              label="Contact"
+              color="#112D4E"
+              v-model="contact"
+            ></v-text-field>
+          </div>
+        </div>
+
+        <v-divider class="mb-6 mx-4"></v-divider>
+
+        <!-- Address Details fields -->
+        <div class="py-4 px-6">
+          <h3>Address Details</h3>
+        </div>
+        <v-divider class="mb-4 mx-4"></v-divider>
+        <div class="d-flex flex-wrap flex-column flex-sm-row px-sm-2 justify-space-around">
+          <div class="d-flex flex-wrap flex-column px-4 px-sm-0 custom-info">
+            <v-text-field
+              density="compact"
+              variant="outlined"
+              label="Address Lane 1"
+              color="#112D4E"
+              v-model="addressLane1"
+            ></v-text-field>
+            <v-text-field
+              density="compact"
+              variant="outlined"
+              label="Address Lane 2"
+              color="#112D4E"
+              v-model="addressLane2"
+            ></v-text-field>
+          </div>
+          <div class="d-flex flex-wrap flex-column px-4 px-sm-0 custom-info">
+            <v-text-field
+              density="compact"
+              variant="outlined"
+              label="Landmark"
+              color="#112D4E"
+              v-model="landmark"
+            ></v-text-field>
+            <div class="d-flex ga-2">
+              <v-select
+                variant="outlined"
+                item-color="#112D4E"
+                color="#112D4E"
+                label="State"
+                density="compact"
+                v-model="state"
+                :items="states"
+              ></v-select>
+              <v-text-field
+                variant="outlined"
+                density="compact"
+                label="Pincode"
+                color="#112D4E"
+                v-model="pincode"
+              ></v-text-field>
+            </div>
+          </div>
+        </div>
+
+        <v-divider class="mb-6 mx-4"></v-divider>
+
+        <!-- credentials field -->
+        <div class="py-4 px-6">
+          <h3>Credentials</h3>
+        </div>
+        <v-divider class="mb-4 mx-4"></v-divider>
+        <div class="d-flex flex-wrap flex-column flex-sm-row px-sm-2 justify-space-around">
+          <div class="d-flex flex-wrap flex-column px-4 px-sm-0" style="width: 98%">
+            <v-text-field
+              density="compact"
+              variant="outlined"
+              label="E-mail"
+              color="#112D4E"
+              v-model="email"
+            ></v-text-field>
+            <v-text-field
+              density="compact"
+              variant="outlined"
+              type="password"
+              label="Password"
+              color="#112D4E"
+              v-model="password"
+            ></v-text-field>
+            <v-text-field
+              density="compact"
+              variant="outlined"
+              type="password"
+              label="Confirm Password"
+              color="#112D4E"
+              v-model="confirmPassword"
+            ></v-text-field>
+          </div>
+          <v-divider class="mb-4 mx-4"></v-divider>
+        </div>
+
+        <!-- update and close buttons -->
+        <div justify="center" align="center" class="pb-6 pt-6">
+          <v-btn style="background-color: #112d4e" class="text-white mx-6" @click="showForm = false"
+            >Update</v-btn
+          >
+          <v-btn style="background-color: #112d4e" class="text-white mx-6" @click="showForm = false"
+            >Close</v-btn
+          >
+        </div>
+      </div>
+    </div>
   </v-container>
 </template>
 
 <script setup>
 import { ref, nextTick } from 'vue'
-import UpdateVendor from '@/components/UpdateVendor.vue'
-import UpdateVendorPassword from '@/components/UpdateVendorPassword.vue'
 
 const showForm = ref(false)
-const showFormPass = ref(false)
-const updateVendorRef = ref(null)
-const updateVendorPasswordRef = ref(null)
-const initialPage = ref('personal')
 
-const showFormAndScroll = () => {
-  showForm.value = true
-  initialPage.value = 'address'
-  nextTick(() => {
-    updateVendorRef.value?.$el.scrollIntoView({ behavior: 'smooth' })
-  })
-}
+const firstName = ref('John')
+const lastName = ref('Doe')
+const shopName = ref("John's Grocery")
+const contact = ref('+1-202-555-0173')
 
-const showFormAndScrollToAddress = () => {
-  showForm.value = true
-  initialPage.value = 'personal'
-  nextTick(() => {
-    updateVendorRef.value?.$el.scrollIntoView({ behavior: 'smooth' })
-  })
-}
-
-const showFormAndScrollToPassword = () => {
-  showFormPass.value = true
-  initialPage.value = 'password'
-  nextTick(() => {
-    updateVendorPasswordRef.value?.$el.scrollIntoView({ behavior: 'smooth' })
-  })
-}
+const addressLane1 = ref('123 Main Street')
+const addressLane2 = ref('Suite 101')
+const landmark = ref('Near the old cinema')
+const pincode = ref('10001')
+const state = ref('New York')
+const email = ref('john.doe@example.com')
+const password = ref('asdf123456')
+const password2 = ref('**********')
+const confirmPassword = ref('asdf123456')
+const states = ['Uttar Pradesh', 'Gujarat', 'Rajasthan', 'Maharashtra', 'West Bengal']
 </script>
 <style scoped>
-.name-heading {
-  font-size: 18px;
+.custom-info {
+  width: 100%;
+}
+
+@media only screen and (min-width: 600px) {
+  .custom-info {
+    width: 48% !important;
+  }
+}
+
+h1,
+h3 {
+  color: #112d4e;
 }
 
 @media (max-width: 600px) {
