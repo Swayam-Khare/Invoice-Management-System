@@ -146,6 +146,7 @@ async function approveVendor(id) {
   color: white;
   transition: 0.5s;
 }
+
 .approve:hover {
   color: #00ff00dd;
   background-color: white;
@@ -157,6 +158,7 @@ async function approveVendor(id) {
   color: white;
   transition: 0.5s;
 }
+
 .delete:hover {
   color: #ff204e;
   background-color: white;

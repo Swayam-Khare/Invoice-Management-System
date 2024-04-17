@@ -159,20 +159,6 @@ exports.createCustomer = asyncErrorHandler(async (req, res, next) => {
 
 exports.getAllCustomers = asyncErrorHandler(async (req, res, next) => {
   // FETCHING ALL THE CUSTOMER ID CORRESPONDING TO VENDOR ID
-  let vendorCustomers = await VendorCustomer.findAll({
-    where: {
-      VendorId: req.vendor.id,
-    },
-  });
-
-  // EXTRACTING CUSTOMER ID FROM VENDORCUSTOMERS ARRAY AND SAVING IT INTO CUSTOMERID ARRAY
-  const customerIds = vendorCustomers.map(
-    (vendorCustomer) => vendorCustomer.CustomerId
-  );
-
-  // APPLYING FILTERS SORTING SEARCHING ETC. IN CUSTOMER
-
-  const totalRows = await VendorCustomer.findAndCountAll();
 
   let orderBy = null;
   let limitFields = null;
@@ -189,7 +175,7 @@ exports.getAllCustomers = asyncErrorHandler(async (req, res, next) => {
     limitFields = apiFeatures.limitFields(req.query.fields);
   }
   if (req.query.page) {
-    offset = apiFeatures.paginate(req.query.page, limit, totalRows.count, next);
+    offset = apiFeatures.paginate(req.query.page, limit, next);
   }
   if (req.query.search) {
     name = apiFeatures.search(name);
@@ -198,6 +184,38 @@ exports.getAllCustomers = asyncErrorHandler(async (req, res, next) => {
   const attribute = limitFields
     ? limitFields
     : ["id", "firstName", "lastName", "email", "contact"];
+
+  let vendorCustomers = await VendorCustomer.findAll({
+    where: {
+      VendorId: req.vendor.id,
+    },
+  });
+
+  // EXTRACTING CUSTOMER ID FROM VENDORCUSTOMERS ARRAY AND SAVING IT INTO CUSTOMERID ARRAY
+  const customerIds = vendorCustomers.map(
+    (vendorCustomer) => vendorCustomer.CustomerId
+  );
+
+  // APPLYING FILTERS SORTING SEARCHING ETC. IN CUSTOMER
+
+  const totalRows = await Customer.findAndCountAll({
+    where: {
+      id: customerIds,
+      [Op.or]: [
+        {
+          firstName: {
+            [Op.iLike]: name,
+          },
+        },
+        {
+          lastName: {
+            [Op.iLike]: name,
+          },
+        },
+      ],
+    },
+  });
+
 
   // FETCHING CUSTOMER DETAILS CORRESPONDING TO VENDOR
   vendorCustomers = await Customer.findAll({
@@ -213,12 +231,7 @@ exports.getAllCustomers = asyncErrorHandler(async (req, res, next) => {
           lastName: {
             [Op.iLike]: name,
           },
-        },
-        {
-          email: {
-            [Op.iLike]: name,
-          },
-        },
+        }
       ],
     },
     attributes: attribute,
@@ -241,6 +254,7 @@ exports.getAllCustomers = asyncErrorHandler(async (req, res, next) => {
     count: vendorCustomers.length,
     data: {
       vendorCustomers,
+      totalRows,
     },
   });
 });

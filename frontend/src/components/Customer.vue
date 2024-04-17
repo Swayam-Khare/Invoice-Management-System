@@ -1,104 +1,82 @@
 <template>
-  <div class="mobile-search pt-4 px-2 px-sm-10 px-md-14 px-lg-16 ml-lg-3 ml-xxl-16">
-    <input
-      type="text"
-      placeholder="Search..."
-      class="elevation-6 pa-3 mx-auto search bg-grey-lighten-2"
-    />
+  <div class="bg-grey-lighten-3 h-screen pa-5 d-flex ga-8 flex-column">
+    <div>
+      <input type="text" v-model="search"placeholder="Search..." class="elevation-6 pa-3 mx-auto search bg-white" />
+    </div>
+    <div class="table-border elevation-6">
+      <v-data-table-server
+        :headers="headers"
+        :items="customerData"
+        :items-per-page="10"
+      :loading="customerStore.loading"
+
+        loading-text="Please wait..."
+        :items-length="customerStore.rowsCount"
+        :search="search"
+        item-value="name"
+        @update:options="loadItems"
+        :items-per-page-options="itemsPerPageOption"
+
+      >
+        <template v-slot:item.actions="{ item }">
+          <v-icon>info_outlined</v-icon>
+        </template>
+      </v-data-table-server>
+    </div>
   </div>
-  <div class="list px-2 px-sm-0 overflow-auto">
-    <table class="mx-auto my-5 my-sm-8 elevation-5">
-      <tr>
-        <th>
-          Name
-          <v-icon icon="swap_vert" class="cursor-pointer"></v-icon>
-        </th>
-        <th>Email</th>
-        <th>Contact</th>
-        <th>Actions</th>
-      </tr>
-      <tr v-for="(item, index) in customers" :key="index" :value="index">
-        <td>{{ item.name }}</td>
-        <td>{{ item.email }}</td>
-        <td>{{ item.contact }}</td>
-        <td class="d-flex align-center ga-5">
-          <img
-            src="../assets/edit_square.svg"
-            class="hover-scale"
-            style="width: 25px; height: 25px"
-          />
-          <v-icon icon="delete" color="#FF204E" class="hover-scale" size="25"></v-icon>
-        </td>
-      </tr>
-    </table>
-  </div>
-  <v-pagination
-    v-model="page"
-    :length="10"
-    next-icon="arrow_forward_ios"
-    prev-icon="arrow_back_ios"
-    class="pagination mx-auto mt-0"
-    :total-visible="4"
-    size="x-small"
-  ></v-pagination>
 </template>
 
 <script setup>
+import { useCustomerStore } from '@/stores/customerStore'
+const customerStore = useCustomerStore()
 import { ref } from 'vue'
 
-const page = ref(1)
+const headers = ref([
+  { title: 'Name', value: 'firstName', sortable: true },
+  { title: 'Email', value: 'email' },
+  { title: 'Contact no', value: 'Address_Details.contact' },
+  { title: '', value: 'actions' }
+])
+let customerData = ref([]);
+let search = ref(undefined);
 
-const customers = ref([
-  {
-    name: 'Chandan Kumar',
-    email: 'chandan@gmail.com',
-    contact: '9104324532'
-  },
-  {
-    name: 'Anant Patel',
-    email: 'anant@gmail.com',
-    contact: '9104324532'
-  },
-  {
-    name: 'Sumit Sharma',
-    email: 'sumit@gmail.com',
-    contact: '9104324532'
-  },
-  {
-    name: 'Anant Patel',
-    email: 'anant@gmail.com',
-    contact: '9104324532'
-  },
-  {
-    name: 'Sumit Sharma',
-    email: 'sumit@gmail.com',
-    contact: '9104324532'
-  },
-  {
-    name: 'Chandan Kumar',
-    email: 'chandan@gmail.com',
-    contact: '9104324532'
-  },
-  {
-    name: 'Anant Patel',
-    email: 'anant@gmail.com',
-    contact: '9104324532'
-  },
-  {
-    name: 'Sumit Sharma',
-    email: 'sumit@gmail.com',
-    contact: '9104324532'
-  },
-  {
-    name: 'Anant Patel',
-    email: 'anant@gmail.com',
-    contact: '9104324532'
-  },
-  {
-    name: 'Sumit Sharma',
-    email: 'sumit@gmail.com',
-    contact: '9104324532'
+async function loadItems(event) {
+  console.log(event)
+  const { sortBy, page, itemsPerPage, search } = event;
+  console.log('line 39',sortBy,page,itemsPerPage,search);
+  let sortingStr = ''
+
+  if (sortBy.length) {
+    sortBy.forEach((i) => {
+      if (i.order == 'asc') {
+        sortingStr += i.key + ','
+      } else {
+        sortingStr += '-' + i.key + ','
+      }
+    })
   }
+  sortingStr = sortingStr.slice(0, sortingStr.length - 1)
+
+  const queryObj = {};
+  
+  queryObj.page = page;
+  queryObj.limit = itemsPerPage;
+  queryObj.search = search;
+  queryObj.sort = sortingStr;
+
+  await customerStore.getAllCustomers(queryObj)
+  customerData.value = customerStore.customers
+  for (let d of customerData.value) {
+    d.firstName = d.firstName + ' ' + d.lastName
+  }
+}
+
+const itemsPerPageOption = ref([
+  { title: '10', value: 10 },
+  { title: '15', value: 15 },
+  { title: '20', value: 20 },
+  { title: '50', value: 50 },
+  { title: '100', value: 100 }
 ])
 </script>
 
@@ -120,45 +98,8 @@ const customers = ref([
     5px 5px 10px rgba(0, 0, 0, 0.456) !important;
 }
 
-table {
-  border-collapse: collapse;
-  width: 90%;
-  overflow: hidden;
-}
-
-th {
-  padding: 10px 20px;
-  text-align: left;
-  background-color: #112d4ecc;
-  color: white;
-}
-
-td {
-  padding: 10px 20px;
-}
-
-tr {
-  transition: 0.2s;
-}
-
-tr:nth-child(odd) {
-  background-color: #112d4e13;
-}
-
-tr:first-child:hover {
-  scale: 1;
-}
-
-tr:hover {
-  scale: 1.01;
-}
-
-.hover-scale {
-  transition: 0.2s;
-}
-
-.hover-scale:hover {
-  scale: 1.3;
-  cursor: pointer;
+.table-border {
+  border: 1px solid rgba(58, 56, 56, 0.134);
+  border-radius: 8px;
 }
 </style>

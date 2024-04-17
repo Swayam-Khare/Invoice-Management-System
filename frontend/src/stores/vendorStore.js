@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
 export const useVendorStore = defineStore('vendorStore', () => {
-  let vendors = ref([])
+  let vendors = ref([]);
   let rowCount = ref({ count: 0 })
   let loading = ref(false)
   let token = ref(null)
