@@ -1,37 +1,83 @@
 <template>
-  <div class="mobile-search pt-4 px-2 px-sm-10 px-md-14 px-lg-16 ml-lg-3 ml-xxl-16">
-    <input
-      type="text"
-      placeholder="Search..."
-      class="elevation-6 pa-3 mx-auto search bg-grey-lighten-2"
-    />
+  <div class="bg-grey-lighten-3 h-screen pa-5 d-flex ga-8 flex-column">
+    <div>
+      <input type="text" v-model="search"placeholder="Search..." class="elevation-6 pa-3 mx-auto search bg-white" />
+    </div>
+    <div class="table-border elevation-6">
+      <v-data-table-server
+        :headers="headers"
+        :items="customerData"
+        :items-per-page="10"
+      :loading="customerStore.loading"
+
+        loading-text="Please wait..."
+        :items-length="customerStore.rowsCount"
+        :search="search"
+        item-value="name"
+        @update:options="loadItems"
+        :items-per-page-options="itemsPerPageOption"
+
+      >
+        <template v-slot:item.actions="{ item }">
+          <v-icon>info_outlined</v-icon>
+        </template>
+      </v-data-table-server>
+    </div>
   </div>
- 
-  <template>
-  <v-data-table-server
-    v-model:items-per-page="itemsPerPage"
-    :headers="headers"
-    :items="serverItems"
-    :items-length="totalItems"
-    :loading="loading"
-    :search="search"
-    item-value="name"
-    @update:options="loadItems"
-  ></v-data-table-server>
-</template>
 </template>
 
 <script setup>
+import { useCustomerStore } from '@/stores/customerStore'
+const customerStore = useCustomerStore()
 import { ref } from 'vue'
 
 const headers = ref([
-  { key: 'data-table-expand' },
   { title: 'Name', value: 'firstName', sortable: true },
-  { title: 'E-mail', value: 'email' },
+  { title: 'Email', value: 'email' },
   { title: 'Contact no', value: 'Address_Details.contact' },
-  { title: 'Status', value: 'status' }
+  { title: '', value: 'actions' }
 ])
+let customerData = ref([]);
+let search = ref(undefined);
 
+async function loadItems(event) {
+  console.log(event)
+  const { sortBy, page, itemsPerPage, search } = event;
+  console.log('line 39',sortBy,page,itemsPerPage,search);
+  let sortingStr = ''
+
+  if (sortBy.length) {
+    sortBy.forEach((i) => {
+      if (i.order == 'asc') {
+        sortingStr += i.key + ','
+      } else {
+        sortingStr += '-' + i.key + ','
+      }
+    })
+  }
+  sortingStr = sortingStr.slice(0, sortingStr.length - 1)
+
+  const queryObj = {};
+  
+  queryObj.page = page;
+  queryObj.limit = itemsPerPage;
+  queryObj.search = search;
+  queryObj.sort = sortingStr;
+
+  await customerStore.getAllCustomers(queryObj)
+  customerData.value = customerStore.customers
+  for (let d of customerData.value) {
+    d.firstName = d.firstName + ' ' + d.lastName
+  }
+}
+
+const itemsPerPageOption = ref([
+  { title: '10', value: 10 },
+  { title: '15', value: 15 },
+  { title: '20', value: 20 },
+  { title: '50', value: 50 },
+  { title: '100', value: 100 }
+])
 </script>
 
 <style scoped>
@@ -52,45 +98,8 @@ const headers = ref([
     5px 5px 10px rgba(0, 0, 0, 0.456) !important;
 }
 
-table {
-  border-collapse: collapse;
-  width: 90%;
-  overflow: hidden;
-}
-
-th {
-  padding: 10px 20px;
-  text-align: left;
-  background-color: #112d4ecc;
-  color: white;
-}
-
-td {
-  padding: 10px 20px;
-}
-
-tr {
-  transition: 0.2s;
-}
-
-tr:nth-child(odd) {
-  background-color: #112d4e13;
-}
-
-tr:first-child:hover {
-  scale: 1;
-}
-
-tr:hover {
-  scale: 1.01;
-}
-
-.hover-scale {
-  transition: 0.2s;
-}
-
-.hover-scale:hover {
-  scale: 1.3;
-  cursor: pointer;
+.table-border {
+  border: 1px solid rgba(58, 56, 56, 0.134);
+  border-radius: 8px;
 }
 </style>
