@@ -5,6 +5,8 @@ const signToken = require("../utils/signToken");
 const { Op } = require("sequelize");
 const apiFeatures = require("../utils/apiFeatures");
 const randomstring = require("randomstring");
+const util = require("util");
+const jwt = require("jsonwebtoken");
 
 const Vendor = db.Vendor;
 const Address = db.Address;
@@ -227,7 +229,11 @@ exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
 // // ------------- GET A SPECIFIC VENDOR --------------
 
 exports.getASpecificVendor = asyncErrorHandler(async (req, res, next) => {
-  const id = req.params.id;
+  const { jwtAuth } = req.cookies;
+  const decodedToken = await util.promisify(jwt.verify)(jwtAuth, process.env.SECRET_STR);
+  
+  const id = decodedToken.id;
+
   const vendor = await Vendor.findOne({
     include: [
       {
@@ -265,7 +271,10 @@ exports.getASpecificVendor = asyncErrorHandler(async (req, res, next) => {
 
 // ------------- DELETE A VENDOR -----------
 exports.deleteVendor = asyncErrorHandler(async (req, res, next) => {
-  const id = req.params.id;
+  const { jwtAuth } = req.cookies;
+  const decodedToken = await util.promisify(jwt.verify)(jwtAuth, process.env.SECRET_STR);
+
+  const id = decodedToken.id;
   const vendor = await Vendor.findByPk(id, {
     include: [
       {
@@ -325,7 +334,10 @@ exports.deleteVendor = asyncErrorHandler(async (req, res, next) => {
 // -------------- UPDATE VENDOR -------------
 
 exports.updateVendor = asyncErrorHandler(async (req, res, next) => {
-  const id = req.params.id;
+  const { jwtAuth } = req.cookies;
+  const decodedToken = await util.promisify(jwt.verify)(jwtAuth, process.env.SECRET_STR);
+
+  const id = decodedToken.id;
   const vendor = await Vendor.findByPk(id, {
     include: [
       {
