@@ -1,15 +1,13 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
-import { jwt } from 'jsonwebtoken'
-import { util } from 'util'
 
 export const useVendorStore = defineStore('vendorStore', () => {
   let vendors = ref([])
-  let vendorToken = ref(null)
   let rowCount = ref({ count: 0 })
   let loading = ref(false)
   let token = ref(null)
+  let loggedVendor = ref({})
   const stateVariable = ref(10)
   const getAllVendors = async (options) => {
     let queryStr = ''
@@ -53,29 +51,19 @@ export const useVendorStore = defineStore('vendorStore', () => {
       loading.value = false
     }
   }
-  const decodedToeknVendor = async () => {
-    vendorToken.value = await util.promisify(jwt.verify)(
-      token,
-      'itcanbeanything45ty85-rfnf03-fefgy'
-    )
-  }
 
-  //  const fetchVendorProfile = async () => {
-  //    try {
-  //      const config = {
-  //        headers: {
-  //          Authorization: `Bearer ${token.value}`
-  //        }
-  //      }
-  //      const res = await axios.get('http://localhost:3500/api/v1/vendors/profile', config)
-  //      // Update the vendor's profile data in the store or the component's reactive data
-  //      firstName.value = res.data.firstName
-  //      lastName.value = res.data.lastName
-  //      // ... update other profile fields
-  //    } catch (error) {
-  //      console.error('Error fetching vendor profile:', error)
-  //    }
-  //  }
+  const getAVendor = async () => {
+    try {
+      loading.value = true
+      const res = await axios.get('http://localhost:3500/api/v1/vendors/specific', {
+        withCredentials: true
+      })
+      loggedVendor.value = res.data.data.vendor
+      console.log(loggedVendor)
+    } catch (err) {
+      console.log(err.message)
+    }
+  }
 
   const deleteVendor = async (id) => {
     try {
@@ -175,10 +163,12 @@ export const useVendorStore = defineStore('vendorStore', () => {
     decodedToeknVendor,
     // fetchVendorProfile,
     token,
+    loggedVendor,
     stateVariable,
     rowCount,
     deleteVendor,
     approveVendor,
-    logoutVendor
+    logoutVendor,
+    getAVendor
   }
 })
