@@ -1,11 +1,13 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
+
 export const useVendorStore = defineStore('vendorStore', () => {
   let vendors = ref([]);
   let rowCount = ref({ count: 0 })
   let loading = ref(false)
   let token = ref(null)
+  let loggedVendor = ref({});
   const stateVariable = ref(10)
   const getAllVendors = async (options) => {
     let queryStr = ''
@@ -47,6 +49,18 @@ export const useVendorStore = defineStore('vendorStore', () => {
       console.log(error)
     } finally {
       loading.value = false
+    }
+  }
+
+  const getAVendor = async () => {
+    try {
+      loading.value = true;
+      const res = await axios.get('http://localhost:3500/api/v1/vendors/specific', { withCredentials: true })
+      loggedVendor.value = res.data.data.vendor;
+      console.log(loggedVendor);
+
+    } catch (err) {
+      console.log(err.message);
     }
   }
 
@@ -146,10 +160,12 @@ export const useVendorStore = defineStore('vendorStore', () => {
     signupVendor,
     loginVendor,
     token,
+    loggedVendor,
     stateVariable,
     rowCount,
     deleteVendor,
     approveVendor,
-    logoutVendor
+    logoutVendor,
+    getAVendor,
   }
 })

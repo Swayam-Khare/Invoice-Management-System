@@ -42,25 +42,25 @@
                 <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
                   >First Name</span
                 >
-                <p style="font-size: 16px">{{ firstName }}</p>
+                <p style="font-size: 16px">{{ profile.firstName }}</p>
               </div>
               <div class="mb-2">
                 <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
                   >Last Name</span
                 >
-                <p style="font-size: 16px">{{ lastName }}</p>
+                <p style="font-size: 16px">{{ profile.lastName }}</p>
               </div>
               <div class="mb-2">
                 <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
                   >Shop Name</span
                 >
-                <p style="font-size: 16px">{{ shopName }}</p>
+                <p style="font-size: 16px">{{ profile.shopName }}</p>
               </div>
               <div class="mb-0">
                 <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
                   >Contact</span
                 >
-                <p style="font-size: 16px">{{ contact }}</p>
+                <p style="font-size: 16px">{{ profile.Address_Details.contact }}</p>
               </div>
             </div>
           </v-card-text>
@@ -79,7 +79,7 @@
                 <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
                   >Address Lane 1</span
                 >
-                <p style="font-size: 16px">{{ addressLane1 }}</p>
+                <p style="font-size: 16px">{{ profile.Address_Details.address_lane1 }}</p>
               </div>
               <v-row>
                 <v-col cols="6" class="py-0 mt-3">
@@ -87,7 +87,7 @@
                     <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
                       >Address Lane 2</span
                     >
-                    <p style="font-size: 16px">{{ addressLane2 }}</p>
+                    <p style="font-size: 16px">{{ profile.Address_Details.address_lane2 }}</p>
                   </div>
                 </v-col>
                 <v-col cols="6" class="py-0 mt-3">
@@ -95,7 +95,7 @@
                     <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
                       >Landmark</span
                     >
-                    <p style="font-size: 16px">{{ landmark }}</p>
+                    <p style="font-size: 16px">{{ profile.Address_Details.landmark }}</p>
                   </div>
                 </v-col>
               </v-row>
@@ -105,7 +105,7 @@
                     <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
                       >State</span
                     >
-                    <p style="font-size: 16px">{{ state }}</p>
+                    <p style="font-size: 16px">{{  profile.Address_Details.state  }}</p>
                   </div>
                 </v-col>
                 <v-col cols="6" class="py-0 mt-0 mb-2">
@@ -113,7 +113,7 @@
                     <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
                       >Pincode</span
                     >
-                    <p style="font-size: 16px">{{ pincode }}</p>
+                    <p style="font-size: 16px">{{ profile.Address_Details.pincode }}</p>
                   </div>
                 </v-col>
               </v-row>
@@ -130,7 +130,7 @@
                 <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
                   >Email</span
                 >
-                <p style="font-size: 16px">{{ email }}</p>
+                <p style="font-size: 16px">{{ profile.email }}</p>
               </div>
               <div class="mb-0">
                 <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
@@ -165,7 +165,7 @@
               variant="outlined"
               label="First Name"
               color="#112D4E"
-              v-model="firstName"
+              v-model="vendorData.firstName"
             ></v-text-field>
             <v-text-field
               density="compact"
@@ -207,7 +207,7 @@
               variant="outlined"
               label="Address Lane 1"
               color="#112D4E"
-              v-model="addressLane1"
+              v-model="vendorData.Address_Details.address_lane1"
             ></v-text-field>
             <v-text-field
               density="compact"
@@ -297,6 +297,7 @@
 </template>
 
 <script setup>
+import { onMounted } from 'vue';
 import { ref, nextTick } from 'vue'
 
 const showForm = ref(false)
@@ -316,6 +317,15 @@ const password = ref('asdf123456')
 const password2 = ref('**********')
 const confirmPassword = ref('asdf123456')
 const states = ['Uttar Pradesh', 'Gujarat', 'Rajasthan', 'Maharashtra', 'West Bengal']
+const vendorData = ref({});
+const props = defineProps(['profile']);
+
+onMounted(() => {
+  console.log(props.profile);
+
+  vendorData.value = {...props.profile}
+})
+
 </script>
 <style scoped>
 .custom-info {
