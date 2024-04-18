@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/valid-v-slot -->
 <template>
   <div style="background-color: #112d4e14">
     <div class="d-flex flex-md-row flex-column justify-space-between align-end">
@@ -123,7 +124,7 @@ function setStatusFilter(status) {
 
 function clearStatusFilter() {
   statusFilter.value = null
-  filterMenu.value = false // Close the menu after clearing filter
+  filterMenu.value = false // Close the menu after clearing filter
 }
 
 const headers = [
@@ -132,7 +133,7 @@ const headers = [
   { title: 'Purchase Date', value: 'purchaseDate' },
   { title: 'Due Date', value: 'dueDate' },
   { title: 'Status', value: 'status' },
-  { title: 'Actions', value: 'action' }
+  { title: 'Actions', value: 'actions' }
 ]
 
 const statusMenu = ref([{ title: 'paid' }, { title: 'overdue' }, { title: 'due' }])
