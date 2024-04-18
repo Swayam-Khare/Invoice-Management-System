@@ -1,8 +1,12 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
+import { jwt } from 'jsonwebtoken'
+import { util } from 'util'
+
 export const useVendorStore = defineStore('vendorStore', () => {
   let vendors = ref([])
+  let vendorToken = ref(null)
   let rowCount = ref({ count: 0 })
   let loading = ref(false)
   let token = ref(null)
@@ -49,6 +53,29 @@ export const useVendorStore = defineStore('vendorStore', () => {
       loading.value = false
     }
   }
+  const decodedToeknVendor = async () => {
+    vendorToken.value = await util.promisify(jwt.verify)(
+      token,
+      'itcanbeanything45ty85-rfnf03-fefgy'
+    )
+  }
+
+  //  const fetchVendorProfile = async () => {
+  //    try {
+  //      const config = {
+  //        headers: {
+  //          Authorization: `Bearer ${token.value}`
+  //        }
+  //      }
+  //      const res = await axios.get('http://localhost:3500/api/v1/vendors/profile', config)
+  //      // Update the vendor's profile data in the store or the component's reactive data
+  //      firstName.value = res.data.firstName
+  //      lastName.value = res.data.lastName
+  //      // ... update other profile fields
+  //    } catch (error) {
+  //      console.error('Error fetching vendor profile:', error)
+  //    }
+  //  }
 
   const deleteVendor = async (id) => {
     try {
@@ -145,6 +172,8 @@ export const useVendorStore = defineStore('vendorStore', () => {
     getAllVendors,
     signupVendor,
     loginVendor,
+    decodedToeknVendor,
+    // fetchVendorProfile,
     token,
     stateVariable,
     rowCount,

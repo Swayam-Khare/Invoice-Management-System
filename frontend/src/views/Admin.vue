@@ -65,6 +65,7 @@
             title="Logout"
             value="logout"
             class="text-left"
+            @click="logout"
           ></v-list-item>
         </v-list>
       </v-menu>
@@ -265,13 +266,6 @@ onMounted(() => {
 })
 const expanded = ref([])
 
-
-function handleMenuItemClick(title) {
-  if (title === 'Logout') {
-    logout()
-  }
-}
-
 async function logout() {
   try {
     const success = await adminStore.logoutAdmin()
@@ -342,11 +336,9 @@ async function loadItems(event) {
   expanded.value = []
 }
 
-
 function toggleExpansion(item, expand, isExpanded) {
   console.log(expand)
 
-  
   // this.expanded = []
   if (isExpanded(item)) {
     let id = null
@@ -378,9 +370,9 @@ function toggleExpansion(item, expand, isExpanded) {
 
 <style scoped>
 @media only screen and (max-width: 690px) {
-  .transition-slot{
-  animation: transSmall 0.2s linear !important;
-  height: 550px !important;
+  .transition-slot {
+    animation: transSmall 0.2s linear !important;
+    height: 550px !important;
   }
 }
 
