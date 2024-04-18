@@ -27,5 +27,27 @@ export const useAdminStore = defineStore('adminStore', () => {
       loading.value = false
     }
   }
-  return { adminArr, loginAdmin, token, stateVariable, typelogin, loading }
+
+  async function logoutAdmin() {
+    try {
+      const response = await axios.get('http://localhost:3500/api/v1/auth/logout/admin', {
+        withCredentials: true
+      })
+
+      if (response.status === 200) {
+        // Clear the token and any other admin-related state
+        token.value = null // Logout successful
+
+        return true
+      } else {
+        console.error('Logout failed:', response)
+        return false // Logout failed
+      }
+    } catch (error) {
+      console.error('Logout failed:', error)
+      return false // Logout failed
+    }
+  }
+
+  return { adminArr, loginAdmin, logoutAdmin, token, stateVariable, typelogin, loading }
 })

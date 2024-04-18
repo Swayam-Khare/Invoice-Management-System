@@ -6,7 +6,10 @@
           <img src="../assets/logo.svg" alt="Logo" style="height: 50px; width: 50px" />
         </template>
         <template v-slot:append>
-          <button class="mr-4 bg-white py-2 px-5 rounded d-flex justify-space-between align-center">
+          <button
+            class="mr-4 bg-white py-2 px-5 rounded d-flex justify-space-between align-center"
+            @click="logoutVendor"
+          >
             <v-icon icon="logout"></v-icon>
             Logout
           </button>
@@ -88,11 +91,11 @@
             color="#112d4ef1"
             title="Update Profile"
             value="profile"
-            @click="isActiveTab=Profile"
+            @click="isActiveTab = Profile"
           ></v-list-item>
         </v-list>
       </v-navigation-drawer>
-      <v-main>
+      <v-main class="h-screen">
         <component
           :is="isActiveTab"
           v-model="showProductDialog"
@@ -104,13 +107,19 @@
 </template>
 <script setup>
 import { ref } from 'vue'
-
+import { useRouter } from 'vue-router'
+import { toast } from 'vue3-toastify'
 import Customer from '../components/Customer.vue'
 import Product from '../components/Product.vue'
 import CreateProduct from '../components/CreateProduct.vue'
 import CreateInvoice from '../components/CreateInvoice.vue'
 import AllInvoice from '../components/AllInvoice.vue'
 import Profile from '../components/Profile.vue'
+import { useVendorStore } from '@/stores/vendorStore'
+
+const router = useRouter()
+
+const vendorStore = useVendorStore()
 
 const drawer = ref(true)
 const rail = ref(true)
@@ -124,4 +133,25 @@ const invoice = ref([
   ['All Invoices', 'local_mall', AllInvoice],
   ['Create Invoice', 'add_circle', CreateInvoice]
 ])
+
+async function logoutVendor() {
+  try {
+    const success = await vendorStore.logoutVendor()
+    if (success) {
+      // Redirect to the home page
+      router.replace('/')
+    } else {
+      console.error('Logout failed')
+      toast.error('admin logout failed!', {
+        autoClose: 2000,
+        type: 'error',
+        position: 'top-right',
+        transition: 'zoom',
+        dangerouslyHTMLString: true
+      })
+    }
+  } catch (error) {
+    console.error('Logout failed:', error)
+  }
+}
 </script>
