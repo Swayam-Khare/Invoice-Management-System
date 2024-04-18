@@ -6,7 +6,7 @@ import { createPinia } from 'pinia'
 import 'vue3-toastify/dist/index.css'
 import App from './App.vue'
 import router from './router'
-
+import { VSparkline } from 'vuetify/labs/VSparkline'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import { createVuetify } from 'vuetify'
 import 'vuetify/styles'
@@ -16,6 +16,8 @@ import { aliases, md } from 'vuetify/iconsets/md'
 
 const vuetify = createVuetify({
   components,
+  component:
+  {VSparkline},
   directives,
 
   icons: {
