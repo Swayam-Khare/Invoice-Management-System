@@ -1,7 +1,7 @@
 <template>
   <div class="bg-grey-lighten-3 h-screen pa-5 d-flex ga-8 flex-column">
     <div>
-      <input type="text" v-model="search"placeholder="Search..." class="elevation-6 pa-3 mx-auto search bg-white" />
+      <input type="text" v-model="search" placeholder="Search..." class="elevation-6 pa-3 mx-auto search bg-white" />
     </div>
     <div class="table-border elevation-6">
       <v-data-table-server
@@ -19,17 +19,21 @@
 
       >
         <template v-slot:item.actions="{ item }">
-          <v-icon>info_outlined</v-icon>
+          <v-icon @click="alertMe(item.id)">info_outlined</v-icon>
         </template>
       </v-data-table-server>
     </div>
   </div>
+  <customerDetails v-model="customerDialog" :details="specificCustomerDetails" @edit="editDialog=true,console.log(specificCustomerDetails)" @close="customerDialog=false"/>
+  <EditCustomer v-model="editDialog" :editDetails="specificCustomerDetails"/>
 </template>
 
 <script setup>
 import { useCustomerStore } from '@/stores/customerStore'
 const customerStore = useCustomerStore()
 import { ref } from 'vue'
+import customerDetails from './customerDetails.vue';
+import EditCustomer from './EditCustomer.vue';
 
 const headers = ref([
   { title: 'Name', value: 'firstName', sortable: true },
@@ -39,6 +43,15 @@ const headers = ref([
 ])
 let customerData = ref([]);
 let search = ref(undefined);
+let customerDialog = ref(false);
+let editDialog = ref(false);
+let specificCustomerDetails = ref({});
+
+function alertMe(id) {
+  specificCustomerDetails.value = customerData.value.find(t => t.id === id);
+  console.log(specificCustomerDetails.value);
+  customerDialog.value = true;
+}
 
 async function loadItems(event) {
   console.log(event)
