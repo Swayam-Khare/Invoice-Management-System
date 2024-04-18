@@ -24,15 +24,16 @@
           <v-text-field
             v-model="password"
             label="Password"
-            type="password"
             :rules="passwordRules"
             variant="outlined"
             color="#112d4e"
             class="mt-1"
             density="compact"
-            @blur="isFocused = false"
-            @focus="isFocused = true"
-          ></v-text-field>
+            :append-inner-icon="visible ? 'visibility_off' : 'visibility'"
+            :type="visible ? 'text' : 'password'"
+            @click:appendInner="visible = !visible"
+          >
+          </v-text-field>
           <v-card-actions class="pl-6 pt-0 pr-6">
             <v-btn color="#112D4E" type="submit" variant="elevated" block :disabled="!isFormValid"
               >Login</v-btn
@@ -80,6 +81,7 @@ const vendorStore = useVendorStore()
 const email = ref('')
 const password = ref('')
 const isFocused = ref(false)
+const visible = ref(false)
 
 const emit = defineEmits(['close', 'signup', 'vendor'])
 
@@ -131,7 +133,7 @@ const submitForm = async () => {
       console.log('in line 97', adminStore.stateVariable)
     } else if (adminStore.typelogin === 'vendor') {
       await vendorStore.loginVendor({ email: email.value, password: password.value })
-      
+
       console.log('line 108', vendorStore.token)
       if (vendorStore.token) {
         toast.success('Vendor Login Successfully.', {
@@ -141,7 +143,7 @@ const submitForm = async () => {
           transition: 'zoom',
           dangerouslyHTMLString: true
         })
-        router.replace('/profile')
+        router.replace('/vendor')
       } else {
         toast.error('Vendor Login failed.', {
           autoClose: 1000,
