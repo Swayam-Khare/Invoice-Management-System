@@ -95,7 +95,7 @@
           ></v-list-item>
         </v-list>
       </v-navigation-drawer>
-      <v-main class="h-screen">
+      <v-main>
         <component
           :is="isActiveTab"
           v-model="showProductDialog"
