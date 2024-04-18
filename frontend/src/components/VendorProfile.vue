@@ -98,7 +98,6 @@ async function approveVendor(id) {
 }
 
 @media only screen and (max-width: 426px) {
-
   .card-body {
     justify-content: center !important;
     align-items: center !important;
