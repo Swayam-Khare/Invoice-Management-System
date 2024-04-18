@@ -1,11 +1,12 @@
 <template>
-  <v-dialog max-width="500px" centered persistent>
+
+  <v-dialog max-width="500px" centered >
     <v-card class="rounded-lg remove-scrollbar">
       <v-card-title
         class="d-flex justify-space-between align-center"
         style="background-color: #112d4ef1; height:56px"
       >
-        <p style="color: #f5f5f5" class="text-h5 pl-5">Sign Up</p>
+        <p style="color: #f5f5f5" class="text-h5 pl-5">Customer Details</p>
         <v-btn icon="close" variant="text" color="#f5f5f5" @click="closeDialog"></v-btn>
       </v-card-title>
       <v-card-text>
@@ -14,7 +15,7 @@
             <v-col cols="12" md="6" class="pb-0 pb-md-3">
               <v-text-field
                 label="First Name"
-                v-model="firstName"
+                v-model="details.firstName"
                 :rules="[alphabetOnlyRule, required]"
                 variant="outlined"
                 color="#112d4e"
@@ -24,7 +25,7 @@
             <v-col cols="12" md="6" class="pt-1 pt-md-3">
               <v-text-field
                 label="Last Name"
-                v-model="lastName"
+                v-model="details.lastName"
                 :rules="[alphabetOnlyRule]"
                 variant="outlined"
                 color="#112d4e"
@@ -35,7 +36,7 @@
           <v-text-field
             label="Email"
             :rules="[emailRule]"
-            v-model="email"
+            v-model="details.email"
             variant="outlined"
             color="#112d4e"
             class="mt-1"
@@ -44,16 +45,7 @@
           <v-text-field
             label="Contact No."
             :rules="contactRules"
-            v-model="contact"
-            variant="outlined"
-            color="#112d4e"
-            class="mt-1"
-            density="compact"
-          ></v-text-field>
-          <v-text-field
-            label="Shop Name"
-            v-model="shopName"
-            :rules="[required]"
+            v-model="details.contact"
             variant="outlined"
             color="#112d4e"
             class="mt-1"
@@ -100,20 +92,8 @@
             </v-col>
           </v-row>
           <v-btn type="submit" class="mt-1 txt-button" color="#112d4e" @click="validate" block
-            >Sign Up</v-btn
+            >Update</v-btn
           >
-          <div class="d-flex justify-center align-center text-center">
-            <span>Already have an account?</span>
-            <v-btn
-              variant="text"
-              color="#112d4e"
-              @click="$emit('close'), $emit('login')"
-              :ripple="false"
-              class="pl-1 pr-0 font-weight-bold text-capitalize"
-            >
-              Log In
-            </v-btn>
-          </div>
         </v-form>
       </v-card-text>
     </v-card>
@@ -121,25 +101,35 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch,onMounted} from 'vue'
 import { useVendorStore } from '../stores/vendorStore'
 import axios from 'axios'
 import { toast } from 'vue3-toastify'
 
 const fatchedState = ref('')
-
 const vendorStore = useVendorStore()
-
+const details = ref({});
 const emit = defineEmits(['close', 'login'])
+const props = defineProps(['editDetails']);
 
+onMounted(() => {
+    console.log(props.editDetails);
+    details.value = JSON.parse(JSON.stringify(props.editDetails));
+    console.log(props.editDetails);
+    
+})
+
+watch(props.editDetails, (newDetails) => {
+    details.value = newDetails;
+    console.log(details.value);
+})
 const firstName = ref('')
 const lastName = ref('')
 const email = ref('')
 const contact = ref('')
-const shopName = ref('')
 const address_lane1 = ref('')
 const address_lane2 = ref('')
-const pincode = ref('')
+const pincode = ref('384315')
 // const state = ref('')
 const alphabetOnlyRule = (v) => /^[A-Za-z\s]*$/.test(v) || 'Alphabets only.'
 const emailRule = (v) => /.+@.+\..+/.test(v) || 'Invalid email address.'
@@ -190,7 +180,6 @@ async function submitForm() {
     lastName: lastName.value,
     email: email.value,
     contact: contact.value,
-    shopName: shopName.value,
     address_lane1: address_lane1.value,
     address_lane2: address_lane2.value,
     pincode: pincode.value,
@@ -234,7 +223,6 @@ function resetForm() {
   lastName.value = null
   email.value = null
   contact.value = null
-  shopName.value = null
   address_lane1.value = null
   address_lane2.value = null
   pincode.value = null
