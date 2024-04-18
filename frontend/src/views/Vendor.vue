@@ -108,14 +108,7 @@
   </v-card>
 </template>
 <script setup>
-<<<<<<< HEAD
-import { ref } from 'vue'
-
-
-
-=======
 import { ref, onMounted } from 'vue'
->>>>>>> main
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import Customer from '../components/Customer.vue'
