@@ -53,14 +53,25 @@
         </v-card-text>
         <v-card-actions class="d-flex ga-10 mt-10 justify-center">
             <v-btn class="edit" prepend-icon="save_as" @click="$emit('edit'),$emit('close')">Edit</v-btn>
-          <v-btn class="delete" prepend-icon="delete">Delete</v-btn>
+          <v-btn class="delete" prepend-icon="delete" @click="deleteCustomer">Delete</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
 </template>
 
 <script setup>
-defineProps(['details'])
+import { useCustomerStore } from '@/stores/customerStore';
+
+const customerStore = useCustomerStore();
+
+const props = defineProps(['details'])
+const emits = defineEmits(['close','edit','delete'])
+
+const deleteCustomer = async() => {
+  await customerStore.deleteCustomer(props.details.id);
+  emits('close');
+  emits('delete');
+}
 </script>
 
 <style scoped>

@@ -15,6 +15,7 @@ const {
   customerAddress,
   Address,
   Product,
+  VendorCustomer,
 } = db;
 
 // ================== FOR GETTING ALL INVOCIES ==========
@@ -217,6 +218,16 @@ exports.addInvoice = asyncErrorHandler(async (req, res, next) => {
             transaction: t,
           }
         );
+        console.log(req.vendor.id);
+        console.log(customer.id);
+        const venCust = await VendorCustomer.create(
+          {
+            VendorId: req.vendor.id,
+            CustomerId: customer.id
+          }, {
+            transaction:t
+          }
+        )
       } else {
         // check if deleted then restore
         if (existingCustomer.deletedAt) {
@@ -232,6 +243,13 @@ exports.addInvoice = asyncErrorHandler(async (req, res, next) => {
                 roleId: existingCustomer.id,
                 role: "customer",
               },
+            },
+            transaction: t,
+          });
+          await VendorCustomer.restore({
+            where: {
+              VendorId: req.vendor.id,
+              CustomerId:existingCustomer.id
             },
             transaction: t,
           });

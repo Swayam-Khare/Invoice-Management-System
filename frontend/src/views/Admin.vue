@@ -64,6 +64,7 @@
             :onmouseleave="cancelHover"
             title="Logout"
             value="logout"
+            @click="logout"
             class="text-left"
           ></v-list-item>
         </v-list>
@@ -266,11 +267,11 @@ onMounted(() => {
 const expanded = ref([])
 
 
-function handleMenuItemClick(title) {
-  if (title === 'Logout') {
-    logout()
-  }
-}
+// function handleMenuItemClick(title) {
+//   if (title === 'Logout') {
+//     logout()
+//   }
+// }
 
 async function logout() {
   try {
