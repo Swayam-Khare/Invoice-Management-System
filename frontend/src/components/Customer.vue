@@ -14,7 +14,7 @@
         :items-length="customerStore.rowsCount"
         :search="search"
         item-value="name"
-        @update:options="loadItems"
+        @update:options="options=$event, loadItems(options)"
         :items-per-page-options="itemsPerPageOption"
 
       >
@@ -24,8 +24,8 @@
       </v-data-table-server>
     </div>
   </div>
-  <customerDetails v-model="customerDialog" :details="specificCustomerDetails" @edit="editDialog=true,console.log(specificCustomerDetails)" @close="customerDialog=false"/>
-  <EditCustomer v-model="editDialog" :editDetails="specificCustomerDetails"/>
+  <customerDetails v-model="customerDialog" :details="specificCustomerDetails" @edit="editDialog=true" @close="customerDialog=false" @delete="loadItems(options)"/>
+  <EditCustomer v-model="editDialog" :editDetails="specificCustomerDetails" @close="editDialog=false,loadItems(options)"/>
 </template>
 
 <script setup>
@@ -46,6 +46,7 @@ let search = ref(undefined);
 let customerDialog = ref(false);
 let editDialog = ref(false);
 let specificCustomerDetails = ref({});
+let options = ref({});
 
 function alertMe(id) {
   specificCustomerDetails.value = customerData.value.find(t => t.id === id);
