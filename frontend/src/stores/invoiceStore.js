@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios from './axios'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 export const useInvoiceStore = defineStore('invoiceStore', () => {
@@ -17,7 +17,7 @@ export const useInvoiceStore = defineStore('invoiceStore', () => {
     // console.log(queryStr);
     try {
       loading.value = true
-      const res = await axios.get(`http://localhost:3500/api/v1/invoices?${queryStr}`, {
+      const res = await axios.get(`/invoices?${queryStr}`, {
         withCredentials: true
       })
       console.log(res.data.data.invoices)

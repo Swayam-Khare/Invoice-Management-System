@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import axios from 'axios'
+import axios from './axios';
 
 export const useAdminStore = defineStore('adminStore', () => {
   const adminArr = ref([])
@@ -8,15 +8,16 @@ export const useAdminStore = defineStore('adminStore', () => {
   let token = ref(null)
   let typelogin = ref('admin')
   const stateVariable = ref(10)
-const eVariable = import.meta.env.VITE_baseURL_DEV;
+const eVariable = import.meta.env.VITE_BASEURL_DEV;
   let loading = ref(false)
   async function loginAdmin(formData) {
     loading.value = true
     console.log('line 15',eVariable);
+    console.log('line 16', import.meta.env.VITE_BASEURL_DEV);
     try {
       const config = { headers: { 'Content-Type': 'application/json' }, withCredentials: true }
       const res = await axios.post(
-        'http://localhost:3500/api/v1/auth/login/admin',
+        '/auth/login/admin',
         formData,
         config
       )

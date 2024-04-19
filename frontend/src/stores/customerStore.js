@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios from './axios'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { toast } from 'vue3-toastify'
@@ -19,7 +19,7 @@ export const useCustomerStore = defineStore('customerStore', () => {
     // console.log(queryStr);
     try {
       loading.value = true
-      const res = await axios.get(`http://localhost:3500/api/v1/customers?${queryStr}`, {
+      const res = await axios.get(`/customers?${queryStr}`, {
         withCredentials: true
       })
       console.log(res.data.data.vendorCustomers)
@@ -36,7 +36,7 @@ export const useCustomerStore = defineStore('customerStore', () => {
     try {
       loading.value = true
       console.log('line 38',data)
-      const res = await axios.patch(`http://localhost:3500/api/v1/customers/${data.id}`,
+      const res = await axios.patch(`/customers/${data.id}`,
         data,
         {
         withCredentials: true
@@ -71,7 +71,7 @@ export const useCustomerStore = defineStore('customerStore', () => {
   const deleteCustomer = async (id)=>{
     try {
       loading.value = true;
-      await axios.delete(`http://localhost:3500/api/v1/customers/${id}`,{withCredentials:true})    
+      await axios.delete(`/customers/${id}`,{withCredentials:true})    
     } catch (err) {
       toast.error(err.message, {
         autoClose: 2000,
