@@ -18,7 +18,7 @@
                 variant="outlined"
                 @click="showDuePicker = !showDuePicker"
                 v-model="dueDate"
-                label="Due Date"   
+                label="Due Date"
                 readonly
                 v-bind="props"
               ></v-text-field>
@@ -129,19 +129,22 @@
             color="#112D4E"
           ></v-text-field>
           <div class="d-flex ga-2">
-            <v-select
-              variant="outlined"
-              item-color="#112D4E"
-              color="#112D4E"
-              label="State"
-              density="compact"
-              :items="states"
-            ></v-select>
             <v-text-field
-              variant="outlined"
-              density="compact"
               label="Pincode"
-              color="#112D4E"
+              v-model="pincode"
+              :rules="pincodeRules"
+              variant="outlined"
+              color="#112d4e"
+              density="compact"
+            ></v-text-field>
+            <v-text-field
+              label="State"
+              v-model="fatchedState"
+              :rules="[required]"
+              variant="outlined"
+              color="#112d4e"
+              density="compact"
+              :disabled="true"
             ></v-text-field>
           </div>
         </div>
@@ -224,9 +227,11 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import SelectCustomer from './SelectCustomer.vue'
 import SelectProduct from './SelectProduct.vue'
+import axios from 'axios'
+import { toast } from 'vue3-toastify'
 
 const showDuePicker = ref(false)
 const showPurchasePicker = ref(false)
@@ -235,7 +240,41 @@ const actualPurchaseDate = ref(null)
 const showSelectCustomer = ref(false)
 const showSelectProduct = ref(false)
 const status = ['Paid', 'Due', 'Overdue']
-const states = ['Uttar Pradesh', 'Gujarat', 'Rajasthan']
+const pincode = ref('')
+const fatchedState = ref('')
+
+const required = (v) => !!v || 'This field is Required'
+
+const pincodeRules = computed(() => [
+  (v) => !!v || 'Pincode is required.',
+  (v) => (v && /^\d+$/.test(v)) || 'Pincode must contain only digits.',
+  (v) => (v && /^\d{6}$/.test(v)) || 'Pincode must be exactly 6 digits.'
+])
+
+const fetchStateFromPincode = async (pincode) => {
+  try {
+    const response = await axios.get(`https://api.postalpincode.in/pincode/${pincode}`)
+    fatchedState.value = response.data[0].PostOffice[0].State
+  } catch (error) {
+    console.log(error)
+    toast.error('Pincode is invalid!', {
+      autoClose: 1000,
+      pauseOnHover: false,
+      type: 'error',
+      position: 'bottom-center',
+      transition: 'zoom',
+      dangerouslyHTMLString: true
+    })
+  }
+}
+
+watch(pincode, async (newPincode) => {
+  if (newPincode && newPincode.length === 6) {
+    await fetchStateFromPincode(newPincode)
+  } else {
+    fatchedState.value = ''
+  }
+})
 
 const orderData = ref([
   { product: 'Dish Washer', quantity: 2, price: 5000, discount: 100, subtotal: 4900 },
@@ -257,16 +296,6 @@ const purchaseDate = computed(() => {
   }
   return ''
 })
-
-// const addProduct = () => {
-//   orderData.value.push({
-//     product: 'Product',
-//     quantity: 1,
-//     price: 0,
-//     discount: 0,
-//     subtotal: 0
-//   })
-// }
 </script>
 
 <style scoped>
