@@ -20,11 +20,7 @@ const {
 
 // ================== FOR GETTING ALL INVOCIES ==========
 exports.getInvoices = asyncErrorHandler(async (req, res, next) => {
-  const totalRow = await Invoice.findAndCountAll({
-    where: {
-      VendorId: req.vendor.id,
-    },
-  });
+  
   let status = [];
   if (!req.query.status) {
     status = ["paid", "due", "overdue"];
@@ -46,7 +42,7 @@ exports.getInvoices = asyncErrorHandler(async (req, res, next) => {
     limitFields = apiFeatures.limitFields(req.query.fields);
   }
   if (req.query.page) {
-    offset = apiFeatures.paginate(req.query.page, limit, totalRow.count, next);
+    offset = apiFeatures.paginate(req.query.page, limit, next);
   }
   if (req.query.search) {
     search = apiFeatures.search(search);
@@ -61,6 +57,7 @@ exports.getInvoices = asyncErrorHandler(async (req, res, next) => {
       },
       {
         model: Customer,
+        paranoid:false,
       },
     ],
     where: {
