@@ -5,7 +5,8 @@
   >
     <div class="d-flex align-center ga-3">
       <img src="../assets/logo.svg" alt="Logo" />
-      <span class="text-h4 text-white">Invoice Management System</span>
+      <span class="text-h4 d-none d-md-flex text-white">Invoice Management System</span>
+      <span class="text-h4 d-flex d-md-none text-white">IMS</span>
     </div>
     <div class="d-flex align-center">
       <div class="search pr-10">
@@ -18,7 +19,7 @@
         />
         <!-- <v-icon icon="search" class="bg-grey-lighten-2 d-flex d-md-none"></v-icon> -->
       </div>
-      <v-menu>
+      <!-- <v-menu>
         <template v-slot:activator="{ props }">
           <button v-bind="props" class="elevation-6 logo-btn" id="random-color">
             <span class="logo-char">A</span>
@@ -27,8 +28,45 @@
         <v-list class="mt-4">
           <v-list-item class="font-weight-bold"> Hi, Admin </v-list-item>
           <v-list-item height="40" v-for="(item, index) in items" :key="index" :value="index">
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
+            <v-list-item-title @click="handleMenuItemClick(item.title)">{{
+              item.title
+            }}</v-list-item-title>
           </v-list-item>
+        </v-list>
+      </v-menu> -->
+      <v-menu offset="4">
+        <template v-slot:activator="{ props }">
+          <button v-bind="props" class="elevation-6 logo-btn" id="random-color">
+            <span class="logo-char">A</span>
+          </button>
+        </template>
+
+        <!-- list item to show in menu -->
+        <v-list class="pa-0">
+          <v-list-item variant="flat" class="text-left font-weight-bold"> Hi, Admin </v-list-item>
+          <v-list-item
+            id="update-password"
+            :active="itemVariant == 'update-password'"
+            color="#112D4E"
+            variant="flat"
+            :onmouseenter="activeHover"
+            :onmouseleave="cancelHover"
+            title="Update Password"
+            value="updatePassword"
+            class="text-left"
+          ></v-list-item>
+          <v-list-item
+            id="logout"
+            :active="itemVariant == 'logout'"
+            color="#112D4E"
+            variant="flat"
+            :onmouseenter="activeHover"
+            :onmouseleave="cancelHover"
+            title="Logout"
+            value="logout"
+            @click="logout"
+            class="text-left"
+          ></v-list-item>
         </v-list>
       </v-menu>
     </div>
@@ -105,21 +143,22 @@
               variant="text"
               class="nav-btn text-capitalize h-100"
             >
-              {{ status }} Status <v-icon :icon="clearFilter()" @click="closeFilter()"></v-icon>
+              Status <v-icon :icon="clearFilter()" @click="closeFilter()"></v-icon>
             </v-btn>
           </template>
 
           <!-- list item to show in menu -->
           <v-list class="pa-0">
             <v-list-item
-             
               id="approved"
               :active="itemVariant == 'approved'"
               color="#112D4E"
               variant="flat"
               :onmouseenter="activeHover"
               :onmouseleave="cancelHover"
-              @click="(approvalStatus = 'approved'),(options.status = approvalStatus), loadItems(options)"
+              @click="
+                (approvalStatus = 'approved'), (options.status = approvalStatus), loadItems(options)
+              "
               title="Approved"
               value="approved"
               class="text-left"
@@ -133,7 +172,9 @@
               variant="flat"
               :onmouseenter="activeHover"
               :onmouseleave="cancelHover"
-              @click="(approvalStatus = 'pending'), (options.status = approvalStatus), loadItems(options)"
+              @click="
+                (approvalStatus = 'pending'), (options.status = approvalStatus), loadItems(options)
+              "
               title="Pending"
               value="pending"
               class="text-left"
@@ -150,7 +191,7 @@
       </template>
       <template v-slot:expanded-row="{ item }">
         <td :colspan="headers.length">
-          <div class="transition-slot overflow-hidden" id="details">
+          <div class="transition-slot" id="details">
             <Profile :data="item" @unmount-profile="loadItems(options)" />
           </div>
         </td>
@@ -161,12 +202,18 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { toast } from 'vue3-toastify'
+
 import randomColor from 'randomcolor'
 import { onMounted } from 'vue'
 import { useVendorStore } from '../stores/vendorStore.js'
+import { useAdminStore } from '@/stores/admin'
 import Profile from '../components/VendorProfile.vue'
+
+const router = useRouter()
+
 let data = ref([])
-let showComponent = ref(true)
 const itemsPerPageOption = ref([
   { title: '10', value: 10 },
   { title: '15', value: 15 },
@@ -180,12 +227,17 @@ let options = ref({})
 let search = ref(undefined)
 let itemVariant = ref(null)
 const vendorStore = useVendorStore()
+const adminStore = useAdminStore()
 
 const activeHover = (event) => {
   if (event.currentTarget.id == 'pending') {
     itemVariant.value = 'pending'
   } else if (event.currentTarget.id == 'approved') {
     itemVariant.value = 'approved'
+  } else if (event.currentTarget.id == 'update-password') {
+    itemVariant.value = 'update-password'
+  } else if (event.currentTarget.id == 'logout') {
+    itemVariant.value = 'logout'
   }
 }
 
@@ -214,14 +266,33 @@ onMounted(() => {
 })
 const expanded = ref([])
 
-const items = ref([
-  {
-    title: 'Update Profile'
-  },
-  {
-    title: 'Logout'
+
+// function handleMenuItemClick(title) {
+//   if (title === 'Logout') {
+//     logout()
+//   }
+// }
+
+async function logout() {
+  try {
+    const success = await adminStore.logoutAdmin()
+    if (success) {
+      // Redirect to the home page
+      router.replace('/')
+    } else {
+      console.error('Logout failed')
+      toast.error('admin logout failed!', {
+        autoClose: 2000,
+        type: 'error',
+        position: 'top-right',
+        transition: 'zoom',
+        dangerouslyHTMLString: true
+      })
+    }
+  } catch (error) {
+    console.error('Logout failed:', error)
   }
-])
+}
 
 const headers = ref([
   { key: 'data-table-expand' },
@@ -240,7 +311,7 @@ function icon(expand, item) {
 }
 
 async function loadItems(event) {
-  console.log(event);
+  console.log(event)
   const { page, itemsPerPage, sortBy, search, status } = event
   let sortingStr = ''
   if (sortBy.length) {
@@ -269,12 +340,14 @@ async function loadItems(event) {
     d.firstName = d.firstName + ' ' + d.lastName
   }
   // }
-  expanded.value = [];
-
+  expanded.value = []
 }
+
 
 function toggleExpansion(item, expand, isExpanded) {
   console.log(expand)
+
+  
   // this.expanded = []
   if (isExpanded(item)) {
     let id = null
@@ -305,9 +378,10 @@ function toggleExpansion(item, expand, isExpanded) {
 </script>
 
 <style scoped>
-@media only screen and (max-width: 690) {
-  .pagination {
-    width: 70% !important;
+@media only screen and (max-width: 690px) {
+  .transition-slot{
+  animation: transSmall 0.2s linear !important;
+  height: 550px !important;
   }
 }
 
@@ -406,6 +480,16 @@ tr:hover {
 
   to {
     height: 350px;
+  }
+}
+
+@keyframes transSmall {
+  from {
+    height: 0;
+  }
+
+  to {
+    height: 550px;
   }
 }
 
