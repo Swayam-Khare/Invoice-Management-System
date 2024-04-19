@@ -129,7 +129,7 @@
     >
       <template v-slot:item.status="{ item }">
         <td :class="{ pending: item.status === 'pending', approved: item.status === 'approved' }">
-          {{ item.status }}
+          {{ item.status }} {{ eVariable }}
         </td>
       </template>
 
