@@ -8,12 +8,9 @@ export const useAdminStore = defineStore('adminStore', () => {
   let token = ref(null)
   let typelogin = ref('admin')
   const stateVariable = ref(10)
-const eVariable = import.meta.env.VITE_BASEURL_DEV;
   let loading = ref(false)
   async function loginAdmin(formData) {
     loading.value = true
-    console.log('line 15',eVariable);
-    console.log('line 16', import.meta.env.VITE_BASEURL_DEV);
     try {
       const config = { headers: { 'Content-Type': 'application/json' }, withCredentials: true }
       const res = await axios.post(
