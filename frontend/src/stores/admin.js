@@ -28,7 +28,7 @@ export const useAdminStore = defineStore('adminStore', () => {
 
   async function logoutAdmin() {
     try {
-      const response = await axios.get('http://localhost:3500/api/v1/auth/logout/admin', {
+      const response = await axios.get('/auth/logout/admin', {
         withCredentials: true
       })
 
