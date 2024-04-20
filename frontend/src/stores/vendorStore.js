@@ -68,7 +68,7 @@ export const useVendorStore = defineStore('vendorStore', () => {
     try {
       console.log('in 52', id)
       loading.value = true
-      const res = await axios.delete(`/vendors/${id}`, {
+      const res = await axios.delete(`/vendors/specific/${id}`, {
         withCredentials: true
       })
     } catch (error) {
