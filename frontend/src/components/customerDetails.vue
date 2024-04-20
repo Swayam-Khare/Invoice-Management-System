@@ -3,8 +3,8 @@
       <v-card class="rounded-lg">
 
         <v-card-text>
-          <div class="temp">
-            <div class="d-flex justify-space-between">
+          <div class="">
+            <div class="customer-details-wrapper d-flex justify-space-between">
               <img
                 src="../assets/imgs/User/1.png"
                 alt="profile photo"
@@ -51,7 +51,7 @@
             </div>
           </div>
         </v-card-text>
-        <v-card-actions class="d-flex ga-10 mt-10 justify-center">
+        <v-card-actions class="action-btn d-flex ga-10 mt-10 justify-center">
             <v-btn class="edit" prepend-icon="save_as" @click="$emit('edit'),$emit('close')">Edit</v-btn>
           <v-btn class="delete" prepend-icon="delete" @click="deleteCustomer">Delete</v-btn>
         </v-card-actions>
@@ -75,6 +75,39 @@ const deleteCustomer = async() => {
 </script>
 
 <style scoped>
+@media only screen and (max-width:520px){
+  .customer-details-wrapper{
+    flex-direction: column !important;
+    gap: 20px;
+  }
+
+  .customer-details-wrapper img{
+    align-self: center;
+  }
+
+  .personal{
+      transform: translateX(-30px) !important;
+  }
+
+  .address{
+    width: 150% !important;
+  }
+
+  .action-btn{
+    flex-direction: column !important;
+    gap: 10px !important;
+    align-items: center !important;
+  }
+
+  .edit{
+    width: 50% !important;
+  }
+
+  .delete{
+    width: 50% !important;
+  }
+}
+
 .line {
   position: absolute;
   border-top: 35px solid #112d4e;
