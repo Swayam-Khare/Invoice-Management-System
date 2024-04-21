@@ -155,9 +155,10 @@ async function loadItems(event) {
   await invoiceStore.getAllInvoices(queryStr)
   invoiceData.value = invoiceStore.invoices
   console.log(invoiceData.value)
+  
 
   for (let d of invoiceData.value) {
-    d.Customer.fullName = d.Customer.firstName + ' ' + d.Customer.lastName
+    d.Customer.firstName = d.Customer.firstName + ' ' + d.Customer.lastName
   }
 
   for (let d of invoiceData.value) {
@@ -165,6 +166,7 @@ async function loadItems(event) {
     d.due_date = formatDate(d.due_date)
     console.log(d.due_date)
   }
+  
 }
 
 const formatDate = (date) => {
@@ -208,7 +210,7 @@ function clearStatusFilter() {
 
 const headers = [
   { title: 'Invoice no.', value: 'invoice_no', sortable: true, class: 'custom-table' },
-  { title: 'Customer Name', value: 'Customer.fullName', sortable: true },
+  { title: 'Customer Name', value: 'Customer.firstName', sortable: true },
   { title: 'Purchase Date', value: 'purchase_date' },
   { title: 'Due Date', value: 'due_date' },
   { title: 'Status', value: 'status' },
