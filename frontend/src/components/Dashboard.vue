@@ -44,6 +44,28 @@
           </v-col>
         </v-row>
         <v-row>
+          <v-col cols="12" sm="6">
+            <v-card elevation="5" color="amber-lighten-5" dark rounded>
+              <v-card-title>Paid vs Unpaid Invoices</v-card-title>
+              <v-card-text>
+                <div style="height: 300px;">
+                  <Pie :data="chartData" :options="chartOptions"></Pie>
+                </div>
+              </v-card-text>
+            </v-card>
+          </v-col>
+          <v-col cols="12" sm="6">
+            <v-card elevation="5" color="amber-lighten-5" dark rounded>
+              <v-card-title>Monthly Income</v-card-title>
+              <v-card-text>
+                <div style="height: 300px;">
+                  <Line :data="lineChartData" :options="lineChartOptions"></Line>
+                </div>
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
+        <v-row>
           <v-col cols="12" sm="12">
             <v-card elevation="5" color="#112d4e">
               <v-card-title>Recent Invoices</v-card-title>
@@ -70,28 +92,6 @@
                   </div>
                 </template>
               </v-data-table-virtual>
-            </v-card>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="12" sm="6">
-            <v-card elevation="5" color="amber-lighten-5" dark rounded>
-              <v-card-title>Paid vs Unpaid Invoices</v-card-title>
-              <v-card-text>
-                <div style="height: 300px;">
-                  <Pie :data="chartData" :options="chartOptions"></Pie>
-                </div>
-              </v-card-text>
-            </v-card>
-          </v-col>
-          <v-col cols="12" sm="6">
-            <v-card elevation="5" color="amber-lighten-5" dark rounded>
-              <v-card-title>Monthly Income</v-card-title>
-              <v-card-text>
-                <div style="height: 300px;">
-                  <Line :data="lineChartData" :options="lineChartOptions"></Line>
-                </div>
-              </v-card-text>
             </v-card>
           </v-col>
         </v-row>
