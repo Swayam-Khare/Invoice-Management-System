@@ -15,15 +15,12 @@ const {
   customerAddress,
   Address,
   Product,
+  VendorCustomer,
 } = db;
 
 // ================== FOR GETTING ALL INVOCIES ==========
 exports.getInvoices = asyncErrorHandler(async (req, res, next) => {
-  const totalRow = await Invoice.findAndCountAll({
-    where: {
-      VendorId: req.vendor.id,
-    },
-  });
+  
   let status = [];
   if (!req.query.status) {
     status = ["paid", "due", "overdue"];
@@ -45,7 +42,7 @@ exports.getInvoices = asyncErrorHandler(async (req, res, next) => {
     limitFields = apiFeatures.limitFields(req.query.fields);
   }
   if (req.query.page) {
-    offset = apiFeatures.paginate(req.query.page, limit, totalRow.count, next);
+    offset = apiFeatures.paginate(req.query.page, limit, next);
   }
   if (req.query.search) {
     search = apiFeatures.search(search);
@@ -60,6 +57,7 @@ exports.getInvoices = asyncErrorHandler(async (req, res, next) => {
       },
       {
         model: Customer,
+        paranoid:false,
       },
     ],
     where: {
@@ -217,6 +215,16 @@ exports.addInvoice = asyncErrorHandler(async (req, res, next) => {
             transaction: t,
           }
         );
+        console.log(req.vendor.id);
+        console.log(customer.id);
+        const venCust = await VendorCustomer.create(
+          {
+            VendorId: req.vendor.id,
+            CustomerId: customer.id
+          }, {
+            transaction:t
+          }
+        )
       } else {
         // check if deleted then restore
         if (existingCustomer.deletedAt) {
@@ -232,6 +240,13 @@ exports.addInvoice = asyncErrorHandler(async (req, res, next) => {
                 roleId: existingCustomer.id,
                 role: "customer",
               },
+            },
+            transaction: t,
+          });
+          await VendorCustomer.restore({
+            where: {
+              VendorId: req.vendor.id,
+              CustomerId:existingCustomer.id
             },
             transaction: t,
           });

@@ -28,28 +28,6 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
     state,
   } = req.body;
 
-  // const vendor = await Vendor.create({
-  //   firstName,
-  //   lastName,
-  //   shopName,
-  //   email,
-  //   password,
-  //   confirmPassword,
-  // });
-  // let vendorAddress = null;
-  // if (vendor && vendor.id) {
-  //   const roleId = vendor.id;
-  //   vendorAddress = await Address.create({
-  //     address_lane1,
-  //     address_lane2,
-  //     landmark,
-  //     pincode,
-  //     state,
-  //     contact,
-  //     role,
-  //     roleId,
-  //   });
-  // }
 
   // ---------- CREATE WITH ASSOCIATIONS --------------
 
@@ -105,6 +83,14 @@ exports.createVendor = asyncErrorHandler(async (req, res, next) => {
         email,
       },
     });
+    await Vendor.update(
+      { status: "pending" },
+      {
+        where: {
+          email,
+        },
+      }
+    );
     const vendor = await Vendor.findOne({ where: { email } });
     // restore all the associated data.
     await Address.restore({
@@ -230,8 +216,11 @@ exports.getAllVendors = asyncErrorHandler(async (req, res, next) => {
 
 exports.getASpecificVendor = asyncErrorHandler(async (req, res, next) => {
   const { jwtAuth } = req.cookies;
-  const decodedToken = await util.promisify(jwt.verify)(jwtAuth, process.env.SECRET_STR);
-  
+  const decodedToken = await util.promisify(jwt.verify)(
+    jwtAuth,
+    process.env.SECRET_STR
+  );
+
   const id = decodedToken.id;
 
   const vendor = await Vendor.findOne({
@@ -272,9 +261,17 @@ exports.getASpecificVendor = asyncErrorHandler(async (req, res, next) => {
 // ------------- DELETE A VENDOR -----------
 exports.deleteVendor = asyncErrorHandler(async (req, res, next) => {
   const { jwtAuth } = req.cookies;
-  const decodedToken = await util.promisify(jwt.verify)(jwtAuth, process.env.SECRET_STR);
+  const decodedToken = await util.promisify(jwt.verify)(
+    jwtAuth,
+    process.env.SECRET_STR
+  );
 
-  const id = decodedToken.id;
+  let id = null;
+  if (decodedToken.role === "admin" && req.params.id) {
+    id = req.params.id;
+  } else {
+    id = decodedToken.id;
+  }
   const vendor = await Vendor.findByPk(id, {
     include: [
       {
@@ -335,7 +332,10 @@ exports.deleteVendor = asyncErrorHandler(async (req, res, next) => {
 
 exports.updateVendor = asyncErrorHandler(async (req, res, next) => {
   const { jwtAuth } = req.cookies;
-  const decodedToken = await util.promisify(jwt.verify)(jwtAuth, process.env.SECRET_STR);
+  const decodedToken = await util.promisify(jwt.verify)(
+    jwtAuth,
+    process.env.SECRET_STR
+  );
 
   const id = decodedToken.id;
   const vendor = await Vendor.findByPk(id, {
