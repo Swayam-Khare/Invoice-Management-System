@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div class="d-flex flex-md-row flex-column justify-space-between align-end">
     <div class="mobile-search pt-4 px-2 px-sm-10 px-md-14 px-lg-16 ml-lg-3 ml-xxl-16">
       <input
@@ -26,7 +26,7 @@
         <th>
           Name
           <v-icon icon="swap_vert" class="cursor-pointer"></v-icon>
-          <!-- <v-icon icon="arrow_downward" size="small"></v-icon> -->
+          
         </th>
         <th>
           Price
@@ -84,96 +84,101 @@
     :total-visible="4"
     size="x-small"
   ></v-pagination>
+</template> -->
+<template>
+  <div class="bg-grey-lighten-3 h-screen pa-5 d-flex ga-8 flex-column">
+    <div>
+      <input type="text" v-model="search" placeholder="Search..." class="elevation-6 pa-3 mx-auto search bg-white" />
+    </div>
+    <div class="table-border elevation-6">
+      <v-data-table-server
+        :headers="headers"
+        :items="customerData"
+        :items-per-page="10"
+      :loading="productStore.loading"
+
+        loading-text="Please wait..."
+        :items-length="productStore.rowsCount"
+        :search="search"
+        item-value="name"
+        @update:options="options=$event, loadItems(options)"
+        :items-per-page-options="itemsPerPageOption"
+
+      >
+        <template v-slot:item.actions="{ item }">
+          <v-icon @click="alertMe(item.id)">info_outlined</v-icon>
+        </template>
+      </v-data-table-server>
+    </div>
+  </div>
+  <customerDetails v-model="customerDialog" :details="specificCustomerDetails" @edit="editDialog=true" @close="customerDialog=false" @delete="loadItems(options)"/>
+  <EditCustomer v-model="editDialog" :editDetails="specificCustomerDetails" @close="editDialog=false,loadItems(options)"/>
 </template>
 
 <script setup>
+import { useProductStore } from '@/stores/productStore'
+const productStore = useProductStore()
 import { ref } from 'vue'
-// import randomColor from 'randomcolor'
-import CreateProduct from './CreateProduct.vue'
+import customerDetails from './customerDetails.vue';
+import EditCustomer from './EditCustomer.vue';
 
-const page = ref(1)
-// onMounted(() => {
-//     const color = randomColor()
-//     document.getElementById('random-color').style.backgroundColor = color
-// })
-
-// const items = ref([{ title: 'Update Profile' }, { title: 'Logout' }])
-
-const status = ref([{ title: 'All' }, { title: 'Out of Stock' }])
-const vendors = ref([
-  {
-    name: 'product 1',
-    description: 'lsdkfjl skdjflsdk fslkjfls dkk',
-    stock: 0,
-    price: 200,
-    discount: 3
-  },
-  {
-    name: 'product 1',
-    description: 'lsdkfjl skdjflsdk fslkjfls dkk',
-    stock: 52,
-    price: 0,
-    discount: 3
-  },
-  {
-    name: 'product 1',
-    description: 'lsdkfjl skdjflsdk fslkjfls dkk',
-    stock: 52,
-    price: 200,
-    discount: 3
-  },
-  {
-    name: 'product 1',
-    description: 'lsdkfjl skdjflsdk fslkjfls dkk',
-    stock: 52,
-    price: 200,
-    discount: 3
-  },
-  {
-    name: 'product 1',
-    description: 'lsdkfjl skdjflsdk fslkjfls dkk',
-    stock: 0,
-    price: 200,
-    discount: 3
-  },
-  {
-    name: 'product 1',
-    description: 'lsdkfjl skdjflsdk fslkjfls dkk',
-    stock: 0,
-    price: 200,
-    discount: 3
-  },
-  {
-    name: 'product 1',
-    description: 'lsdkfjl skdjflsdk fslkjfls dkk',
-    stock: 20552,
-    price: 200,
-    discount: 3
-  },
-  {
-    name: 'product 1',
-    description: 'lsdkfjl skdjflsdk fslkjfls dkk',
-    stock: 0,
-    price: 200,
-    discount: 3
-  },
-  {
-    name: 'product 1',
-    description: 'lsdkfjl skdjflsdk fslkjfls dkk',
-    stock: 0,
-    price: 200,
-    discount: 3
-  },
-  {
-    name: 'product 1',
-    description: 'lsdkfjl skdjflsdk fslkjfls dkk',
-    stock: 52,
-    price: 200,
-    discount: 3
-  }
+const headers = ref([
+  { title: 'Name', value: 'firstName', sortable: true },
+  { title: 'Email', value: 'email' },
+  { title: 'Contact no', value: 'Address_Details.contact' },
+  { title: '', value: 'actions' }
 ])
+let customerData = ref([]);
+let search = ref(undefined);
+let customerDialog = ref(false);
+let editDialog = ref(false);
+let specificCustomerDetails = ref({});
+let options = ref({});
 
-const showProductDialog = ref(false)
+function alertMe(id) {
+  specificCustomerDetails.value = customerData.value.find(t => t.id === id);
+  console.log(specificCustomerDetails.value);
+  customerDialog.value = true;
+}
+
+async function loadItems(event) {
+  console.log(event)
+  const { sortBy, page, itemsPerPage, search } = event;
+  console.log('line 39',sortBy,page,itemsPerPage,search);
+  let sortingStr = ''
+
+  if (sortBy.length) {
+    sortBy.forEach((i) => {
+      if (i.order == 'asc') {
+        sortingStr += i.key + ','
+      } else {
+        sortingStr += '-' + i.key + ','
+      }
+    })
+  }
+  sortingStr = sortingStr.slice(0, sortingStr.length - 1)
+
+  const queryObj = {};
+  
+  queryObj.page = page;
+  queryObj.limit = itemsPerPage;
+  queryObj.search = search;
+  queryObj.sort = sortingStr;
+
+  await productStore.getAllCustomers(queryObj)
+  customerData.value = productStore.customers
+  for (let d of customerData.value) {
+    d.firstName = d.firstName + ' ' + d.lastName
+  }
+}
+
+const itemsPerPageOption = ref([
+  { title: '10', value: 10 },
+  { title: '15', value: 15 },
+  { title: '20', value: 20 },
+  { title: '50', value: 50 },
+  { title: '100', value: 100 }
+])
 </script>
 
 <style scoped>
@@ -194,78 +199,8 @@ const showProductDialog = ref(false)
     5px 5px 10px rgba(0, 0, 0, 0.456) !important;
 }
 
-.logo-btn {
-  border-radius: 100%;
-  padding: 5px 18px;
-  background-color: #ec407a;
-}
-
-.logo-char {
-  color: white;
-  font-size: 30px;
-}
-
-table {
-  border-collapse: collapse;
-  width: 90%;
-  overflow: hidden;
-}
-
-th {
-  padding: 10px 20px;
-  text-align: left;
-  /* border-bottom: 2px solid rgba(0, 0, 0, 0.521); */
-  background-color: #112d4ecc;
-  color: white;
-}
-
-td {
-  padding: 10px 20px;
-  /* border-bottom: 1px solid rgba(0, 0, 0, 0.521); */
-}
-
-tr {
-  transition: 0.2s;
-}
-
-tr:nth-child(odd) {
-  background-color: #112d4e13;
-}
-
-tr:first-child:hover {
-  scale: 1;
-}
-
-tr:hover {
-  scale: 1.01;
-}
-
-.approved {
-  background-color: rgba(0, 128, 0, 0.066);
-  color: green;
-  border-radius: 20px;
-  padding: 5px 10px;
-}
-
-.pending {
-  background-color: rgba(255, 0, 0, 0.066);
-  color: red;
-  border-radius: 20px;
-  padding: 5px 10px;
-}
-
-.hover-scale {
-  transition: 0.2s;
-}
-
-.hover-scale:hover {
-  scale: 1.3;
-  cursor: pointer;
-}
-
-.hover-btn:hover {
-  background-color: #112d4e;
-  color: white;
-  transition: 0.5s;
+.table-border {
+  border: 1px solid rgba(58, 56, 56, 0.134);
+  border-radius: 8px;
 }
 </style>
