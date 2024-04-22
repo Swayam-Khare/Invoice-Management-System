@@ -107,11 +107,7 @@ exports.addProduct = asyncErrorHandler(async (req, res, next) => {
 
 // READ OPERATION
 exports.readProducts = asyncErrorHandler(async (req, res, next) => {
-    const totalRows = await VendorProduct.findAndCountAll({
-        where: {
-            VendorId: req.vendor.id,
-        }
-    });
+    
     let orderBy, whereCondition = {};
     let limitFields = null;
     let offset = null;
@@ -146,7 +142,7 @@ exports.readProducts = asyncErrorHandler(async (req, res, next) => {
         limitFields = apiFeatures.limitFields(req.query.fields);
     }
     if (req.query.page) {
-        offset = apiFeatures.paginate(req.query.page, limit, totalRows.count, next);
+        offset = apiFeatures.paginate(req.query.page, limit, next);
 
     }
     if (req.query.search) {
@@ -198,6 +194,12 @@ exports.readProducts = asyncErrorHandler(async (req, res, next) => {
             price: vendorProduct.price,
             discount: vendorProduct.discount,
         };
+    });
+
+    const totalRows = await VendorProduct.findAndCountAll({
+        where: {
+            VendorId: req.vendor.id,
+        }
     });
 
     res.status(200).json({
