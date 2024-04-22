@@ -2,12 +2,9 @@
   <div style="background-color: #112d4e14">
     <div class="d-flex flex-md-row flex-column justify-space-between align-end">
       <div class="mobile-search align-center mt-1 pt-4 px-2 px-sm-10 px-md-14 px-lg-16 ml-xxl-16">
-        <v-text-field
-          variant="outlined" 
-          color="#112d4e"
-          density="compact"
-          :disabled="true"
-        >#</v-text-field>
+        <v-text-field variant="outlined" color="#112d4e" density="compact" :disabled="true"
+          >#</v-text-field
+        >
         <input
           type="text"
           placeholder="Search invoice no."
@@ -118,7 +115,6 @@ import { ref, computed } from 'vue'
 import { useInvoiceStore } from '@/stores/invoiceStore'
 const invoiceStore = useInvoiceStore()
 const page = ref(1)
-let statusFilter = ref(null)
 let filterMenu = ref(false)
 const menuTop = ref('0px')
 const menuLeft = ref('0px')
@@ -129,7 +125,6 @@ let options = ref({})
 let search = ref(undefined)
 
 async function loadItems(event) {
-  console.log(event)
   const { page, itemsPerPage, sortBy, search, status } = event
   let sortingStr = ''
   if (sortBy.length) {
@@ -142,19 +137,15 @@ async function loadItems(event) {
     })
   }
   sortingStr = sortingStr.slice(0, sortingStr.length - 1)
-  console.log(sortingStr)
   const queryStr = {}
   queryStr.page = page
   queryStr.limit = itemsPerPage
   queryStr.sort = sortingStr
   queryStr.search = search
   queryStr.status = status
-  console.log(queryStr)
 
   await invoiceStore.getAllInvoices(queryStr)
   invoiceData.value = invoiceStore.invoices
-  console.log(invoiceData.value)
-  
 
   for (let d of invoiceData.value) {
     d.Customer.firstName = d.Customer.firstName + ' ' + d.Customer.lastName
@@ -163,9 +154,7 @@ async function loadItems(event) {
   for (let d of invoiceData.value) {
     d.purchase_date = formatDate(d.purchase_date)
     d.due_date = formatDate(d.due_date)
-    console.log(d.due_date)
   }
-  
 }
 
 const formatDate = (date) => {
@@ -181,22 +170,12 @@ const itemsPerPageOption = ref([
   { title: '100', value: 100 }
 ])
 
-// const filteredItems = computed(() => {
-//   if (!statusFilter.value) return vendors.value
-//   return vendors.value.filter((item) => item.status === statusFilter.value)
-// })
-
 function toggleFilterMenu(event) {
   filterMenu.value = !filterMenu.value
   const iconPos = event.target.getBoundingClientRect()
   menuTop.value = iconPos.bottom + window.scrollY + 'px'
   menuLeft.value = iconPos.left + 'px'
 }
-
-// function setStatusFilter(status) {
-//   statusFilter.value = status.title
-//   filterMenu.value = false // Close the menu after selection
-// }
 
 function clearStatusFilter() {
   // statusFilter.value = null

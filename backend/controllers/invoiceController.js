@@ -29,6 +29,7 @@ exports.getInvoices = asyncErrorHandler(async (req, res, next) => {
   }
 
   let orderBy;
+  let orderByCustomer;
   let limitFields = null;
   let offset = null;
   const limit = req.query.limit || 10;
@@ -48,6 +49,11 @@ exports.getInvoices = asyncErrorHandler(async (req, res, next) => {
     search = apiFeatures.search(search);
   }
 
+  if (orderBy[0][0].startsWith("Customer")) {
+    orderByCustomer = [['firstName', ['DESC']]]
+    orderBy = undefined
+  }
+
   // const attributes = limitFields ? limitFields : ["id", "invoice_no", "transaction_no", "due_date", "purchase_date", "status", "total"];
   const invoices = await Invoice.findAll({
     include: [
@@ -58,6 +64,7 @@ exports.getInvoices = asyncErrorHandler(async (req, res, next) => {
       {
         model: Customer,
         paranoid:false,
+        order: orderByCustomer
       },
     ],
     where: {
@@ -130,7 +137,6 @@ exports.getInvoice = asyncErrorHandler(async (req, res, next) => {
   });
 
   const id = invoice.dataValues.Order_Details.productId;
-  // console.log(id);
 
   const products = await Product.findAll({
     where: {
@@ -139,8 +145,6 @@ exports.getInvoice = asyncErrorHandler(async (req, res, next) => {
       },
     },
   });
-
-  // console.log(products);
 
   invoice.dataValues["Address"] = address.dataValues;
   invoice.dataValues["Products"] = products.map((product) => {
@@ -215,8 +219,6 @@ exports.addInvoice = asyncErrorHandler(async (req, res, next) => {
             transaction: t,
           }
         );
-        console.log(req.vendor.id);
-        console.log(customer.id);
         const venCust = await VendorCustomer.create(
           {
             VendorId: req.vendor.id,
