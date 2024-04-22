@@ -41,6 +41,7 @@ const headers = ref([
   { title: 'Contact no', value: 'Address_Details.contact' },
   { title: '', value: 'actions' }
 ])
+
 let customerData = ref([]);
 let search = ref(undefined);
 let customerDialog = ref(false);
