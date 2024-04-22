@@ -91,7 +91,6 @@ const { myTitle } = defineProps({
     // default: 'Admin Login'
   }
 })
-console.log(myTitle, 'Tvhbkjvhwvfwhk vcnd fjbhsfkbjcw dnsm')
 const emailRules = computed(() => [
   (v) => !!v || 'Email is required',
   (v) => /.+@.+\..+/.test(v) || 'Email must be valid'
