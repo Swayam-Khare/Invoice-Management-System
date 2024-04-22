@@ -7,8 +7,8 @@ const router = express.Router();
 router.route("/").get(authController.protect, authController.restrict("admin"), vendorController.getAllVendors).post(vendorController.createVendor);
 
 router
-  .route("/:id")
-  .get(authController.protect, authController.restrict("admin"), vendorController.getASpecificVendor)
+  .route("/specific/:id?")
+  .get(authController.protect, vendorController.getASpecificVendor)
   .delete(authController.protect, vendorController.deleteVendor)
   .patch(authController.protect, authController.restrict("vendor"), vendorController.updateVendor);
 

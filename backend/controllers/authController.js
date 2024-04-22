@@ -138,7 +138,11 @@ exports.logout = asyncErrorHandler(async (req, res, next) => {
 
   if (role === "admin" || role === "vendor") {
     // Clear the JWT token cookie
-    res.clearCookie("jwtAuth");
+    res.clearCookie("jwtAuth", {
+      expires: new Date(Date.now()),
+      httpOnly: true,
+    });
+
     res.status(200).json({
       status: "Success",
       message: `${role} logged out successfully`,

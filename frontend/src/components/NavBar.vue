@@ -33,7 +33,7 @@
         </v-btn>
 
         <!-- menu for about page -->
-        <v-menu :open-on-hover="true" offset="4">
+        <v-menu offset="4">
           <template v-slot:activator="{ props }">
             <v-btn
               id="about"
@@ -78,7 +78,7 @@
         </v-menu>
       </span>
       <span class="h-100 d-flex align-center">
-        <v-menu :open-on-hover="true" offset="4">
+        <v-menu offset="4">
           <template v-slot:activator="{ props }">
             <v-btn
               id="login"
@@ -118,12 +118,26 @@
             ></v-list-item>
           </v-list>
         </v-menu>
-        <Login v-model="showLoginDialog" @close="showLoginDialog = false" @vendor ="titleValue = 'Vendor Login', showLoginDialog = true" @signup="showSignupDialog = true" :myTitle="titleValue"/>
+        <Login
+          v-model="showLoginDialog"
+          @close="showLoginDialog = false"
+          @vendor=";(titleValue = 'Vendor Login'), (showLoginDialog = true)"
+          @signup="showSignupDialog = true"
+          :myTitle="titleValue"
+        />
 
-        <v-btn class="h-100 rounded-lg text-capitalize" color="#112D4E" @click="showSignupDialog = true">
+        <v-btn
+          class="h-100 rounded-lg text-capitalize"
+          color="#112D4E"
+          @click="showSignupDialog = true"
+        >
           Sign Up
         </v-btn>
-        <Signup v-model="showSignupDialog" @close="showSignupDialog = false" @login="showLoginDialog = true" />
+        <Signup
+          v-model="showSignupDialog"
+          @close="showSignupDialog = false"
+          @login="showLoginDialog = true"
+        />
       </span>
     </div>
   </div>
