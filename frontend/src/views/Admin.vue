@@ -197,8 +197,9 @@ const cancelHover = () => {
 }
 
 function closeFilter() {
-  if (options.value.status) {
-    options.value.status = undefined
+  if (approvalStatus.value) {
+    approvalStatus.value = undefined;
+    options.value.status = approvalStatus.value;
     loadItems(options.value)
   }
 }
