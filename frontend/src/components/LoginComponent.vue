@@ -29,7 +29,7 @@
             color="#112d4e"
             class="mt-1"
             density="compact"
-            :append-inner-icon="visible ? 'visibility_off' : 'visibility'"
+            :append-inner-icon="!visible ? 'visibility_off' : 'visibility'"
             :type="visible ? 'text' : 'password'"
             @click:appendInner="visible = !visible"
           >
