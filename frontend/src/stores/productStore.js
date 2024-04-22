@@ -35,7 +35,7 @@ export const useProductStore = defineStore('productStore', () => {
   const updateProduct = async (data) => {
     try {
       loading.value = true
-      console.log('line 38',data)
+      console.log('line 38',data.id)
       const res = await axios.patch(`http://localhost:3500/api/v1/products/${data.id}`,
         data,
         {
@@ -86,5 +86,5 @@ export const useProductStore = defineStore('productStore', () => {
     }
   }
 
-  return { getAllProducts, customers, rowsCount, loading, updateProduct, deleteProduct }
+  return { getAllProducts, products, rowsCount, loading, updateProduct, deleteProduct }
 })

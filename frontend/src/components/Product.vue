@@ -88,22 +88,25 @@
 <template>
   <div class="bg-grey-lighten-3 h-screen pa-5 d-flex ga-8 flex-column">
     <div>
-      <input type="text" v-model="search" placeholder="Search..." class="elevation-6 pa-3 mx-auto search bg-white" />
+      <input
+        type="text"
+        v-model="search"
+        placeholder="Search..."
+        class="elevation-6 pa-3 mx-auto search bg-white"
+      />
     </div>
     <div class="table-border elevation-6">
       <v-data-table-server
         :headers="headers"
-        :items="customerData"
+        :items="productData"
         :items-per-page="10"
-      :loading="productStore.loading"
-
+        :loading="productStore.loading"
         loading-text="Please wait..."
         :items-length="productStore.rowsCount"
         :search="search"
         item-value="name"
-        @update:options="options=$event, loadItems(options)"
+        @update:options="(options = $event), loadItems(options)"
         :items-per-page-options="itemsPerPageOption"
-
       >
         <template v-slot:item.actions="{ item }">
           <v-icon @click="alertMe(item.id)">info_outlined</v-icon>
@@ -111,40 +114,47 @@
       </v-data-table-server>
     </div>
   </div>
-  <customerDetails v-model="customerDialog" :details="specificCustomerDetails" @edit="editDialog=true" @close="customerDialog=false" @delete="loadItems(options)"/>
-  <EditCustomer v-model="editDialog" :editDetails="specificCustomerDetails" @close="editDialog=false,loadItems(options)"/>
+  <ProductDetails
+    v-model="productDialog"
+    :details="specificProductDetails"
+    @edit="editDialog = true"
+    @close="productDialog = false"
+    @delete="loadItems(options)"
+  />
+  <EditProduct v-model="editDialog" :editDetails="specificProductDetails" @close="editDialog=false,loadItems(options)"/>
 </template>
 
 <script setup>
 import { useProductStore } from '@/stores/productStore'
 const productStore = useProductStore()
 import { ref } from 'vue'
-import customerDetails from './customerDetails.vue';
-import EditCustomer from './EditCustomer.vue';
+import ProductDetails from './ProductDetails.vue'
+import EditProduct from './EditProduct.vue'
 
 const headers = ref([
-  { title: 'Name', value: 'firstName', sortable: true },
-  { title: 'Email', value: 'email' },
-  { title: 'Contact no', value: 'Address_Details.contact' },
-  { title: '', value: 'actions' }
+  { title: 'Product', value: 'name', sortable: true },
+  { title: 'Stock', value: 'stock' },
+  { title: 'Price', value: 'price' },
+  { title: 'Discount', value: 'discount' },
+  { title: 'Actions', value: 'actions' }
 ])
-let customerData = ref([]);
-let search = ref(undefined);
-let customerDialog = ref(false);
-let editDialog = ref(false);
-let specificCustomerDetails = ref({});
-let options = ref({});
+let productData = ref([])
+let search = ref(undefined)
+let productDialog = ref(false)
+let editDialog = ref(false)
+let specificProductDetails = ref({})
+let options = ref({})
 
 function alertMe(id) {
-  specificCustomerDetails.value = customerData.value.find(t => t.id === id);
-  console.log(specificCustomerDetails.value);
-  customerDialog.value = true;
+  specificProductDetails.value = productData.value.find((t) => t.id === id)
+  console.log(specificProductDetails.value)
+  productDialog.value = true
 }
 
 async function loadItems(event) {
   console.log(event)
-  const { sortBy, page, itemsPerPage, search } = event;
-  console.log('line 39',sortBy,page,itemsPerPage,search);
+  const { sortBy, page, itemsPerPage, search } = event
+  // console.log('line 39', sortBy, page, itemsPerPage, search)
   let sortingStr = ''
 
   if (sortBy.length) {
@@ -158,18 +168,15 @@ async function loadItems(event) {
   }
   sortingStr = sortingStr.slice(0, sortingStr.length - 1)
 
-  const queryObj = {};
-  
-  queryObj.page = page;
-  queryObj.limit = itemsPerPage;
-  queryObj.search = search;
-  queryObj.sort = sortingStr;
+  const queryObj = {}
 
-  await productStore.getAllCustomers(queryObj)
-  customerData.value = productStore.customers
-  for (let d of customerData.value) {
-    d.firstName = d.firstName + ' ' + d.lastName
-  }
+  queryObj.page = page
+  queryObj.limit = itemsPerPage
+  queryObj.search = search
+  queryObj.sort = sortingStr
+
+  await productStore.getAllProducts(queryObj)
+  productData.value = productStore.products
 }
 
 const itemsPerPageOption = ref([
