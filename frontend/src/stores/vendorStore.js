@@ -1,11 +1,14 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import axios from 'axios'
+import axios from './axios'
+import { toast } from 'vue3-toastify'
+
 export const useVendorStore = defineStore('vendorStore', () => {
-  let vendors = ref([])
+  let vendors = ref([]);
   let rowCount = ref({ count: 0 })
   let loading = ref(false)
   let token = ref(null)
+  let loggedVendor = ref({});
   const stateVariable = ref(10)
   const getAllVendors = async (options) => {
     let queryStr = ''
@@ -19,7 +22,7 @@ export const useVendorStore = defineStore('vendorStore', () => {
     console.log(queryStr)
     try {
       loading.value = true
-      const res = await axios.get(`http://localhost:3500/api/v1/vendors?${queryStr}`, {
+      const res = await axios.get(`/vendors?${queryStr}`, {
         withCredentials: true
       })
       vendors.value = res.data.data.vendors
@@ -36,7 +39,7 @@ export const useVendorStore = defineStore('vendorStore', () => {
     try {
       const config = { headers: { 'Content-Type': 'application/json' }, withCredentials: true }
       const res = await axios.post(
-        'http://localhost:3500/api/v1/auth/login/vendor',
+        '/auth/login/vendor',
         formData,
         config
       )
@@ -50,11 +53,23 @@ export const useVendorStore = defineStore('vendorStore', () => {
     }
   }
 
+  const getAVendor = async () => {
+    try {
+      loading.value = true;
+      const res = await axios.get('/vendors/specific', { withCredentials: true })
+      loggedVendor.value = res.data.data.vendor;
+      console.log(loggedVendor);
+
+    } catch (err) {
+      console.log(err.message);
+    }
+  }
+
   const deleteVendor = async (id) => {
     try {
       console.log('in 52', id)
       loading.value = true
-      const res = await axios.delete(`http://localhost:3500/api/v1/vendors/${id}`, {
+      const res = await axios.delete(`/vendors/specific/${id}`, {
         withCredentials: true
       })
     } catch (error) {
@@ -69,7 +84,7 @@ export const useVendorStore = defineStore('vendorStore', () => {
     try {
       loading.value = true
       const res = await axios.patch(
-        `http://localhost:3500/api/v1/admin/vendorStatus/${id}`,
+        `/admin/vendorStatus/${id}`,
         {},
         { withCredentials: true }
       )
@@ -88,9 +103,16 @@ export const useVendorStore = defineStore('vendorStore', () => {
           'Content-Type': 'application/json'
         }
       }
-      const res = await axios.post('http://localhost:3500/api/v1/vendors', formData, config)
+      const res = await axios.post('/vendors', formData, config)
       //   console.log(res);
       // Handle successful signup response here
+      toast.success('Your request has been sent successfully. Our team will contact you soon ', {
+        autoClose: 3000,
+        type: 'success',
+        position: 'bottom-center',
+        transition: 'zoom',
+        dangerouslyHTMLString: true
+      })
     } catch (error) {
       console.log(error)
       // Handle error response here
@@ -108,7 +130,7 @@ export const useVendorStore = defineStore('vendorStore', () => {
 
   async function logoutVendor() {
     try {
-      const response = await axios.get('http://localhost:3500/api/v1/auth/logout/vendor', {
+      const response = await axios.get('/auth/logout/vendor', {
         withCredentials: true
       })
 
@@ -129,7 +151,7 @@ export const useVendorStore = defineStore('vendorStore', () => {
 
   //   const vendors = computed(async () => {
   //         try {
-  //             const res =  await axios.get('http://localhost:3500/api/v1/vendors', { withCredentials: true });
+  //             const res =  await axios.get('/vendors', { withCredentials: true });
   //             const resData = await res.data.data.vendors;
   //             return  resData;
   //         } catch (error) {
@@ -146,10 +168,12 @@ export const useVendorStore = defineStore('vendorStore', () => {
     signupVendor,
     loginVendor,
     token,
+    loggedVendor,
     stateVariable,
     rowCount,
     deleteVendor,
     approveVendor,
-    logoutVendor
+    logoutVendor,
+    getAVendor,
   }
 })

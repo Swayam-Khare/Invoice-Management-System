@@ -18,7 +18,7 @@
       <v-navigation-drawer v-model="drawer" :rail="rail" permanent @click="rail = false">
         <v-list-item
           prepend-avatar="https://randomuser.me/api/portraits/men/85.jpg"
-          title="John Leider"
+          :title="vendorData.firstName+' '+vendorData.lastName"
           nav
         >
           <template v-slot:append>
@@ -100,13 +100,14 @@
           :is="isActiveTab"
           v-model="showProductDialog"
           @close="showProductDialog = false"
+          :profile="vendorData"
         />
       </v-main>
     </v-layout>
   </v-card>
 </template>
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import Customer from '../components/Customer.vue'
@@ -133,6 +134,13 @@ const invoice = ref([
   ['All Invoices', 'local_mall', AllInvoice],
   ['Create Invoice', 'add_circle', CreateInvoice]
 ])
+
+const vendorData = ref({});
+
+onMounted(async () => {
+  await vendorStore.getAVendor();
+  vendorData.value = vendorStore.loggedVendor;
+})
 
 async function logoutVendor() {
   try {

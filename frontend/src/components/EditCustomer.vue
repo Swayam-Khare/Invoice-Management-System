@@ -1,11 +1,12 @@
 <template>
-  <v-dialog max-width="500px" centered persistent>
+
+  <v-dialog max-width="500px" centered persistent >
     <v-card class="rounded-lg remove-scrollbar">
       <v-card-title
         class="d-flex justify-space-between align-center"
         style="background-color: #112d4ef1; height:56px"
       >
-        <p style="color: #f5f5f5" class="text-h5 pl-5">Sign Up</p>
+        <p style="color: #f5f5f5" class="text-h5 pl-5">Customer Details</p>
         <v-btn icon="close" variant="text" color="#f5f5f5" @click="closeDialog"></v-btn>
       </v-card-title>
       <v-card-text>
@@ -14,7 +15,7 @@
             <v-col cols="12" md="6" class="pb-0 pb-md-3">
               <v-text-field
                 label="First Name"
-                v-model="firstName"
+                v-model="details.firstName"
                 :rules="[alphabetOnlyRule, required]"
                 variant="outlined"
                 color="#112d4e"
@@ -24,7 +25,7 @@
             <v-col cols="12" md="6" class="pt-1 pt-md-3">
               <v-text-field
                 label="Last Name"
-                v-model="lastName"
+                v-model="details.lastName"
                 :rules="[alphabetOnlyRule]"
                 variant="outlined"
                 color="#112d4e"
@@ -35,7 +36,7 @@
           <v-text-field
             label="Email"
             :rules="[emailRule]"
-            v-model="email"
+            v-model="details.email"
             variant="outlined"
             color="#112d4e"
             class="mt-1"
@@ -44,16 +45,7 @@
           <v-text-field
             label="Contact No."
             :rules="contactRules"
-            v-model="contact"
-            variant="outlined"
-            color="#112d4e"
-            class="mt-1"
-            density="compact"
-          ></v-text-field>
-          <v-text-field
-            label="Shop Name"
-            v-model="shopName"
-            :rules="[required]"
+            v-model="details.contact"
             variant="outlined"
             color="#112d4e"
             class="mt-1"
@@ -61,7 +53,7 @@
           ></v-text-field>
           <v-text-field
             label="Address Line 1"
-            v-model="address_lane1"
+            v-model="details.Address_Details.address_lane1"
             :rules="[required]"
             variant="outlined"
             class="mt-1"
@@ -70,15 +62,15 @@
           ></v-text-field>
           <v-text-field
             label="Address Line 2"
-            v-model="address_lane2"
+            v-model="details.Address_Details.address_lane2"
             variant="outlined"
             class="mt-1"
             color="#112d4e"
             density="compact"
           ></v-text-field>
           <v-text-field
-            label="Landmark"
-            v-model="landmark"
+            label="landmark"
+            v-model="details.Address_Details.landmark"
             variant="outlined"
             class="mt-1"
             color="#112d4e"
@@ -88,7 +80,7 @@
             <v-col cols="12" md="6" class="pb-0 pb-md-3">
               <v-text-field
                 label="Pincode"
-                v-model="pincode"
+                v-model="details.Address_Details.pincode"
                 :rules="pincodeRules"
                 variant="outlined"
                 color="#112d4e"
@@ -103,25 +95,13 @@
                 variant="outlined"
                 color="#112d4e"
                 density="compact"
-                :disabled="true"
+                :readOnly="true"
               ></v-text-field>
             </v-col>
           </v-row>
           <v-btn type="submit" class="mt-1 txt-button" color="#112d4e" @click="validate" block
-            >Sign Up</v-btn
+            >Update</v-btn
           >
-          <div class="d-flex justify-center align-center text-center">
-            <span>Already have an account?</span>
-            <v-btn
-              variant="text"
-              color="#112d4e"
-              @click="$emit('close'), $emit('login')"
-              :ripple="false"
-              class="pl-1 pr-0 font-weight-bold text-capitalize"
-            >
-              Log In
-            </v-btn>
-          </div>
         </v-form>
       </v-card-text>
     </v-card>
@@ -129,26 +109,37 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
-import { useVendorStore } from '../stores/vendorStore'
+import { ref, computed, watch} from 'vue'
+import { useCustomerStore } from '../stores/customerStore'
 import axios from 'axios'
 import { toast } from 'vue3-toastify'
 
 const fatchedState = ref('')
-
-const vendorStore = useVendorStore()
-
+const customerStore = useCustomerStore()
 const emit = defineEmits(['close', 'login'])
+const props = defineProps({
+  editDetails: {
+    type:Object
+  }
+});
 
-const firstName = ref('')
-const lastName = ref('')
-const email = ref('')
-const contact = ref('')
-const shopName = ref('')
-const address_lane1 = ref('')
-const address_lane2 = ref('')
-const landmark = ref('')
-const pincode = ref('')
+
+const details = ref({Address_Details:{}})
+
+
+watch(() => props.editDetails, (newDetails) => {
+  details.value = { ...newDetails };
+  details.value.firstName = newDetails.firstName.split(' ')[0];
+})
+
+
+// const firstName = ref('')
+// const lastName = ref('')
+// const email = ref('')
+// const contact = ref('')
+// const address_lane1 = ref('')
+// const address_lane2 = ref('')
+// const pincode = ref('')
 const alphabetOnlyRule = (v) => /^[A-Za-z\s]*$/.test(v) || 'Alphabets only.'
 const emailRule = (v) => /.+@.+\..+/.test(v) || 'Invalid email address.'
 
@@ -157,7 +148,8 @@ const required = (v) => !!v || 'This field is Required'
 const pincodeRules = computed(() => [
   (v) => !!v || 'Pincode is required.',
   (v) => (v && /^\d+$/.test(v)) || 'Pincode must contain only digits.',
-  (v) => (v && /^\d{6}$/.test(v)) || 'Pincode must be exactly 6 digits.'
+  (v) => (v && /^\d{6}$/.test(v)) || 'Pincode must be exactly 6 digits.',
+  // async(v) => await fetchStateFromPincode(v)
 ])
 
 const contactRules = computed(() => [
@@ -172,6 +164,7 @@ const fetchStateFromPincode = async (pincode) => {
   try {
     const response = await axios.get(`https://api.postalpincode.in/pincode/${pincode}`)
     fatchedState.value = response.data[0].PostOffice[0].State
+    return true;
   } catch (error) {
     toast.error('Pincode is invalid!', {
       autoClose: 1000,
@@ -181,10 +174,11 @@ const fetchStateFromPincode = async (pincode) => {
       transition: 'zoom',
       dangerouslyHTMLString: true
     })
+    return 'Pincode is invalid!';
   }
 }
 
-watch(pincode, async (newPincode) => {
+watch(()=>details.value.Address_Details.pincode, async (newPincode) => {
   if (newPincode && newPincode.length === 6) {
     await fetchStateFromPincode(newPincode)
   } else {
@@ -192,26 +186,27 @@ watch(pincode, async (newPincode) => {
   }
 })
 
+
 async function submitForm() {
   const formData = {
-    firstName: firstName.value,
-    lastName: lastName.value,
-    email: email.value,
-    contact: contact.value,
-    shopName: shopName.value,
-    address_lane1: address_lane1.value,
-    address_lane2: address_lane2.value,
-    landmark: landmark.value,
-    pincode: pincode.value,
+    id:details.value.id,
+    firstName: details.value.firstName.split(' ')[0],
+    lastName: details.value.lastName,
+    email: details.value.email,
+    contact: details.value.contact,
+    address_lane1: details.value.Address_Details.address_lane1,
+    address_lane2: details.value.Address_Details.address_lane2,
+    landmark: details.value.Address_Details.landmark,
+    pincode: details.value.Address_Details.pincode,
     state: fatchedState.value
   }
   const check = await validate()
   // console.log(check.valid)
   if (check.valid) {
-    await vendorStore.signupVendor(formData)
-
+    await customerStore.updateCustomer(formData)
   } else {
-    toast.error('Please enter complete details!.', {
+    console.log('Please enter complete details')
+    toast.error('Something went Wrong!.', {
       autoClose: 1000,
       type: 'error',
       position: 'bottom-center',
@@ -220,6 +215,8 @@ async function submitForm() {
     })
     return
   }
+
+  // console.log('Form submitted!')
   resetForm()
   emit('close')
 }
@@ -230,15 +227,13 @@ function validate() {
 }
 
 function resetForm() {
-  firstName.value = null
-  lastName.value = null
-  email.value = null
-  contact.value = null
-  shopName.value = null
-  address_lane1.value = null
-  address_lane2.value = null
-  landmark.value = null
-  pincode.value = null
+  // firstName.value = null
+  // lastName.value = null
+  // email.value = null
+  // contact.value = null
+  // address_lane1.value = null
+  // address_lane2.value = null
+  // pincode.value = null
   fatchedState.value = ''
 }
 

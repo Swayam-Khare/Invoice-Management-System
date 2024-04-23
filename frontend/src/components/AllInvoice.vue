@@ -1,23 +1,40 @@
 <template>
-  <div style="background-color: #112d4e14">
+  <div style="background-color: #112d4e14;" class="remove-scrollbar h-screen overflow-auto">
     <div class="d-flex flex-md-row flex-column justify-space-between align-end">
-      <div class="mobile-search mt-1 pt-4 px-2 px-sm-10 px-md-14 px-lg-16 ml-lg-3 ml-xxl-16">
-        <input
-          type="text"
-          placeholder="Search invoice no."
-          class="elevation-6 pa-3 search bg-white"
-        />
+      <div class="mobile-search align-center mt-1 pt-4 px-2 px-sm-10 px-md-14 px-lg-16 ml-xxl-16">
+        <!-- <v-text-field variant="outlined" color="#112d4e" density="compact" :disabled="true"
+          >#</v-text-field
+        > -->
+        <!-- <v-text-field variant="outlined" color="#112d4e" density="compact" v-model="search" placeholder="Search" class="bg-white"
+          >#</v-text-field
+        > -->
+        <div class="search-wrapper">
+          <label class="label">#</label>
+          <input
+            type="text"
+            placeholder="Search invoice no."
+            class="elevation-6 py-3 px-6 search bg-white"
+            v-model="search"
+          />
+          </div>
       </div>
     </div>
     <div class="list px-2 px-sm-0 overflow-auto">
       <!-- New Table Start -->
-      <v-data-table-virtual
+      <v-data-table-server
         :headers="headers"
-        :items="filteredItems"
+        :items="invoiceData"
+        :items-per-page="10"
+        :loading="invoiceStore.loading"
+        loading-text="Please wait..."
+        :items-length="invoiceStore.rowsCount"
+        :search="search"
+        item-key="id"
+        @update:options="(options = $event), (options.status = paymentStatus), loadItems(options)"
+        :items-per-page-options="itemsPerPageOption"
         style="width: 90%"
         class="mx-auto my-5 my-sm-5 rounded-lg elevation-5 custom-data-table"
       >
-
         <template v-slot:header.status="{ header }">
           <v-tooltip bottom>
             <template v-slot:activator="{ on }">
@@ -38,12 +55,16 @@
               <v-list-item
                 v-for="status in statusMenu"
                 :key="status"
-                @click="setStatusFilter(status)"
+                @click="
+                  (paymentStatus = status.title),
+                    (options.status = paymentStatus),
+                    loadItems(options)
+                "
               >
                 <v-list-item-title>{{ status.title }}</v-list-item-title>
               </v-list-item>
               <v-list-item @click="clearStatusFilter">
-                <v-list-item-title>Clear Filter</v-list-item-title>
+                <v-list-item-title>clear</v-list-item-title>
               </v-list-item>
             </v-list>
           </v-menu>
@@ -81,33 +102,70 @@
             >{{ item.status }}</span
           >
         </template>
-      </v-data-table-virtual>
+      </v-data-table-server>
     </div>
-    <v-pagination
-      v-model="page"
-      :length="10"
-      next-icon="arrow_forward_ios"
-      prev-icon="arrow_back_ios"
-      class="pagination mx-auto mt-0"
-      :total-visible="4"
-      size="x-small"
-    ></v-pagination>
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
-
+import { useInvoiceStore } from '@/stores/invoiceStore'
+const invoiceStore = useInvoiceStore()
 const page = ref(1)
-let statusFilter = ref(null)
 let filterMenu = ref(false)
 const menuTop = ref('0px')
 const menuLeft = ref('0px')
 
-const filteredItems = computed(() => {
-  if (!statusFilter.value) return vendors.value
-  return vendors.value.filter((item) => item.status === statusFilter.value)
-})
+let invoiceData = ref([])
+let paymentStatus = ref(undefined)
+let options = ref({})
+let search = ref(undefined)
+
+async function loadItems(event) {
+  const { page, itemsPerPage, sortBy, search, status } = event
+  let sortingStr = ''
+  if (sortBy.length) {
+    sortBy.forEach((i) => {
+      if (i.order == 'asc') {
+        sortingStr += i.key + ','
+      } else {
+        sortingStr += '-' + i.key + ','
+      }
+    })
+  }
+  sortingStr = sortingStr.slice(0, sortingStr.length - 1)
+  const queryStr = {}
+  queryStr.page = page
+  queryStr.limit = itemsPerPage
+  queryStr.sort = sortingStr
+  queryStr.search = search
+  queryStr.status = status
+
+  await invoiceStore.getAllInvoices(queryStr)
+  invoiceData.value = invoiceStore.invoices
+
+  for (let d of invoiceData.value) {
+    d.Customer.firstName = d.Customer.firstName + ' ' + d.Customer.lastName
+  }
+
+  for (let d of invoiceData.value) {
+    d.purchase_date = formatDate(d.purchase_date)
+    d.due_date = formatDate(d.due_date)
+  }
+}
+
+const formatDate = (date) => {
+  const options = { year: 'numeric', month: 'short', day: 'numeric' }
+  return new Date(date).toLocaleDateString('en-US', options)
+}
+
+const itemsPerPageOption = ref([
+  { title: '10', value: 10 },
+  { title: '15', value: 15 },
+  { title: '20', value: 20 },
+  { title: '50', value: 50 },
+  { title: '100', value: 100 }
+])
 
 function toggleFilterMenu(event) {
   filterMenu.value = !filterMenu.value
@@ -116,98 +174,25 @@ function toggleFilterMenu(event) {
   menuLeft.value = iconPos.left + 'px'
 }
 
-function setStatusFilter(status) {
-  statusFilter.value = status.title
-  filterMenu.value = false // Close the menu after selection
-}
-
 function clearStatusFilter() {
-  statusFilter.value = null
-  filterMenu.value = false // Close the menu after clearing filter
+  // statusFilter.value = null
+  // filterMenu.value = false // Close the menu after clearing filter
+  if (options.value.status) {
+    options.value.status = undefined
+    loadItems(options.value)
+  }
 }
 
 const headers = [
-  { title: 'Invoice no.', value: 'invoice', sortable: true, class: 'custom-table' },
-  { title: 'Customer Name', value: 'customerName', sortable: true },
-  { title: 'Purchase Date', value: 'purchaseDate' },
-  { title: 'Due Date', value: 'dueDate' },
+  { title: 'Invoice no.', value: 'invoice_no', sortable: true, class: 'custom-table' },
+  { title: 'Customer Name', value: 'Customer.firstName', sortable: true },
+  { title: 'Purchase Date', value: 'purchase_date' },
+  { title: 'Due Date', value: 'due_date' },
   { title: 'Status', value: 'status' },
   { title: 'Actions', value: 'action' }
 ]
 
 const statusMenu = ref([{ title: 'paid' }, { title: 'overdue' }, { title: 'due' }])
-const vendors = ref([
-  {
-    invoice: 'INV-001',
-    customerName: 'John Doe',
-    purchaseDate: '2021-09-01',
-    dueDate: '2021-09-30',
-    status: 'paid'
-  },
-  {
-    invoice: 'INV-002',
-    customerName: 'Jane Doe',
-    purchaseDate: '2021-09-01',
-    dueDate: '2021-09-30',
-    status: 'overdue'
-  },
-  {
-    invoice: 'INV-003',
-    customerName: 'John Doe',
-    purchaseDate: '2021-09-01',
-    dueDate: '2021-09-30',
-    status: 'due'
-  },
-  {
-    invoice: 'INV-004',
-    customerName: 'Jane Doe',
-    purchaseDate: '2021-09-01',
-    dueDate: '2021-09-30',
-    status: 'paid'
-  },
-  {
-    invoice: 'INV-005',
-    customerName: 'John Doe',
-    purchaseDate: '2021-09-01',
-    dueDate: '2021-09-30',
-    status: 'overdue'
-  },
-  {
-    invoice: 'INV-006',
-    customerName: 'Jane Doe',
-    purchaseDate: '2021-09-01',
-    dueDate: '2021-09-30',
-    status: 'due'
-  },
-  {
-    invoice: 'INV-007',
-    customerName: 'John Doe',
-    purchaseDate: '2021-09-01',
-    dueDate: '2021-09-30',
-    status: 'paid'
-  },
-  {
-    invoice: 'INV-008',
-    customerName: 'Jane Doe',
-    purchaseDate: '2021-09-01',
-    dueDate: '2021-09-30',
-    status: 'overdue'
-  },
-  {
-    invoice: 'INV-009',
-    customerName: 'John Doe',
-    purchaseDate: '2021-09-01',
-    dueDate: '2021-09-30',
-    status: 'due'
-  },
-  {
-    invoice: 'INV-010',
-    customerName: 'Jane Doe',
-    purchaseDate: '2021-09-01',
-    dueDate: '2021-09-30',
-    status: 'paid'
-  }
-])
 </script>
 
 <style scoped>
@@ -215,6 +200,22 @@ const vendors = ref([
   .pagination {
     width: 70% !important;
   }
+}
+
+.remove-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.search-wrapper{
+  position:relative;
+}
+
+.label{
+  position:absolute;
+  top: 10px;
+  left:8px;
+  font-size:18px;
+  z-index:10;
 }
 
 .custom-data-table >>> .v-data-table__th {
