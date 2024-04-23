@@ -182,20 +182,20 @@
           <tr>
             <th class="text-left">Product</th>
             <th class="text-left">Quantity</th>
-            <th class="text-left">Price</th>
-            <th class="text-left">Discount</th>
-            <th class="text-left">Subtotal</th>
+            <th class="text-left">Price(₹)</th>
+            <th class="text-left">Discount(%)</th>
+            <th class="text-left">Subtotal(₹)</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="item in orderData" :key="item.product">
             <td>
-              {{ item.product }}
+              {{ item.name }}
             </td>
-            <td>{{ item.quantity }}</td>
+            <td><input type="number" :max="item.stock" value="1" min="1" v-model="item.quantity"></td>
             <td>{{ item.price }}</td>
             <td>{{ item.discount }}</td>
-            <td>{{ item.subtotal }}</td>
+            <td>{{ subtotal(item.quantity,item.price,item.discount) }}</td>
           </tr>
           <tr style="background-color: white !important">
             <td>
@@ -246,7 +246,7 @@
     <SelectCustomer v-model="showSelectCustomer" @close="showSelectCustomer = false" @selected-customer-data="handleCustomer"/>
 
     <!-- Select Product Dialog -->
-    <SelectProduct v-model="showSelectProduct" @close="showSelectProduct = false" />
+    <SelectProduct v-model="showSelectProduct" @close="showSelectProduct = false" @select-existing-product="handleProduct"/>
   </div>
 </template>
 
@@ -256,6 +256,9 @@ import SelectCustomer from './SelectCustomer.vue'
 import SelectProduct from './SelectProduct.vue'
 import axios from 'axios'
 import { toast } from 'vue3-toastify'
+import { useProductStore } from '@/stores/productStore'
+
+const productStore = useProductStore();
 
 const showDuePicker = ref(false)
 const showPurchasePicker = ref(false)
@@ -269,6 +272,11 @@ const fatchedState = ref('')
 const existingCustomerDetails = ref({});
 
 const required = (v) => !!v || 'This field is Required'
+
+
+function subtotal(qty, price, discount) {
+  return (qty*price) - ((qty*price*discount)/100)
+}
 
 const pincodeRules = computed(() => [
   (v) => !!v || 'Pincode is required.',
@@ -316,6 +324,15 @@ function handleCustomer(custData) {
   existingCustomerDetails.value.email = custData.email;
   readOnly.value = true;
   console.log(existingCustomerDetails.value);
+}
+
+async function handleProduct(prodData) {
+  
+  await productStore.getSelectedProducts(prodData)
+  orderData.value = productStore.selectedProducts;
+  for (let item of orderData.value) {
+    item.quantity = 1;
+  }
 }
 
 const dueDate = computed(() => {

@@ -203,6 +203,60 @@ exports.readProducts = asyncErrorHandler(async (req, res, next) => {
   });
 });
 
+exports.readProductsByIds = asyncErrorHandler(async (req, res, next) => {
+
+  const vendorProducts = await VendorProduct.findAll({
+    where: {
+      VendorId: req.vendor.id,
+      ProductId: req.body.ids
+    },
+    attributes: {
+      exclude: ["VendorId"],
+    },
+  });
+
+  if (!vendorProducts.length) {
+    return res.status(404).json({
+      status: "fail",
+      message: "No products found for this vendor with the specified filters.",
+    });
+  }
+
+
+  const products = await Product.findAll({
+    where: {
+      id: req.body.ids
+    },
+  })
+
+  const myProducts = products.map((product) => {
+    const vendorProduct = vendorProducts.find(
+      (vp) => vp.ProductId === product.id
+    );
+    return {
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      stock: vendorProduct.stock,
+      price: vendorProduct.price,
+      discount: vendorProduct.discount,
+    };
+  });
+
+
+
+
+  return res.status(200).json({
+    status: "Success",
+    count: myProducts.length,
+    data: {
+      myProducts
+    }
+  })
+
+})
+
+
 // READ PRODUCT BY ID
 exports.readProductById = asyncErrorHandler(async (req, res, next) => {
   const product = await Product.findOne({
