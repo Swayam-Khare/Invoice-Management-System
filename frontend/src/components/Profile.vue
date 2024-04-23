@@ -105,7 +105,7 @@
                     <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
                       >State</span
                     >
-                    <p style="font-size: 16px">{{  profile.Address_Details.state  }}</p>
+                    <p style="font-size: 16px">{{ profile.Address_Details.state }}</p>
                   </div>
                 </v-col>
                 <v-col cols="6" class="py-0 mt-0 mb-2">
@@ -172,7 +172,7 @@
               variant="outlined"
               label="Last Name"
               color="#112D4E"
-              v-model="lastName"
+              v-model="vendorData.lastName"
             ></v-text-field>
           </div>
           <div class="d-flex flex-wrap flex-column px-4 px-sm-0 custom-info">
@@ -181,14 +181,16 @@
               variant="outlined"
               label="Shop Name"
               color="#112D4E"
-              v-model="shopName"
+              v-model="vendorData.shopName"
             ></v-text-field>
             <v-text-field
               density="compact"
               variant="outlined"
+              maxlength="10"
+              minlength="10"
               label="Contact"
               color="#112D4E"
-              v-model="contact"
+              v-model="vendorData.Address_Details.contact"
             ></v-text-field>
           </div>
         </div>
@@ -214,7 +216,7 @@
               variant="outlined"
               label="Address Lane 2"
               color="#112D4E"
-              v-model="addressLane2"
+              v-model="vendorData.Address_Details.address_lane2"
             ></v-text-field>
           </div>
           <div class="d-flex flex-wrap flex-column px-4 px-sm-0 custom-info">
@@ -223,22 +225,25 @@
               variant="outlined"
               label="Landmark"
               color="#112D4E"
-              v-model="landmark"
+              v-model="vendorData.Address_Details.landmark"
             ></v-text-field>
             <div class="d-flex ga-2">
-              <v-select
+              <v-text-field
                 variant="outlined"
                 item-color="#112D4E"
                 color="#112D4E"
                 label="State"
                 density="compact"
-                v-model="state"
-                :items="states"
-              ></v-select>
+                v-model="fatchedState"
+                :disabled="true"
+              ></v-text-field>
               <v-text-field
                 variant="outlined"
                 density="compact"
+                maxlength="6"
+                minlength="6"
                 label="Pincode"
+                :rules="pincodeRules"
                 color="#112D4E"
                 v-model="pincode"
               ></v-text-field>
@@ -247,7 +252,9 @@
         </div>
 
         <v-divider class="mb-6 mx-4"></v-divider>
-
+        <v-overlay :model-value="isLoading" persistent>
+          <v-progress-circular indeterminate size="64"></v-progress-circular>
+        </v-overlay>
         <!-- credentials field -->
         <div class="py-4 px-6">
           <h3>Credentials</h3>
@@ -260,7 +267,8 @@
               variant="outlined"
               label="E-mail"
               color="#112D4E"
-              v-model="email"
+              v-model="vendorData.email"
+              :disabled="true"
             ></v-text-field>
             <v-text-field
               density="compact"
@@ -284,7 +292,7 @@
 
         <!-- update and close buttons -->
         <div justify="center" align="center" class="pb-6 pt-6">
-          <v-btn style="background-color: #112d4e" class="text-white mx-6" @click="showForm = false"
+          <v-btn style="background-color: #112d4e" class="text-white mx-6" @click="submitForm"
             >Update</v-btn
           >
           <v-btn style="background-color: #112d4e" class="text-white mx-6" @click="showForm = false"
@@ -297,35 +305,87 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
-import { ref, nextTick } from 'vue'
+import { useVendorStore } from '@/stores/vendorStore'
+import { ref, watch, onMounted, computed } from 'vue'
+import { toast } from 'vue3-toastify'
+import axios from 'axios'
+
+const vendorStore = useVendorStore()
+
+const isLoading = ref(false)
 
 const showForm = ref(false)
 
-const firstName = ref('John')
-const lastName = ref('Doe')
-const shopName = ref("John's Grocery")
-const contact = ref('+1-202-555-0173')
+let fatchedState = ref('')
 
-const addressLane1 = ref('123 Main Street')
-const addressLane2 = ref('Suite 101')
-const landmark = ref('Near the old cinema')
-const pincode = ref('10001')
-const state = ref('New York')
-const email = ref('john.doe@example.com')
+const pincodeRules = computed(() => [
+  (v) => !!v || 'Pincode is required.',
+  (v) => (v && /^\d+$/.test(v)) || 'Pincode must contain only digits.',
+  (v) => (v && /^\d{6}$/.test(v)) || 'Pincode must be exactly 6 digits.'
+])
+
 const password = ref('asdf123456')
 const password2 = ref('**********')
 const confirmPassword = ref('asdf123456')
-const states = ['Uttar Pradesh', 'Gujarat', 'Rajasthan', 'Maharashtra', 'West Bengal']
-const vendorData = ref({});
-const props = defineProps(['profile']);
+
+const vendorData = ref({})
+const props = defineProps(['profile'])
 
 onMounted(() => {
-  console.log(props.profile);
-
-  vendorData.value = {...props.profile}
+  console.log(props.profile)
+  // destruturing the data
+  vendorData.value = JSON.parse(JSON.stringify(props.profile))
+  console.log('vivek ', vendorData.value.Address_Details)
 })
 
+let pincode = ref(props.profile.Address_Details.pincode)
+
+async function submitForm() {
+  isLoading.value = true // Set loading state to true
+  const formData = {
+    firstName: vendorData.value.firstName,
+    lastName: vendorData.value.lastName,
+    email: vendorData.value.email,
+    contact: vendorData.value.Address_Details.contact,
+    shopName: vendorData.value.shopName,
+    landmark: vendorData.value.Address_Details.landmark,
+    address_lane1: vendorData.value.Address_Details.address_lane1,
+    address_lane2: vendorData.value.Address_Details.address_lane2,
+    pincode: pincode
+  }
+  try {
+    await vendorStore.updateVendor(formData)
+    isLoading.value = false // Set loading state to false after successful API call
+  } catch (error) {
+    isLoading.value = false // Set loading state to false if there's an error
+    console.error('Error updating vendor:', error)
+    // Handle error if needed
+  }
+}
+
+const fetchStateFromPincode = async (pincode) => {
+  try {
+    const response = await axios.get(`https://api.postalpincode.in/pincode/${pincode}`)
+    fatchedState.value = response.data[0].PostOffice[0].State
+  } catch (error) {
+    toast.error('Pincode is invalid!', {
+      autoClose: 1000,
+      pauseOnHover: false,
+      type: 'error',
+      position: 'bottom-center',
+      transition: 'zoom',
+      dangerouslyHTMLString: true
+    })
+  }
+}
+
+watch(pincode, async (newPincode) => {
+  if (newPincode && newPincode.length === 6) {
+    await fetchStateFromPincode(newPincode)
+  } else {
+    fatchedState.value = ''
+  }
+})
 </script>
 <style scoped>
 .custom-info {

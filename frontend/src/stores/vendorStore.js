@@ -62,6 +62,26 @@ export const useVendorStore = defineStore('vendorStore', () => {
       console.log(loggedVendor)
     } catch (err) {
       console.log(err.message)
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const updateVendor = async (updatedVendorData) => {
+    try {
+      loading.value = true
+      const config = { headers: { 'Content-Type': 'application/json' }, withCredentials: true }
+      const res = await axios.patch(
+        'http://localhost:3500/api/v1/vendors/specific',
+        updatedVendorData,
+        config
+      )
+      loggedVendor.value = res.data.data.vendor
+      console.log(loggedVendor)
+    } catch (err) {
+      console.log(err.message)
+    } finally {
+      loading.value = false
     }
   }
 
@@ -160,7 +180,7 @@ export const useVendorStore = defineStore('vendorStore', () => {
     getAllVendors,
     signupVendor,
     loginVendor,
-    decodedToeknVendor,
+    updateVendor,
     // fetchVendorProfile,
     token,
     loggedVendor,
