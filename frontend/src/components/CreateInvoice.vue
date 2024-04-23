@@ -74,12 +74,21 @@
     <div class="bg-white rounded-lg mx-4 elevation-3 mb-7">
       <div class="d-flex flex-wrap justify-space-between align-center py-4 px-6">
         <h3>Customer Info</h3>
-        <v-btn
-          color="#112D4E"
-          @click="showSelectCustomer = true"
-          class="text-capitalize mt-2 mt-sm-0"
-          >Select Customer</v-btn
-        >
+        <div class="d-flex ga-5 flex-column flex-sm-row">
+          <v-btn
+            color="red"
+            @click="handleClear"
+            :class="{'d-none':!readOnly}"
+            class="text-capitalize mt-2 mt-sm-0"
+            >Clear Customer</v-btn
+          >
+          <v-btn
+            color="#112D4E"
+            @click="showSelectCustomer = true"
+            class="text-capitalize mt-2 mt-sm-0"
+            >Select Customer</v-btn
+          >
+        </div>
       </div>
       <v-divider class="mb-4 mx-4"></v-divider>
       <div class="d-flex flex-wrap flex-column flex-sm-row px-sm-2 justify-space-around">
@@ -89,24 +98,32 @@
             variant="outlined"
             label="First Name"
             color="#112D4E"
+            v-model="existingCustomerDetails.firstName"
+            :readOnly="readOnly"
           ></v-text-field>
           <v-text-field
             density="compact"
             variant="outlined"
             label="Last Name"
             color="#112D4E"
+            v-model="existingCustomerDetails.lastName"
+            :readOnly="readOnly"
           ></v-text-field>
           <v-text-field
             density="compact"
             variant="outlined"
             label="Email"
             color="#112D4E"
+            v-model="existingCustomerDetails.email"
+            :readOnly="readOnly"
           ></v-text-field>
           <v-text-field
             density="compact"
             variant="outlined"
             label="Contact"
             color="#112D4E"
+            v-model="existingCustomerDetails.contact"
+            :readOnly="readOnly"
           ></v-text-field>
         </div>
         <div class="d-flex flex-wrap flex-column px-4 px-sm-0 custom-info">
@@ -115,23 +132,30 @@
             variant="outlined"
             label="Address Lane 1"
             color="#112D4E"
+            v-model="existingCustomerDetails.address_lane1"
+            :readOnly="readOnly"
           ></v-text-field>
           <v-text-field
             density="compact"
             variant="outlined"
             label="Address Lane 2"
             color="#112D4E"
+            v-model="existingCustomerDetails.address_lane1"
+            :readOnly="readOnly"
           ></v-text-field>
           <v-text-field
             density="compact"
             variant="outlined"
             label="Landmark"
             color="#112D4E"
+            v-model="existingCustomerDetails.landmark"
+            :readOnly="readOnly"
           ></v-text-field>
           <div class="d-flex ga-2">
             <v-text-field
               label="Pincode"
-              v-model="pincode"
+              v-model="existingCustomerDetails.pincode"
+              :readOnly="readOnly"
               :rules="pincodeRules"
               variant="outlined"
               color="#112d4e"
@@ -144,7 +168,7 @@
               variant="outlined"
               color="#112d4e"
               density="compact"
-              :disabled="true"
+              :readOnly="true"
             ></v-text-field>
           </div>
         </div>
@@ -219,7 +243,7 @@
     </div>
 
     <!-- Select Customer Dialog -->
-    <SelectCustomer v-model="showSelectCustomer" @close="showSelectCustomer = false" />
+    <SelectCustomer v-model="showSelectCustomer" @close="showSelectCustomer = false" @selected-customer-data="handleCustomer"/>
 
     <!-- Select Product Dialog -->
     <SelectProduct v-model="showSelectProduct" @close="showSelectProduct = false" />
@@ -240,8 +264,9 @@ const actualPurchaseDate = ref(null)
 const showSelectCustomer = ref(false)
 const showSelectProduct = ref(false)
 const status = ['Paid', 'Due', 'Overdue']
-const pincode = ref('')
+const readOnly = ref(false)
 const fatchedState = ref('')
+const existingCustomerDetails = ref({});
 
 const required = (v) => !!v || 'This field is Required'
 
@@ -268,7 +293,7 @@ const fetchStateFromPincode = async (pincode) => {
   }
 }
 
-watch(pincode, async (newPincode) => {
+watch(()=>existingCustomerDetails.value.pincode, async (newPincode) => {
   if (newPincode && newPincode.length === 6) {
     await fetchStateFromPincode(newPincode)
   } else {
@@ -276,10 +301,25 @@ watch(pincode, async (newPincode) => {
   }
 })
 
+function handleClear() {
+  existingCustomerDetails.value = {};
+  readOnly.value = false;
+}
+
 const orderData = ref([
   { product: 'Dish Washer', quantity: 2, price: 5000, discount: 100, subtotal: 4900 },
   { product: 'TV', quantity: 1, price: 30000, discount: 2000, subtotal: 28000 }
 ])
+
+function handleCustomer(custData) {
+  const { Address_Details } = custData;
+  existingCustomerDetails.value = { ...Address_Details };
+  existingCustomerDetails.value.firstName = custData.firstName.split(' ')[0];
+  existingCustomerDetails.value.lastName = custData.lastName;
+  existingCustomerDetails.value.email = custData.email;
+  readOnly.value = true;
+  console.log(existingCustomerDetails.value);
+}
 
 const dueDate = computed(() => {
   if (actualDueDate.value) {

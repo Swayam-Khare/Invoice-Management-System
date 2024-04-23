@@ -129,6 +129,7 @@ const details = ref({Address_Details:{}})
 
 watch(() => props.editDetails, (newDetails) => {
   details.value = { ...newDetails };
+  details.value.firstName = newDetails.firstName.split(' ')[0];
 })
 
 

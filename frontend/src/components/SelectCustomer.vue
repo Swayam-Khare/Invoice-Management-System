@@ -60,7 +60,7 @@ import { useCustomerStore } from '@/stores/customerStore'
 
 const customerStore = useCustomerStore()
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(['close','selectedCustomerData'])
 
 const headers = ref([
   { title: 'Name', value: 'firstName', sortable: true },
@@ -114,6 +114,11 @@ const itemsPerPageOption = ref([
 
 function closeDialog() {
   emit('close')
+}
+
+function handleAction(custData) {
+  emit('selectedCustomerData', custData);
+  emit('close');
 }
 </script>
 
