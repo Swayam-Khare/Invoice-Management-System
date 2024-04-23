@@ -34,45 +34,45 @@
           loading-text="Please wait..."
           :items-length="productStore.rowsCount"
           :search="search"
-          item-value="name"
+          :show-select="true"
+          v-model= "selectedItems"
           @update:options="(options = $event), loadItems(options)"
           :items-per-page-options="itemsPerPageOption"
-        >
-          <template v-slot:item.actions="{ item }">
-            <v-btn
-              color="#112d4e"
-              class="text-body-2 text-capitalize"
-              density="compact"
-              @click="handleAction(item)"
-              >Select</v-btn
-            >
-          </template></v-data-table-server
-        >
+        ></v-data-table-server>
       </div>
+      <v-btn
+        color="#112d4e"
+        class="text-body-2 text-capitalize"
+        density="compact"
+        @click="handleAction"
+        >Select</v-btn
+      >
     </v-card>
   </v-dialog>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { defineEmits } from 'vue'
 import { useProductStore } from '@/stores/productStore'
 
 const productStore = useProductStore()
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(['close', 'selectExistingProduct'])
 
 const headers = ref([
   { title: 'Product', value: 'name', sortable: true },
   { title: 'Stock', value: 'stock' },
   { title: 'Price', value: 'price' },
-  { title: 'Discount', value: 'discount' },
-  { title: 'Actions', value: 'actions' }
+  { title: 'Discount', value: 'discount' }
+  // { title: 'Action', value: 'actions' },
 ])
 
 let productData = ref([])
 let search = ref(undefined)
 let options = ref({})
+const selectedItems = ref([]);
+
 
 async function loadItems(event) {
   console.log(event)
@@ -112,6 +112,11 @@ const itemsPerPageOption = ref([
 
 function closeDialog() {
   emit('close')
+}
+
+function handleAction() {
+  emit('selectExistingProduct', selectedItems.value);
+  emit('close');
 }
 </script>
 
