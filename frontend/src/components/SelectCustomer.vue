@@ -41,7 +41,7 @@
           <template v-slot:item.actions="{ item }">
             <v-btn
               color="#112d4e"
-              class="text-body-2 text-capitalize"
+              class="text-body-2 text-capitalize text-white"
               density="compact"
               @click="handleAction(item)"
               >Select</v-btn
@@ -130,7 +130,7 @@ function handleAction(custData) {
 }
 
 .custom-data-table >>> .v-data-table__th {
-  background-color: #112d4ef1;
+  background-color: #112d4e;
   color: white;
 }
 

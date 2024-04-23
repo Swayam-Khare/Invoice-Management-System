@@ -36,7 +36,7 @@ import customerDetails from './customerDetails.vue';
 import EditCustomer from './EditCustomer.vue';
 
 const headers = ref([
-  { title: 'Name', value: 'firstName', sortable: true },
+  { title: 'Name', value: 'fullName', sortable: true },
   { title: 'Email', value: 'email' },
   { title: 'Contact no', value: 'Address_Details.contact' },
   { title: 'More Info', value: 'actions' },
@@ -82,7 +82,7 @@ async function loadItems(event) {
   await customerStore.getAllCustomers(queryObj)
   customerData.value = customerStore.customers
   for (let d of customerData.value) {
-    d.firstName = d.firstName + ' ' + d.lastName
+    d.fullName = d.firstName + ' ' + d.lastName
   }
 }
 

@@ -1,6 +1,7 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import axios from './axios'
+import { toast } from 'vue3-toastify'
 
 export const useVendorStore = defineStore('vendorStore', () => {
   let vendors = ref([]);
@@ -105,6 +106,13 @@ export const useVendorStore = defineStore('vendorStore', () => {
       const res = await axios.post('/vendors', formData, config)
       //   console.log(res);
       // Handle successful signup response here
+      toast.success('Your request has been sent successfully. Our team will contact you soon ', {
+        autoClose: 3000,
+        type: 'success',
+        position: 'bottom-center',
+        transition: 'zoom',
+        dangerouslyHTMLString: true
+      })
     } catch (error) {
       console.log(error)
       // Handle error response here
