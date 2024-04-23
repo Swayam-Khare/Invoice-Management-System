@@ -97,6 +97,7 @@
     </div>
     <div class="table-border elevation-6">
       <v-data-table-server
+        class="custom-data-table"
         :headers="headers"
         :items="productData"
         :items-per-page="10"
@@ -121,7 +122,11 @@
     @close="productDialog = false"
     @delete="loadItems(options)"
   />
-  <EditProduct v-model="editDialog" :editDetails="specificProductDetails" @close="editDialog=false,loadItems(options)"/>
+  <EditProduct
+    v-model="editDialog"
+    :editDetails="specificProductDetails"
+    @close="(editDialog = false), loadItems(options)"
+  />
 </template>
 
 <script setup>
@@ -204,6 +209,15 @@ const itemsPerPageOption = ref([
   box-shadow:
     0 0 0 1px black,
     5px 5px 10px rgba(0, 0, 0, 0.456) !important;
+}
+
+.custom-data-table >>> .v-data-table__th {
+  background-color: #112d4ef1;
+  color: white;
+}
+
+.custom-data-table >>> th.v-data-table__th--sortable:hover {
+  color: white !important;
 }
 
 .table-border {

@@ -276,10 +276,7 @@ watch(pincode, async (newPincode) => {
   }
 })
 
-const orderData = ref([
-  { product: 'Dish Washer', quantity: 2, price: 5000, discount: 100, subtotal: 4900 },
-  { product: 'TV', quantity: 1, price: 30000, discount: 2000, subtotal: 28000 }
-])
+const orderData = ref([])
 
 const dueDate = computed(() => {
   if (actualDueDate.value) {
