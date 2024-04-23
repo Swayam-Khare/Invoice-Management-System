@@ -15,15 +15,12 @@ const {
   customerAddress,
   Address,
   Product,
+  VendorCustomer,
 } = db;
 
 // ================== FOR GETTING ALL INVOCIES ==========
 exports.getInvoices = asyncErrorHandler(async (req, res, next) => {
-  const totalRow = await Invoice.findAndCountAll({
-    where: {
-      VendorId: req.vendor.id,
-    },
-  });
+  
   let status = [];
   if (!req.query.status) {
     status = ["paid", "due", "overdue"];
@@ -32,6 +29,7 @@ exports.getInvoices = asyncErrorHandler(async (req, res, next) => {
   }
 
   let orderBy;
+  let orderByCustomer;
   let limitFields = null;
   let offset = null;
   const limit = req.query.limit || 10;
@@ -45,10 +43,15 @@ exports.getInvoices = asyncErrorHandler(async (req, res, next) => {
     limitFields = apiFeatures.limitFields(req.query.fields);
   }
   if (req.query.page) {
-    offset = apiFeatures.paginate(req.query.page, limit, totalRow.count, next);
+    offset = apiFeatures.paginate(req.query.page, limit, next);
   }
   if (req.query.search) {
     search = apiFeatures.search(search);
+  }
+
+  if (orderBy[0][0].startsWith("Customer")) {
+    orderByCustomer = [['firstName', ['DESC']]]
+    orderBy = undefined
   }
 
   // const attributes = limitFields ? limitFields : ["id", "invoice_no", "transaction_no", "due_date", "purchase_date", "status", "total"];
@@ -60,6 +63,8 @@ exports.getInvoices = asyncErrorHandler(async (req, res, next) => {
       },
       {
         model: Customer,
+        paranoid:false,
+        order: orderByCustomer
       },
     ],
     where: {
@@ -132,7 +137,6 @@ exports.getInvoice = asyncErrorHandler(async (req, res, next) => {
   });
 
   const id = invoice.dataValues.Order_Details.productId;
-  // console.log(id);
 
   const products = await Product.findAll({
     where: {
@@ -141,8 +145,6 @@ exports.getInvoice = asyncErrorHandler(async (req, res, next) => {
       },
     },
   });
-
-  // console.log(products);
 
   invoice.dataValues["Address"] = address.dataValues;
   invoice.dataValues["Products"] = products.map((product) => {
@@ -217,6 +219,14 @@ exports.addInvoice = asyncErrorHandler(async (req, res, next) => {
             transaction: t,
           }
         );
+        const venCust = await VendorCustomer.create(
+          {
+            VendorId: req.vendor.id,
+            CustomerId: customer.id
+          }, {
+            transaction:t
+          }
+        )
       } else {
         // check if deleted then restore
         if (existingCustomer.deletedAt) {
@@ -232,6 +242,13 @@ exports.addInvoice = asyncErrorHandler(async (req, res, next) => {
                 roleId: existingCustomer.id,
                 role: "customer",
               },
+            },
+            transaction: t,
+          });
+          await VendorCustomer.restore({
+            where: {
+              VendorId: req.vendor.id,
+              CustomerId:existingCustomer.id
             },
             transaction: t,
           });

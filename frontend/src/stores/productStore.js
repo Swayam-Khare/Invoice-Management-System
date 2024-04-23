@@ -3,12 +3,13 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { toast } from 'vue3-toastify'
 
-export const useCustomerStore = defineStore('customerStore', () => {
+export const useProductStore = defineStore('productStore', () => {
   let loading = ref(false)
-  let customers = ref([]);
+  let products = ref([]);
   let rowsCount = ref(null);
+  let selectedProducts = ref([]);
 
-  const getAllCustomers = async (options) => {
+  const getAllProducts = async (options) => {
     let queryStr = ''
     for (const key in options) {
       if (options[key]) {
@@ -19,11 +20,11 @@ export const useCustomerStore = defineStore('customerStore', () => {
     // console.log(queryStr);
     try {
       loading.value = true
-      const res = await axios.get(`/customers?${queryStr}`, {
+      const res = await axios.get(`/products?${queryStr}`, {
         withCredentials: true
       })
-      console.log(res.data.data.vendorCustomers)
-      customers.value = res.data.data.vendorCustomers;
+      console.log(res.data.data)
+      products.value = res.data.data.myProducts;
       rowsCount.value = res.data.data.totalRows.count;
     } catch (error) {
       console.log(error.message)
@@ -32,11 +33,31 @@ export const useCustomerStore = defineStore('customerStore', () => {
     }
   }
 
-  const updateCustomer = async (data) => {
+  const getSelectedProducts = async (ids) => {
+    try {
+      loading.value = true;
+      const data = {
+        ids
+      }
+      const res = await axios.post("/products/findByIds",
+        data,
+        {
+        withCredentials:true
+        })
+      selectedProducts.value = res.data.data.myProducts
+      
+    } catch (err) {
+      console.log(err);
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  const updateProduct = async (data) => {
     try {
       loading.value = true
-      console.log('line 38',data)
-      const res = await axios.patch(`/customers/${data.id}`,
+      console.log('line 38',data.id)
+      const res = await axios.patch(`/products/${data.id}`,
         data,
         {
         withCredentials: true
@@ -68,10 +89,10 @@ export const useCustomerStore = defineStore('customerStore', () => {
     
   }
 
-  const deleteCustomer = async (id)=>{
+  const deleteProduct = async (id)=>{
     try {
       loading.value = true;
-      await axios.delete(`/customers/${id}`,{withCredentials:true})    
+      await axios.delete(`/products/${id}`,{withCredentials:true})    
     } catch (err) {
       toast.error(err.message, {
         autoClose: 2000,
@@ -86,5 +107,5 @@ export const useCustomerStore = defineStore('customerStore', () => {
     }
   }
 
-  return { getAllCustomers, customers, rowsCount, loading, updateCustomer, deleteCustomer }
+  return { getAllProducts, products, rowsCount, loading, updateProduct, deleteProduct, getSelectedProducts, selectedProducts }
 })

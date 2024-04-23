@@ -18,7 +18,7 @@
                 variant="outlined"
                 @click="showDuePicker = !showDuePicker"
                 v-model="dueDate"
-                label="Due Date"   
+                label="Due Date"
                 readonly
                 v-bind="props"
               ></v-text-field>
@@ -74,12 +74,21 @@
     <div class="bg-white rounded-lg mx-4 elevation-3 mb-7">
       <div class="d-flex flex-wrap justify-space-between align-center py-4 px-6">
         <h3>Customer Info</h3>
-        <v-btn
-          color="#112D4E"
-          @click="showSelectCustomer = true"
-          class="text-capitalize mt-2 mt-sm-0"
-          >Select Customer</v-btn
-        >
+        <div class="d-flex ga-5 flex-column flex-sm-row">
+          <v-btn
+            color="red"
+            @click="handleClear"
+            :class="{'d-none':!readOnly}"
+            class="text-capitalize mt-2 mt-sm-0"
+            >Clear Customer</v-btn
+          >
+          <v-btn
+            color="#112D4E"
+            @click="showSelectCustomer = true"
+            class="text-capitalize mt-2 mt-sm-0"
+            >Select Customer</v-btn
+          >
+        </div>
       </div>
       <v-divider class="mb-4 mx-4"></v-divider>
       <div class="d-flex flex-wrap flex-column flex-sm-row px-sm-2 justify-space-around">
@@ -89,24 +98,32 @@
             variant="outlined"
             label="First Name"
             color="#112D4E"
+            v-model="existingCustomerDetails.firstName"
+            :readOnly="readOnly"
           ></v-text-field>
           <v-text-field
             density="compact"
             variant="outlined"
             label="Last Name"
             color="#112D4E"
+            v-model="existingCustomerDetails.lastName"
+            :readOnly="readOnly"
           ></v-text-field>
           <v-text-field
             density="compact"
             variant="outlined"
             label="Email"
             color="#112D4E"
+            v-model="existingCustomerDetails.email"
+            :readOnly="readOnly"
           ></v-text-field>
           <v-text-field
             density="compact"
             variant="outlined"
             label="Contact"
             color="#112D4E"
+            v-model="existingCustomerDetails.contact"
+            :readOnly="readOnly"
           ></v-text-field>
         </div>
         <div class="d-flex flex-wrap flex-column px-4 px-sm-0 custom-info">
@@ -115,33 +132,43 @@
             variant="outlined"
             label="Address Lane 1"
             color="#112D4E"
+            v-model="existingCustomerDetails.address_lane1"
+            :readOnly="readOnly"
           ></v-text-field>
           <v-text-field
             density="compact"
             variant="outlined"
             label="Address Lane 2"
             color="#112D4E"
+            v-model="existingCustomerDetails.address_lane1"
+            :readOnly="readOnly"
           ></v-text-field>
           <v-text-field
             density="compact"
             variant="outlined"
             label="Landmark"
             color="#112D4E"
+            v-model="existingCustomerDetails.landmark"
+            :readOnly="readOnly"
           ></v-text-field>
           <div class="d-flex ga-2">
-            <v-select
-              variant="outlined"
-              item-color="#112D4E"
-              color="#112D4E"
-              label="State"
-              density="compact"
-              :items="states"
-            ></v-select>
             <v-text-field
-              variant="outlined"
-              density="compact"
               label="Pincode"
-              color="#112D4E"
+              v-model="existingCustomerDetails.pincode"
+              :readOnly="readOnly"
+              :rules="pincodeRules"
+              variant="outlined"
+              color="#112d4e"
+              density="compact"
+            ></v-text-field>
+            <v-text-field
+              label="State"
+              v-model="fatchedState"
+              :rules="[required]"
+              variant="outlined"
+              color="#112d4e"
+              density="compact"
+              :readOnly="true"
             ></v-text-field>
           </div>
         </div>
@@ -155,20 +182,20 @@
           <tr>
             <th class="text-left">Product</th>
             <th class="text-left">Quantity</th>
-            <th class="text-left">Price</th>
-            <th class="text-left">Discount</th>
-            <th class="text-left">Subtotal</th>
+            <th class="text-left">Price(₹)</th>
+            <th class="text-left">Discount(%)</th>
+            <th class="text-left">Subtotal(₹)</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="item in orderData" :key="item.product">
             <td>
-              {{ item.product }}
+              {{ item.name }}
             </td>
-            <td>{{ item.quantity }}</td>
+            <td><input type="number" :max="item.stock" value="1" min="1" v-model="item.quantity"></td>
             <td>{{ item.price }}</td>
             <td>{{ item.discount }}</td>
-            <td>{{ item.subtotal }}</td>
+            <td>{{ subtotal(item.quantity,item.price,item.discount) }}</td>
           </tr>
           <tr style="background-color: white !important">
             <td>
@@ -216,17 +243,22 @@
     </div>
 
     <!-- Select Customer Dialog -->
-    <SelectCustomer v-model="showSelectCustomer" @close="showSelectCustomer = false" />
+    <SelectCustomer v-model="showSelectCustomer" @close="showSelectCustomer = false" @selected-customer-data="handleCustomer"/>
 
     <!-- Select Product Dialog -->
-    <SelectProduct v-model="showSelectProduct" @close="showSelectProduct = false" />
+    <SelectProduct v-model="showSelectProduct" @close="showSelectProduct = false" @select-existing-product="handleProduct"/>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import SelectCustomer from './SelectCustomer.vue'
 import SelectProduct from './SelectProduct.vue'
+import axios from 'axios'
+import { toast } from 'vue3-toastify'
+import { useProductStore } from '@/stores/productStore'
+
+const productStore = useProductStore();
 
 const showDuePicker = ref(false)
 const showPurchasePicker = ref(false)
@@ -235,12 +267,73 @@ const actualPurchaseDate = ref(null)
 const showSelectCustomer = ref(false)
 const showSelectProduct = ref(false)
 const status = ['Paid', 'Due', 'Overdue']
-const states = ['Uttar Pradesh', 'Gujarat', 'Rajasthan']
+const readOnly = ref(false)
+const fatchedState = ref('')
+const existingCustomerDetails = ref({});
 
-const orderData = ref([
-  { product: 'Dish Washer', quantity: 2, price: 5000, discount: 100, subtotal: 4900 },
-  { product: 'TV', quantity: 1, price: 30000, discount: 2000, subtotal: 28000 }
+const required = (v) => !!v || 'This field is Required'
+
+
+function subtotal(qty, price, discount) {
+  return (qty*price) - ((qty*price*discount)/100)
+}
+
+const pincodeRules = computed(() => [
+  (v) => !!v || 'Pincode is required.',
+  (v) => (v && /^\d+$/.test(v)) || 'Pincode must contain only digits.',
+  (v) => (v && /^\d{6}$/.test(v)) || 'Pincode must be exactly 6 digits.'
 ])
+
+const fetchStateFromPincode = async (pincode) => {
+  try {
+    const response = await axios.get(`https://api.postalpincode.in/pincode/${pincode}`)
+    fatchedState.value = response.data[0].PostOffice[0].State
+  } catch (error) {
+    console.log(error)
+    toast.error('Pincode is invalid!', {
+      autoClose: 1000,
+      pauseOnHover: false,
+      type: 'error',
+      position: 'bottom-center',
+      transition: 'zoom',
+      dangerouslyHTMLString: true
+    })
+  }
+}
+
+watch(()=>existingCustomerDetails.value.pincode, async (newPincode) => {
+  if (newPincode && newPincode.length === 6) {
+    await fetchStateFromPincode(newPincode)
+  } else {
+    fatchedState.value = ''
+  }
+})
+
+function handleClear() {
+  existingCustomerDetails.value = {};
+  readOnly.value = false;
+}
+
+const orderData = ref([])
+
+function handleCustomer(custData) {
+  const { Address_Details } = custData;
+  existingCustomerDetails.value = { ...Address_Details };
+  existingCustomerDetails.value.firstName = custData.firstName.split(' ')[0];
+  existingCustomerDetails.value.lastName = custData.lastName;
+  existingCustomerDetails.value.email = custData.email;
+  readOnly.value = true;
+  console.log(existingCustomerDetails.value);
+}
+
+async function handleProduct(prodData) {
+  
+  await productStore.getSelectedProducts(prodData)
+  orderData.value = productStore.selectedProducts;
+  for (let item of orderData.value) {
+    item.quantity = 1;
+  }
+}
 
 const dueDate = computed(() => {
   if (actualDueDate.value) {
@@ -257,16 +350,6 @@ const purchaseDate = computed(() => {
   }
   return ''
 })
-
-// const addProduct = () => {
-//   orderData.value.push({
-//     product: 'Product',
-//     quantity: 1,
-//     price: 0,
-//     discount: 0,
-//     subtotal: 0
-//   })
-// }
 </script>
 
 <style scoped>

@@ -356,6 +356,8 @@ exports.updateCustomer = asyncErrorHandler(async (req, res, next) => {
     role,
   } = req.body;
 
+
+
   if (role) {
     return next(
       new CustomError("You can't update role using this end point!", 400)
@@ -389,6 +391,7 @@ exports.updateCustomer = asyncErrorHandler(async (req, res, next) => {
 
   res.status(200).json({
     status: "Success",
+    message:"Customer has been updated Successfully",
     data: {
       updatedCustomer,
     },

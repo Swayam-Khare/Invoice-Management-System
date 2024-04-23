@@ -19,21 +19,7 @@
         />
         <!-- <v-icon icon="search" class="bg-grey-lighten-2 d-flex d-md-none"></v-icon> -->
       </div>
-      <!-- <v-menu>
-        <template v-slot:activator="{ props }">
-          <button v-bind="props" class="elevation-6 logo-btn" id="random-color">
-            <span class="logo-char">A</span>
-          </button>
-        </template>
-        <v-list class="mt-4">
-          <v-list-item class="font-weight-bold"> Hi, Admin </v-list-item>
-          <v-list-item height="40" v-for="(item, index) in items" :key="index" :value="index">
-            <v-list-item-title @click="handleMenuItemClick(item.title)">{{
-              item.title
-            }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu> -->
+
       <v-menu offset="4">
         <template v-slot:activator="{ props }">
           <button v-bind="props" class="elevation-6 logo-btn" id="random-color">
@@ -53,6 +39,7 @@
             :onmouseleave="cancelHover"
             title="Update Password"
             value="updatePassword"
+            @click="showUpdatePassDialog = true"
             class="text-left"
           ></v-list-item>
           <v-list-item
@@ -64,6 +51,7 @@
             :onmouseleave="cancelHover"
             title="Logout"
             value="logout"
+            @click="logout"
             class="text-left"
             @click="logout"
           ></v-list-item>
@@ -71,133 +59,107 @@
       </v-menu>
     </div>
   </div>
-  <div class="mobile-search pt-4">
-    <input
-      type="text"
-      placeholder="Search..."
-      class="elevation-6 pa-3 mx-auto search bg-grey-lighten-2 d-flex d-sm-none"
-      v-model="search"
-    />
+
+  <div class="bg-grey-lighten-3 pa-6 h-screen">
+    <div class="mobile-search pt-4">
+      <input
+        type="text"
+        placeholder="Search..."
+        class="elevation-6 pa-3 mx-auto search bg-grey-lighten-2 d-flex d-sm-none"
+        v-model="search"
+      />
+    </div>
+    <div class="table-border elevation-6">
+      <v-data-table-server
+        v-model:expanded="expanded"
+        :headers="headers"
+        :items="data"
+        :items-per-page="8"
+        :search="search"
+        item-key="id"
+        :loading="vendorStore.loading"
+        loading-text="Please wait..."
+        @update:options="(options = $event), (options.status = approvalStatus), loadItems(options)"
+        :items-per-page-options="itemsPerPageOption"
+        :items-length="vendorStore.rowCount.count"
+      >
+        <template v-slot:item.status="{ item }">
+          <td :class="{ pending: item.status === 'pending', approved: item.status === 'approved' }">
+            {{ item.status }} {{ eVariable }}
+          </td>
+        </template>
+
+        <template v-slot:header.status="{}">
+          <v-menu offset="4">
+            <template v-slot:activator="{ props }">
+              <v-btn
+                id="status"
+                :ripple="false"
+                v-bind="props"
+                variant="text"
+                class="nav-btn text-capitalize h-100"
+              >
+                Status <v-icon :icon="clearFilter()" @click="closeFilter()"></v-icon>
+              </v-btn>
+            </template>
+
+            <!-- list item to show in menu -->
+            <v-list class="pa-0">
+              <v-list-item
+                id="approved"
+                :active="itemVariant == 'approved'"
+                color="#112D4E"
+                variant="flat"
+                :onmouseenter="activeHover"
+                :onmouseleave="cancelHover"
+                @click="
+                  (approvalStatus = 'approved'),
+                    (options.status = approvalStatus),
+                    loadItems(options)
+                "
+                title="Approved"
+                value="approved"
+                class="text-left"
+              >
+              </v-list-item>
+              <v-list-item
+                v-model="status"
+                id="pending"
+                :active="itemVariant == 'pending'"
+                color="#112D4E"
+                variant="flat"
+                :onmouseenter="activeHover"
+                :onmouseleave="cancelHover"
+                @click="
+                  (approvalStatus = 'pending'),
+                    (options.status = approvalStatus),
+                    loadItems(options)
+                "
+                title="Pending"
+                value="pending"
+                class="text-left"
+              ></v-list-item>
+            </v-list>
+          </v-menu>
+        </template>
+
+        <template v-slot:item.actions="{ item }">
+          <v-icon @click="alertMe(item.id)">info_outlined</v-icon>
+        </template>
+      </v-data-table-server>
+    </div>
   </div>
-  <div>
-    <!-- <v-data-table-server
-      items-per-page="10"
-      :headers="headers"
-      :items="data"
-      :items-length="data.length"
-      :loading="vendorStore.loading"
-      loading-text="Loading, please wait..."
-      @update:options="loadItems"
-      expand-on-click
-    >
-      <template v-slot:expanded-row="{ item }">
-        <td :colspan="headers.length">
-          <div class="px-4 py-2">
-            Custom expansion content here
-            <Profile :data="item" />
-             <p>Hello {{ item }}</p> 
-          </div>
-        </td>
-      </template>
-
-      <template v-slot:item.status="{ item }">
-        <td :class="{ pending: item.status === 'pending', approved: item.status === 'approved' }">
-          {{ item.status }}
-        </td>
-      </template>
-    </v-data-table-server> -->
-
-    <!-- <v-skeleton-loader
-      v-if="vendorStore.loading"
-      :loading="vendorStore.loading"
-      type="table"
-    ></v-skeleton-loader> -->
-
-    <v-data-table-server
-      v-model:expanded="expanded"
-      :headers="headers"
-      :items="data"
-      :items-per-page="10"
-      :search="search"
-      item-key="id"
-      :loading="vendorStore.loading"
-      loading-text="Please wait..."
-      show-expand
-      @update:options="(options = $event), (options.status = approvalStatus), loadItems(options)"
-      :items-per-page-options="itemsPerPageOption"
-      :items-length="vendorStore.rowCount.count"
-    >
-      <template v-slot:item.status="{ item }">
-        <td :class="{ pending: item.status === 'pending', approved: item.status === 'approved' }">
-          {{ item.status }}
-        </td>
-      </template>
-
-      <template v-slot:header.status="{}">
-        <v-menu :open-on-hover="true" offset="4">
-          <template v-slot:activator="{ props }">
-            <v-btn
-              id="status"
-              :ripple="false"
-              v-bind="props"
-              variant="text"
-              class="nav-btn text-capitalize h-100"
-            >
-              Status <v-icon :icon="clearFilter()" @click="closeFilter()"></v-icon>
-            </v-btn>
-          </template>
-
-          <!-- list item to show in menu -->
-          <v-list class="pa-0">
-            <v-list-item
-              id="approved"
-              :active="itemVariant == 'approved'"
-              color="#112D4E"
-              variant="flat"
-              :onmouseenter="activeHover"
-              :onmouseleave="cancelHover"
-              @click="
-                (approvalStatus = 'approved'), (options.status = approvalStatus), loadItems(options)
-              "
-              title="Approved"
-              value="approved"
-              class="text-left"
-            >
-            </v-list-item>
-            <v-list-item
-              v-model="status"
-              id="pending"
-              :active="itemVariant == 'pending'"
-              color="#112D4E"
-              variant="flat"
-              :onmouseenter="activeHover"
-              :onmouseleave="cancelHover"
-              @click="
-                (approvalStatus = 'pending'), (options.status = approvalStatus), loadItems(options)
-              "
-              title="Pending"
-              value="pending"
-              class="text-left"
-            ></v-list-item>
-          </v-list>
-        </v-menu>
-      </template>
-      <template v-slot:item.data-table-expand="{ toggleExpand, internalItem, isExpanded }">
-        <v-btn
-          :icon="icon(isExpanded, internalItem)"
-          variant="text"
-          @click="toggleExpansion(internalItem, toggleExpand, isExpanded)"
-        ></v-btn>
-      </template>
-      <template v-slot:expanded-row="{ item }">
-        <td :colspan="headers.length">
-          <div class="transition-slot" id="details">
-            <Profile :data="item" @unmount-profile="loadItems(options)" />
-          </div>
-        </td>
-      </template>
-    </v-data-table-server>
-  </div>
+  <Profile
+    v-model="vendorDialog"
+    :data="specificVendorDetails"
+    @close="vendorDialog = false"
+    @reload="loadItems(options)"
+  />
+  <UpdateAdminPassword
+    v-model="showUpdatePassDialog"
+    @close="showUpdatePassDialog = false"
+    @update="logout"
+  />
 </template>
 
 <script setup>
@@ -210,6 +172,7 @@ import { onMounted } from 'vue'
 import { useVendorStore } from '../stores/vendorStore.js'
 import { useAdminStore } from '@/stores/admin'
 import Profile from '../components/VendorProfile.vue'
+import UpdateAdminPassword from '@/components/UpdateAdminPassword.vue'
 
 const router = useRouter()
 
@@ -222,13 +185,15 @@ const itemsPerPageOption = ref([
   { title: '100', value: 100 }
 ])
 
+let showUpdatePassDialog = ref(false)
 let approvalStatus = ref(undefined)
 let options = ref({})
 let search = ref(undefined)
 let itemVariant = ref(null)
 const vendorStore = useVendorStore()
 const adminStore = useAdminStore()
-
+let specificVendorDetails = ref({})
+let vendorDialog = ref(false)
 const activeHover = (event) => {
   if (event.currentTarget.id == 'pending') {
     itemVariant.value = 'pending'
@@ -246,8 +211,9 @@ const cancelHover = () => {
 }
 
 function closeFilter() {
-  if (options.value.status) {
-    options.value.status = undefined
+  if (approvalStatus.value) {
+    approvalStatus.value = undefined
+    options.value.status = approvalStatus.value
     loadItems(options.value)
   }
 }
@@ -265,6 +231,12 @@ onMounted(() => {
   document.getElementById('random-color').style.backgroundColor = color
 })
 const expanded = ref([])
+
+// function handleMenuItemClick(title) {
+//   if (title === 'Logout') {
+//     logout()
+//   }
+// }
 
 async function logout() {
   try {
@@ -288,11 +260,11 @@ async function logout() {
 }
 
 const headers = ref([
-  { key: 'data-table-expand' },
   { title: 'Name', value: 'firstName', sortable: true },
   { title: 'E-mail', value: 'email' },
   { title: 'Contact no', value: 'Address_Details.contact' },
-  { title: 'Status', value: 'status' }
+  { title: 'Status', value: 'status' },
+  { title: '', value: 'actions' }
 ])
 
 function icon(expand, item) {
@@ -336,35 +308,10 @@ async function loadItems(event) {
   expanded.value = []
 }
 
-function toggleExpansion(item, expand, isExpanded) {
-  console.log(expand)
-
-  // this.expanded = []
-  if (isExpanded(item)) {
-    let id = null
-    var pos = 350
-    const ele = document.getElementById('details')
-    clearInterval(id)
-    const frame = () => {
-      if (pos == 0) {
-        clearInterval(id)
-        expand(item)
-      } else {
-        pos = pos - 10
-        ele.style.height = pos + 'px'
-      }
-    }
-    id = setInterval(frame, 4)
-  } else {
-    expand(item)
-  }
-
-  if (expanded.value.length > 1) {
-    const temp = expanded.value[1]
-    expanded.value = []
-    expanded.value.push(temp)
-  }
-  console.log(expanded.value)
+function alertMe(id) {
+  specificVendorDetails.value = data.value.find((t) => t.id === id)
+  console.log(specificVendorDetails.value)
+  vendorDialog.value = true
 }
 </script>
 
@@ -464,35 +411,8 @@ tr:hover {
   height: 350px;
 }
 
-@keyframes trans {
-  from {
-    height: 0;
-  }
-
-  to {
-    height: 350px;
-  }
-}
-
-@keyframes transSmall {
-  from {
-    height: 0;
-  }
-
-  to {
-    height: 550px;
-  }
-}
-
-.vSelect {
-  position: absolute;
-  /* width: 180px; */
-  transform: translate(50px, -40px);
-}
-
-.v-field__input {
-  background-color: red !important;
-  padding: 0px !important;
-  height: 0px !important;
+.table-border {
+  border: 1px solid rgba(58, 56, 56, 0.134);
+  border-radius: 8px;
 }
 </style>

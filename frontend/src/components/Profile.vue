@@ -350,8 +350,7 @@ async function submitForm() {
     shopName: vendorData.value.shopName,
     landmark: vendorData.value.Address_Details.landmark,
     address_lane1: vendorData.value.Address_Details.address_lane1,
-    address_lane2: vendorData.value.Address_Details.address_lane2,
-    pincode: pincode
+    address_lane2: vendorData.value.Address_Details.address_lane2
   }
   try {
     await vendorStore.updateVendor(formData)
