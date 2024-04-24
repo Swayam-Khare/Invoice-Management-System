@@ -14,8 +14,8 @@
             <input
               v-model="search"
               type="text"
-              class="pl-2 mt-4 mt-sm-0 border-md rounded"
-              placeholder="Search Product"
+              class="pl-2 mt-4 mt-sm-0 py-2 border-md rounded"
+              placeholder="Search..."
             />
           </div>
         </div>
@@ -42,10 +42,12 @@
       </div>
       <v-btn
         color="#112d4e"
-        class="text-body-2 text-capitalize"
-        density="compact"
+        size="large"
+        class=" mx-auto text-h6 mb-4 w-50 text-capitalize"
         @click="handleAction"
-        >Select</v-btn
+        >
+        Select
+        </v-btn
       >
     </v-card>
   </v-dialog>
