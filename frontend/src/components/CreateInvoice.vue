@@ -448,7 +448,7 @@ const increaseQty = (item) => {
     return
   }
   item.quantity++
-}
+} 
 
 const decreaseQty = (item) => {
   if (item.quantity === 1) {
