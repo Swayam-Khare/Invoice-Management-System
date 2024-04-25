@@ -19,7 +19,7 @@
 
       >
         <template v-slot:item.actions="{ item }">
-          <v-icon @click="alertMe(item.id)">info_outlined</v-icon>
+          <v-icon class="ml-8" @click="alertMe(item.id)">info_outlined</v-icon>
         </template>
       </v-data-table-server>
     </div>
@@ -39,8 +39,9 @@ const headers = ref([
   { title: 'Name', value: 'firstName', sortable: true },
   { title: 'Email', value: 'email' },
   { title: 'Contact no', value: 'Address_Details.contact' },
-  { title: '', value: 'actions' }
+  { title: 'More Info', value: 'actions' },
 ])
+
 let customerData = ref([]);
 let search = ref(undefined);
 let customerDialog = ref(false);
