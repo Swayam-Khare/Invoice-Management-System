@@ -8,6 +8,7 @@ export const useVendorStore = defineStore('vendorStore', () => {
   let rowCount = ref({ count: 0 })
   let loading = ref(false)
   let token = ref(null)
+  const updatePasswordStatus = ref(null)
 
   let loggedVendor = ref({})
   const stateVariable = ref(10)
@@ -154,6 +155,38 @@ export const useVendorStore = defineStore('vendorStore', () => {
     }
   }
 
+  async function updatePassword(password) {
+    try {
+      loading.value = true
+      const config = {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        withCredentials: true
+      }
+      const res = await axios.patch('/vendors/updatepassword', password, config)
+      updatePasswordStatus.value = res.status
+      toast.success(res.data.message, {
+        autoClose: 1000,
+        type: 'success',
+        position: 'bottom-center',
+        transition: 'zoom',
+        dangerouslyHTMLString: true
+      })
+    } catch (error) {
+      updatePasswordStatus.value = error.response.status
+      toast.error(error.response.data.message, {
+        autoClose: 1000,
+        type: 'error',
+        position: 'bottom-center',
+        transition: 'zoom',
+        dangerouslyHTMLString: true
+      })
+    } finally {
+      loading.value = false
+    }
+  }
+
   //   const vendors = computed(async () => {
   //         try {
   //             const res =  await axios.get('/vendors', { withCredentials: true });
@@ -181,6 +214,7 @@ export const useVendorStore = defineStore('vendorStore', () => {
     deleteVendor,
     approveVendor,
     logoutVendor,
+    updatePassword,
     getAVendor
   }
 })

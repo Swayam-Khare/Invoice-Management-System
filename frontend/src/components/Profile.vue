@@ -136,13 +136,24 @@
                 <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
                   >Password</span
                 >
-                <p style="font-size: 16px">{{ password2 }}</p>
+                <div class="d-flex">
+                  <p style="font-size: 16px">{{ password2 }}</p>
+                  <v-icon size="16" class="ml-2 cursor-pointer" @click="showUpdatePassDialog = true"
+                    >edit</v-icon
+                  >
+                </div>
               </div>
             </v-card-text>
           </v-card>
         </v-row>
       </v-col>
     </v-row>
+
+    <UpdateVendorPassword
+      v-model="showUpdatePassDialog"
+      @close="showUpdatePassDialog = false"
+      @update="logout"
+    />
 
     <!-- update profile page -->
     <div v-if="showForm" class="pa-2">
@@ -306,12 +317,16 @@
 
 <script setup>
 import { useVendorStore } from '@/stores/vendorStore'
-import { ref, watch, onMounted, computed } from 'vue'
+import { ref, watch, computed } from 'vue'
+import { useRouter } from 'vue-router'
+
 import { toast } from 'vue3-toastify'
 import axios from 'axios'
 import { onBeforeMount } from 'vue'
+import UpdateVendorPassword from '@/components/UpdateVendorPassword.vue'
 
 const vendorStore = useVendorStore()
+const router = useRouter()
 
 const isLoading = ref(false)
 
@@ -326,6 +341,7 @@ const pincodeRules = computed(() => [
 const password = ref('asdf123456')
 const password2 = ref('**********')
 const confirmPassword = ref('asdf123456')
+let showUpdatePassDialog = ref(false)
 
 const vendorData = ref({ Address_Details: {} })
 const props = defineProps(['profile'])
@@ -396,6 +412,27 @@ watch(
     }
   }
 )
+
+async function logout() {
+  try {
+    const success = await vendorStore.logoutVendor()
+    if (success) {
+      // Redirect to the home page
+      router.replace('/')
+    } else {
+      console.error('Logout failed')
+      toast.error('admin logout failed!', {
+        autoClose: 2000,
+        type: 'error',
+        position: 'top-right',
+        transition: 'zoom',
+        dangerouslyHTMLString: true
+      })
+    }
+  } catch (error) {
+    console.error('Logout failed:', error)
+  }
+}
 </script>
 <style scoped>
 .custom-info {
