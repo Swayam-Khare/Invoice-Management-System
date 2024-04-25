@@ -1,25 +1,22 @@
 <template>
   <v-dialog max-width="700" centered>
     <v-card>
-      <v-card-title class="d-flex justify-space-between align-center" style="background-color: #112d4ef1">
+      <v-card-title
+        class="d-flex justify-space-between align-center"
+        style="background-color: #112d4ef1"
+      >
         <p style="color: #f5f5f5" class="text-h5 pl-5">Select Customers</p>
         <v-btn icon="close" variant="text" color="#f5f5f5" @click="closeDialog"></v-btn>
       </v-card-title>
       <v-row>
         <div class="d-flex flex-wrap w-100 mt-7 mx-9 mb-6 justify-space-between align-center">
           <div>
-            Show
             <input
-              type="number"
-              class="pl-2 border-md rounded w-25 ml-2 mr-2"
-              min="1"
-              placeholder="Entries"
+              v-model="search"
+              type="text"
+              class="pl-2 mt-4 mt-sm-0 border-md rounded"
+              placeholder="Search Customer"
             />
-            entries
-          </div>
-
-          <div>
-            <input type="text" class="pl-2 mt-4 mt-sm-0 border-md rounded ml-sm-2" placeholder="Search Customer" />
           </div>
         </div>
       </v-row>
@@ -27,75 +24,105 @@
       <v-divider class="mx-6 mb-4"></v-divider>
 
       <!-- Customer Table -->
-      <v-data-table-virtual
-        :headers="headers"
-        :items="customers"
-        :items-per-page="2"
-        class="elevation-3 mx-6 w-auto mb-4 custom-data-table"
-        hide-default-footer
-      >
-        <template v-slot:item.action="{ item }">
-          <v-btn
-            color="#112d4e"
-            class="text-body-2 text-capitalize"
-            density="compact"
-            @click="handleAction(item)"
-            >Select</v-btn
-          >
-        </template></v-data-table-virtual
-      >
-      <v-pagination
-        v-model="page"
-        :length="10"
-        next-icon="arrow_forward_ios"
-        prev-icon="arrow_back_ios"
-        class="pagination mx-auto mb-2"
-        :total-visible="4"
-        size="x-small"
-      ></v-pagination>
+      <div class="table-border elevation-6 mx-4 mb-5">
+        <v-data-table-server
+          class="custom-data-table"
+          :headers="headers"
+          :items="customerData"
+          :items-per-page="10"
+          :loading="customerStore.loading"
+          loading-text="Please wait..."
+          :items-length="customerStore.rowsCount"
+          :search="search"
+          item-value="name"
+          @update:options="(options = $event), loadItems(options)"
+          :items-per-page-options="itemsPerPageOption"
+        >
+          <template v-slot:item.actions="{ item }">
+            <v-btn
+              color="#112d4e"
+              class="text-body-2 text-capitalize text-white"
+              density="compact"
+              @click="handleAction(item)"
+              >Select</v-btn
+            >
+          </template></v-data-table-server
+        >
+      </div>
     </v-card>
   </v-dialog>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import { defineEmits } from 'vue'
+import { useCustomerStore } from '@/stores/customerStore'
 
-const emit = defineEmits(['close'])
+const customerStore = useCustomerStore()
 
-const headers = [
-  { title: 'Name', value: 'name', sortable: true },
+const emit = defineEmits(['close','selectedCustomerData'])
+
+const headers = ref([
+  { title: 'Name', value: 'firstName', sortable: true },
   { title: 'Email', value: 'email' },
-  { title: 'Contact no.', value: 'contact' },
-  { title: 'Actions', value: 'action' }
-]
+  { title: 'Contact no', value: 'Address_Details.contact' },
+  { title: 'Actions', value: 'actions' }
+])
 
-const page = ref(1)
+let customerData = ref([])
+let search = ref(undefined)
+let options = ref({})
 
-const customers = ref([
-  {
-    contact: 1234567890,
-    name: 'A Doe',
-    email: 'Hello@gmail.com'
-  },
-  {
-    contact: 1234567890,
-    name: 'B Doe',
-    email: 'Hello@gmail.com'
-  },
-  {
-    contact: 1234567890,
-    name: 'C Doe',
-    email: 'Hello@gmail.com'
+async function loadItems(event) {
+  console.log(event)
+  const { sortBy, page, itemsPerPage, search } = event
+  console.log('line 39', sortBy, page, itemsPerPage, search)
+  let sortingStr = ''
+
+  if (sortBy.length) {
+    sortBy.forEach((i) => {
+      if (i.order == 'asc') {
+        sortingStr += i.key + ','
+      } else {
+        sortingStr += '-' + i.key + ','
+      }
+    })
   }
+  sortingStr = sortingStr.slice(0, sortingStr.length - 1)
+
+  const queryObj = {}
+
+  queryObj.page = page
+  queryObj.limit = itemsPerPage
+  queryObj.search = search
+  queryObj.sort = sortingStr
+
+  await customerStore.getAllCustomers(queryObj)
+  customerData.value = customerStore.customers
+  for (let d of customerData.value) {
+    d.firstName = d.firstName + ' ' + d.lastName
+  }
+}
+
+const itemsPerPageOption = ref([
+  { title: '10', value: 10 },
+  { title: '15', value: 15 },
+  { title: '20', value: 20 },
+  { title: '50', value: 50 },
+  { title: '100', value: 100 }
 ])
 
 function closeDialog() {
   emit('close')
 }
+
+function handleAction(custData) {
+  emit('selectedCustomerData', custData);
+  emit('close');
+}
 </script>
 
 <style scoped>
-
 @media only screen and (max-width: 690) {
   .pagination {
     width: 70% !important;
@@ -109,5 +136,10 @@ function closeDialog() {
 
 .custom-data-table >>> th.v-data-table__th--sortable:hover {
   color: white !important;
+}
+
+.table-border {
+  border: 1px solid rgba(58, 56, 56, 0.134);
+  border-radius: 8px;
 }
 </style>

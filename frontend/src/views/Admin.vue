@@ -39,6 +39,7 @@
             :onmouseleave="cancelHover"
             title="Update Password"
             value="updatePassword"
+            @click="showUpdatePassDialog = true"
             class="text-left"
           ></v-list-item>
           <v-list-item
@@ -147,7 +148,17 @@
       </v-data-table-server>
     </div>
   </div>
-  <Profile v-model="vendorDialog" :data="specificVendorDetails" @close="vendorDialog = false " @reload="loadItems(options)" />
+  <Profile
+    v-model="vendorDialog"
+    :data="specificVendorDetails"
+    @close="vendorDialog = false"
+    @reload="loadItems(options)"
+  />
+  <UpdateAdminPassword
+    v-model="showUpdatePassDialog"
+    @close="showUpdatePassDialog = false"
+    @update="logout"
+  />
 </template>
 
 <script setup>
@@ -160,6 +171,7 @@ import { onMounted } from 'vue'
 import { useVendorStore } from '../stores/vendorStore.js'
 import { useAdminStore } from '@/stores/admin'
 import Profile from '../components/VendorProfile.vue'
+import UpdateAdminPassword from '@/components/UpdateAdminPassword.vue'
 
 const router = useRouter()
 
@@ -172,6 +184,7 @@ const itemsPerPageOption = ref([
   { title: '100', value: 100 }
 ])
 
+let showUpdatePassDialog = ref(false)
 let approvalStatus = ref(undefined)
 let options = ref({})
 let search = ref(undefined)
@@ -197,8 +210,9 @@ const cancelHover = () => {
 }
 
 function closeFilter() {
-  if (options.value.status) {
-    options.value.status = undefined
+  if (approvalStatus.value) {
+    approvalStatus.value = undefined
+    options.value.status = approvalStatus.value
     loadItems(options.value)
   }
 }

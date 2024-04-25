@@ -76,6 +76,14 @@
             color="#112d4e"
             density="compact"
           ></v-text-field>
+          <v-text-field
+            label="Landmark"
+            v-model="landmark"
+            variant="outlined"
+            class="mt-1"
+            color="#112d4e"
+            density="compact"
+          ></v-text-field>
           <v-row>
             <v-col cols="12" md="6" class="pb-0 pb-md-3">
               <v-text-field
@@ -139,8 +147,8 @@ const contact = ref('')
 const shopName = ref('')
 const address_lane1 = ref('')
 const address_lane2 = ref('')
+const landmark = ref('')
 const pincode = ref('')
-// const state = ref('')
 const alphabetOnlyRule = (v) => /^[A-Za-z\s]*$/.test(v) || 'Alphabets only.'
 const emailRule = (v) => /.+@.+\..+/.test(v) || 'Invalid email address.'
 
@@ -193,6 +201,7 @@ async function submitForm() {
     shopName: shopName.value,
     address_lane1: address_lane1.value,
     address_lane2: address_lane2.value,
+    landmark: landmark.value,
     pincode: pincode.value,
     state: fatchedState.value
   }
@@ -200,16 +209,9 @@ async function submitForm() {
   // console.log(check.valid)
   if (check.valid) {
     await vendorStore.signupVendor(formData)
-    toast.success('Your request has been sent successfully. Our team will contact you soon ', {
-      autoClose: 3000,
-      type: 'success',
-      position: 'bottom-center',
-      transition: 'zoom',
-      dangerouslyHTMLString: true
-    })
+
   } else {
-    console.log('Please enter complete details')
-    toast.error('Something went Wrong!.', {
+    toast.error('Please enter complete details!.', {
       autoClose: 1000,
       type: 'error',
       position: 'bottom-center',
@@ -218,8 +220,6 @@ async function submitForm() {
     })
     return
   }
-
-  // console.log('Form submitted!')
   resetForm()
   emit('close')
 }
@@ -237,6 +237,7 @@ function resetForm() {
   shopName.value = null
   address_lane1.value = null
   address_lane2.value = null
+  landmark.value = null
   pincode.value = null
   fatchedState.value = ''
 }
