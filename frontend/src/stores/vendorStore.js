@@ -8,6 +8,7 @@ export const useVendorStore = defineStore('vendorStore', () => {
   let rowCount = ref({ count: 0 })
   let loading = ref(false)
   let token = ref(null)
+
   let loggedVendor = ref({})
   const stateVariable = ref(10)
   const getAllVendors = async (options) => {
@@ -123,9 +124,10 @@ export const useVendorStore = defineStore('vendorStore', () => {
 
   async function updateVendor(id, updateData) {
     try {
-      const res = await axios.patch(`/vendors/specific/${id}`, updateData, {
+      const res = await axios.patch('/vendors/specific', updateData, {
         withCredentials: true
       })
+      console.log('updated data address', res.data.data.updatedVendorAddress)
     } catch (error) {
       console.error('updatevendore', error)
     }

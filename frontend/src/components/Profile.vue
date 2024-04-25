@@ -42,25 +42,25 @@
                 <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
                   >First Name</span
                 >
-                <p style="font-size: 16px">{{ profile.firstName }}</p>
+                <p style="font-size: 16px">{{ vendorData.firstName }}</p>
               </div>
               <div class="mb-2">
                 <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
                   >Last Name</span
                 >
-                <p style="font-size: 16px">{{ profile.lastName }}</p>
+                <p style="font-size: 16px">{{ vendorData.lastName }}</p>
               </div>
               <div class="mb-2">
                 <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
                   >Shop Name</span
                 >
-                <p style="font-size: 16px">{{ profile.shopName }}</p>
+                <p style="font-size: 16px">{{ vendorData.shopName }}</p>
               </div>
               <div class="mb-0">
                 <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
                   >Contact</span
                 >
-                <p style="font-size: 16px">{{ profile.Address_Details.contact }}</p>
+                <p style="font-size: 16px">{{ vendorData.Address_Details.contact }}</p>
               </div>
             </div>
           </v-card-text>
@@ -79,7 +79,7 @@
                 <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
                   >Address Lane 1</span
                 >
-                <p style="font-size: 16px">{{ profile.Address_Details.address_lane1 }}</p>
+                <p style="font-size: 16px">{{ vendorData.Address_Details.address_lane1 }}</p>
               </div>
               <v-row>
                 <v-col cols="6" class="py-0 mt-3">
@@ -87,7 +87,7 @@
                     <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
                       >Address Lane 2</span
                     >
-                    <p style="font-size: 16px">{{ profile.Address_Details.address_lane2 }}</p>
+                    <p style="font-size: 16px">{{ vendorData.Address_Details.address_lane2 }}</p>
                   </div>
                 </v-col>
                 <v-col cols="6" class="py-0 mt-3">
@@ -95,7 +95,7 @@
                     <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
                       >Landmark</span
                     >
-                    <p style="font-size: 16px">{{ profile.Address_Details.landmark }}</p>
+                    <p style="font-size: 16px">{{ vendorData.Address_Details.landmark }}</p>
                   </div>
                 </v-col>
               </v-row>
@@ -105,7 +105,7 @@
                     <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
                       >State</span
                     >
-                    <p style="font-size: 16px">{{ profile.Address_Details.state }}</p>
+                    <p style="font-size: 16px">{{ vendorData.Address_Details.state }}</p>
                   </div>
                 </v-col>
                 <v-col cols="6" class="py-0 mt-0 mb-2">
@@ -113,7 +113,7 @@
                     <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
                       >Pincode</span
                     >
-                    <p style="font-size: 16px">{{ profile.Address_Details.pincode }}</p>
+                    <p style="font-size: 16px">{{ vendorData.Address_Details.pincode }}</p>
                   </div>
                 </v-col>
               </v-row>
@@ -130,7 +130,7 @@
                 <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
                   >Email</span
                 >
-                <p style="font-size: 16px">{{ profile.email }}</p>
+                <p style="font-size: 16px">{{ vendorData.email }}</p>
               </div>
               <div class="mb-0">
                 <span class="font-weight-bold caption text-uppercase" style="font-size: 19px"
@@ -245,7 +245,7 @@
                 label="Pincode"
                 :rules="pincodeRules"
                 color="#112D4E"
-                v-model="pincode"
+                v-model="vendorData.Address_Details.pincode"
               ></v-text-field>
             </div>
           </div>
@@ -309,14 +309,13 @@ import { useVendorStore } from '@/stores/vendorStore'
 import { ref, watch, onMounted, computed } from 'vue'
 import { toast } from 'vue3-toastify'
 import axios from 'axios'
+import { onBeforeMount } from 'vue'
 
 const vendorStore = useVendorStore()
 
 const isLoading = ref(false)
 
 const showForm = ref(false)
-
-let fatchedState = ref('')
 
 const pincodeRules = computed(() => [
   (v) => !!v || 'Pincode is required.',
@@ -328,17 +327,19 @@ const password = ref('asdf123456')
 const password2 = ref('**********')
 const confirmPassword = ref('asdf123456')
 
-const vendorData = ref({})
+const vendorData = ref({ Address_Details: {} })
 const props = defineProps(['profile'])
 
-onMounted(() => {
+const fatchedState = ref('')
+
+onBeforeMount(() => {
   console.log(props.profile)
   // destruturing the data
   vendorData.value = JSON.parse(JSON.stringify(props.profile))
   console.log('vivek ', vendorData.value.Address_Details)
 })
 
-let pincode = ref(props.profile.Address_Details.pincode)
+// let pincode = ref(props.profile.Address_Details.pincode)
 
 async function submitForm() {
   isLoading.value = true // Set loading state to true
@@ -350,11 +351,18 @@ async function submitForm() {
     shopName: vendorData.value.shopName,
     landmark: vendorData.value.Address_Details.landmark,
     address_lane1: vendorData.value.Address_Details.address_lane1,
-    address_lane2: vendorData.value.Address_Details.address_lane2
+    address_lane2: vendorData.value.Address_Details.address_lane2,
+    pincode: vendorData.value.Address_Details.pincode,
+    state: fatchedState.value
   }
   try {
-    await vendorStore.updateVendor(formData)
+    await vendorStore.updateVendor(vendorData.value.id, formData)
     isLoading.value = false // Set loading state to false after successful API call
+
+    await vendorStore.getAVendor()
+
+    vendorData.value = vendorStore.loggedVendor
+    showForm.value = false
   } catch (error) {
     isLoading.value = false // Set loading state to false if there's an error
     console.error('Error updating vendor:', error)
@@ -378,13 +386,16 @@ const fetchStateFromPincode = async (pincode) => {
   }
 }
 
-watch(pincode, async (newPincode) => {
-  if (newPincode && newPincode.length === 6) {
-    await fetchStateFromPincode(newPincode)
-  } else {
-    fatchedState.value = ''
+watch(
+  () => vendorData.value.Address_Details.pincode,
+  async (newPincode) => {
+    if (newPincode && newPincode.length === 6) {
+      await fetchStateFromPincode(newPincode)
+    } else {
+      fatchedState.value = null
+    }
   }
-})
+)
 </script>
 <style scoped>
 .custom-info {

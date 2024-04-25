@@ -53,7 +53,6 @@
             value="logout"
             @click="logout"
             class="text-left"
-            @click="logout"
           ></v-list-item>
         </v-list>
       </v-menu>
