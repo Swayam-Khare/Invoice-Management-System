@@ -5,33 +5,7 @@
       <v-divider class="mb-4"></v-divider>
     </div>
 
-    <!-- Due Date -->
     <div style="width: fit-content" class="d-flex flex-wrap ga-md-6 ml-auto mr-4">
-      <div style="width: 300px">
-        <v-menu v-model="showDuePicker" :close-on-content-click="false">
-          <template v-slot:activator="{ props }">
-            <div class="d-flex justify-space-around align-center">
-              <v-icon color="#112D4E" class="mb-7 mr-4 ml-4 ml-md-0" icon="calendar_month"></v-icon>
-              <v-text-field
-                color="#112d4e"
-                density="compact"
-                variant="outlined"
-                @click="showDuePicker = !showDuePicker"
-                v-model="dueDate"
-                label="Due Date"
-                readonly
-                v-bind="props"
-              ></v-text-field>
-            </div>
-          </template>
-          <v-date-picker
-            v-model="actualDueDate"
-            date-format="MMM d, yyyy"
-            @input="showDuePicker = false"
-          ></v-date-picker>
-        </v-menu>
-      </div>
-
       <!-- Purchase Date -->
       <div style="width: 300px">
         <v-menu v-model="showPurchasePicker" :close-on-content-click="false">
@@ -52,7 +26,35 @@
           <v-date-picker
             v-model="actualPurchaseDate"
             date-format="MMM d, yyyy"
+            :max="new Date(Date.now())"
             @input="showPurchasePicker = false"
+          ></v-date-picker>
+        </v-menu>
+      </div>
+
+      <!-- Due Date -->
+      <div style="width: 300px">
+        <v-menu v-model="showDuePicker" :close-on-content-click="false">
+          <template v-slot:activator="{ props }">
+            <div class="d-flex justify-space-around align-center">
+              <v-icon color="#112D4E" class="mb-7 mr-4 ml-4 ml-md-0" icon="calendar_month"></v-icon>
+              <v-text-field
+                color="#112d4e"
+                density="compact"
+                variant="outlined"
+                @click="showDuePicker = !showDuePicker"
+                v-model="dueDate"
+                label="Due Date"
+                readonly
+                v-bind="props"
+              ></v-text-field>
+            </div>
+          </template>
+          <v-date-picker
+            :min="actualPurchaseDate ? actualPurchaseDate : new Date(Date.now())"
+            v-model="actualDueDate"
+            date-format="MMM d, yyyy"
+            @input="showDuePicker = false"
           ></v-date-picker>
         </v-menu>
       </div>
@@ -64,6 +66,7 @@
           variant="outlined"
           color="#112D4E"
           label="Status"
+          v-model="statusValue"
           density="compact"
           :items="status"
         ></v-select>
@@ -78,7 +81,7 @@
           <v-btn
             color="red"
             @click="handleClear"
-            :class="{'d-none':!readOnly}"
+            :class="{ 'd-none': !readOnly }"
             class="text-capitalize mt-2 mt-sm-0"
             >Clear Customer</v-btn
           >
@@ -180,25 +183,46 @@
       <v-table density="comfortable">
         <thead>
           <tr>
-            <th class="text-left">Product</th>
-            <th class="text-left">Quantity</th>
+            <th class="pl-9">Product</th>
+            <th class="pl-8">Quantity</th>
             <th class="text-left">Price(₹)</th>
             <th class="text-left">Discount(%)</th>
             <th class="text-left">Subtotal(₹)</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="item in orderData" :key="item.product">
-            <td>
-              {{ item.name }}
+          <tr v-for="item in orderData" :key="item.name">
+            <td class="d-flex align-center">
+              <input :id="item.name" @click="checkProduct(item)" type="checkbox" class="mr-2" />
+              <label :for="item.name" class="cursor-pointer">{{ item.name }}</label>
             </td>
-            <td><input type="number" :max="item.stock" value="1" min="1" v-model="item.quantity"></td>
+            <td>
+              <v-icon
+                color="grey-darken-2"
+                size="small"
+                @click="decreaseQty(item)"
+                style="border: 2px solid grey"
+                class="cursor-pointer mr-1 rounded-circle text-center pb-1"
+                >-</v-icon
+              >
+              <input
+                type="text"
+                class="pa-2 text-center"
+                style="width: 50px"
+                @change="quantityChange(item)"
+                inputmode="numeric"
+                v-model="item.quantity"
+              />
+              <v-icon color="grey-darken-1" class="ml-3 cursor-pointer" @click="increaseQty(item)"
+                >add_circle_outlined</v-icon
+              >
+            </td>
             <td>{{ item.price }}</td>
             <td>{{ item.discount }}</td>
-            <td>{{ subtotal(item.quantity,item.price,item.discount) }}</td>
+            <td>{{ subtotal(item.quantity, item.price, item.discount) }}</td>
           </tr>
           <tr style="background-color: white !important">
-            <td>
+            <td colspan="2">
               <v-btn
                 color="#112D4E"
                 @click="showSelectProduct = true"
@@ -206,6 +230,15 @@
                 variant="outlined"
                 class="text-capitalize mx-n1 my-3"
                 >Product</v-btn
+              >
+
+              <v-btn
+                color="red"
+                @click="clearProducts"
+                prepend-icon="close"
+                variant="outlined"
+                class="text-capitalize ml-6 my-3"
+                >Clear</v-btn
               >
             </td>
           </tr>
@@ -221,32 +254,59 @@
           class="rounded-lg text-capitalize mx-4 pt-3 pl-4 bg-white elevation-3 w-100"
           placeholder="Addtional Notes"
           rows="5"
+          v-model="notes"
           color="#112D4E"
         ></textarea>
       </div>
 
       <div class="custom-total mr-sm-5 mr-md-0 text-h6 ml-5 mt-2 mt-sm-n2">
         <div class="d-flex justify-space-between w-100">
-          <span>Subtotal: </span> <span>$0.00</span>
+          <span>Subtotal(₹): </span> <span>{{ subtotalFinal() }}</span>
         </div>
         <div class="d-flex justify-space-between w-100">
-          <span>Discount: </span> <span>$0.00</span>
+          <span>Discount(%): </span>
+          <input
+            type="text"
+            style="width: 70px"
+            v-model="totalDiscount"
+            class="bg-white border-md px-2"
+            inputmode="numeric"
+          />
         </div>
-        <div class="d-flex justify-space-between w-100"><span>Tax: </span> <span> $0.00</span></div>
         <div class="d-flex justify-space-between w-100">
-          <span>Total: </span> <span> $0.00</span>
+          <span>Tax(%): </span>
+          <input
+            v-model="totalTax"
+            type="text"
+            style="width: 70px"
+            class="bg-white border-md px-2"
+            inputmode="numeric"
+          />
+        </div>
+        <div class="d-flex justify-space-between w-100">
+          <span>Total(₹): </span> <span>{{ total() }}</span>
         </div>
         <div class="mt-5 d-flex justify-center">
-          <v-btn color="#006c53" class="text-capitalize">Create Invoice</v-btn>
+          <v-btn color="#006c53" @click="createInvoice" class="text-capitalize"
+            >Create Invoice</v-btn
+          >
         </div>
       </div>
     </div>
 
     <!-- Select Customer Dialog -->
-    <SelectCustomer v-model="showSelectCustomer" @close="showSelectCustomer = false" @selected-customer-data="handleCustomer"/>
+    <SelectCustomer
+      v-model="showSelectCustomer"
+      @close="showSelectCustomer = false"
+      @selected-customer-data="handleCustomer"
+    />
 
     <!-- Select Product Dialog -->
-    <SelectProduct v-model="showSelectProduct" @close="showSelectProduct = false" @select-existing-product="handleProduct"/>
+    <SelectProduct
+      v-model="showSelectProduct"
+      @close="showSelectProduct = false"
+      @select-existing-product="handleProduct"
+    />
   </div>
 </template>
 
@@ -258,9 +318,11 @@ import axios from 'axios'
 import { toast } from 'vue3-toastify'
 import { useProductStore } from '@/stores/productStore'
 
-const productStore = useProductStore();
+const productStore = useProductStore()
 
 const showDuePicker = ref(false)
+const statusValue = ref('')
+const notes = ref('')
 const showPurchasePicker = ref(false)
 const actualDueDate = ref(null)
 const actualPurchaseDate = ref(null)
@@ -269,13 +331,35 @@ const showSelectProduct = ref(false)
 const status = ['Paid', 'Due', 'Overdue']
 const readOnly = ref(false)
 const fatchedState = ref('')
-const existingCustomerDetails = ref({});
+const existingCustomerDetails = ref({})
+const selected = ref([])
+const totalTax = ref(0)
+const totalDiscount = ref(0)
+const subtotalValue = ref(0)
+const totalValue = ref(0)
 
 const required = (v) => !!v || 'This field is Required'
 
-
 function subtotal(qty, price, discount) {
-  return (qty*price) - ((qty*price*discount)/100)
+  return qty * price - (qty * price * discount) / 100
+}
+
+function subtotalFinal() {
+  let total = 0
+  for (let item of orderData.value) {
+    total += subtotal(item.quantity, item.price, item.discount)
+  }
+  subtotalValue.value = total
+  return total.toFixed(2)
+}
+
+function total() {
+  let total = parseFloat(subtotalFinal())
+  let tax = (total * totalTax.value) / 100
+  let discount = (total * totalDiscount.value) / 100
+  total = total + tax - discount
+  totalValue.value = total
+  return total.toFixed(2)
 }
 
 const pincodeRules = computed(() => [
@@ -301,53 +385,164 @@ const fetchStateFromPincode = async (pincode) => {
   }
 }
 
-watch(()=>existingCustomerDetails.value.pincode, async (newPincode) => {
-  if (newPincode && newPincode.length === 6) {
-    await fetchStateFromPincode(newPincode)
+const checkProduct = (item) => {
+  if (selected.value[item.id]) {
+    selected.value[item.id] = false
   } else {
-    fatchedState.value = ''
+    selected.value[item.id] = true
   }
-})
+}
+
+watch(
+  () => existingCustomerDetails.value.pincode,
+  async (newPincode) => {
+    if (newPincode && newPincode.length === 6) {
+      await fetchStateFromPincode(newPincode)
+    } else {
+      fatchedState.value = ''
+    }
+  }
+)
+
+const clearProducts = () => {
+  for (let id of selected.value) {
+    orderData.value = orderData.value.filter((item) => !selected.value[item.id])
+  }
+  selected.value = []
+}
+
+const quantityChange = (item) => {
+  if (item.quantity < 1) {
+    item.quantity = 1
+    toast.warning('Minimum quantity must be 1', {
+      autoClose: 1000,
+      pauseOnHover: false,
+      type: 'warning',
+      position: 'bottom-center',
+      transition: 'zoom',
+      dangerouslyHTMLString: true
+    })
+  } else if (item.quantity > item.stock) {
+    item.quantity = item.stock
+    toast.warning('Maximum stock reached!', {
+      autoClose: 1000,
+      pauseOnHover: false,
+      type: 'warning',
+      position: 'bottom-center',
+      transition: 'zoom',
+      dangerouslyHTMLString: true
+    })
+  }
+}
+
+const increaseQty = (item) => {
+  if (item.quantity === item.stock) {
+    toast.warning('Maximum stock reached!', {
+      autoClose: 1000,
+      pauseOnHover: false,
+      type: 'warning',
+      position: 'bottom-center',
+      transition: 'zoom',
+      dangerouslyHTMLString: true
+    })
+    return
+  }
+  item.quantity++
+} 
+
+const decreaseQty = (item) => {
+  if (item.quantity === 1) {
+    toast.warning('Minimum quantity must be 1', {
+      autoClose: 1000,
+      pauseOnHover: false,
+      type: 'warning',
+      position: 'bottom-center',
+      transition: 'zoom',
+      dangerouslyHTMLString: true
+    })
+    return
+  }
+  item.quantity--
+}
+
+const checkDueDate = (date) => {
+  return date >= actualPurchaseDate.value
+}
 
 function handleClear() {
-  existingCustomerDetails.value = {};
-  readOnly.value = false;
+  existingCustomerDetails.value = {}
+  readOnly.value = false
 }
 
 const orderData = ref([])
 
 function handleCustomer(custData) {
-  const { Address_Details } = custData;
-  existingCustomerDetails.value = { ...Address_Details };
-  existingCustomerDetails.value.firstName = custData.firstName.split(' ')[0];
-  existingCustomerDetails.value.lastName = custData.lastName;
-  existingCustomerDetails.value.email = custData.email;
-  readOnly.value = true;
-  console.log(existingCustomerDetails.value);
+  const { Address_Details } = custData
+  existingCustomerDetails.value = { ...Address_Details }
+  existingCustomerDetails.value.firstName = custData.firstName.split(' ')[0]
+  existingCustomerDetails.value.lastName = custData.lastName
+  existingCustomerDetails.value.email = custData.email
+  readOnly.value = true
+  console.log(existingCustomerDetails.value)
 }
 
 async function handleProduct(prodData) {
-  
   await productStore.getSelectedProducts(prodData)
-  orderData.value = productStore.selectedProducts;
+  orderData.value = productStore.selectedProducts
   for (let item of orderData.value) {
-    item.quantity = 1;
+    item.quantity = 1
   }
+}
+
+async function createInvoice() {
+  const invoiceData = {
+    customer_details: {
+      first_name: existingCustomerDetails.value.firstName,
+      last_name: existingCustomerDetails.value.lastName,
+      email: existingCustomerDetails.value.email,
+      contact: existingCustomerDetails.value.contact
+    },
+    Address_Details: {
+      address_lane1: existingCustomerDetails.value.address_lane1,
+      address_lane2: existingCustomerDetails.value.address_lane2,
+      landmark: existingCustomerDetails.value.landmark,
+      pincode: existingCustomerDetails.value.pincode,
+      state: fatchedState.value,
+      contact: existingCustomerDetails.value.contact
+    },
+    due_date: actualDueDate.value,
+    purchase_date: actualPurchaseDate.value,
+    tax: +totalTax.value,
+    delivery_charge: 0,  // TODO: fix this
+    status: statusValue.value,
+    subtotal: subtotalValue.value,
+    total: totalValue.value,
+    penalty: 0, // TODO: fix this
+    notes: notes.value,
+    discount: +totalDiscount.value,
+    order_details: {
+      productId: orderData.value.map((item) => item.id),
+      quantity: orderData.value.map((item) => item.quantity),
+    }
+  }
+  console.log(invoiceData)
 }
 
 const dueDate = computed(() => {
   if (actualDueDate.value) {
     const options = { year: 'numeric', month: 'short', day: 'numeric' }
-    return actualDueDate.value.toLocaleDateString('en-US', options)
+    return actualDueDate.value.toLocaleDateString('en-IN', options)
   }
   return ''
 })
 
 const purchaseDate = computed(() => {
+  actualDueDate.value = null
+  const options = { year: 'numeric', month: 'short', day: 'numeric' }
   if (actualPurchaseDate.value) {
-    const options = { year: 'numeric', month: 'short', day: 'numeric' }
-    return actualPurchaseDate.value.toLocaleDateString('en-US', options)
+    return actualPurchaseDate.value.toLocaleDateString('en-IN', options)
   }
+  // return new Date(Date.now()).toLocaleDateString('en-IN', options)
   return ''
 })
 </script>
@@ -404,5 +599,9 @@ th {
 
 tr:nth-child(even) {
   background-color: #112d4e13;
+}
+
+input[type='checkbox'] {
+  accent-color: #112d4e;
 }
 </style>

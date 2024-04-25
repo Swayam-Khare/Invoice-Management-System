@@ -95,9 +95,9 @@
         <template v-slot:item.status="{ item }">
           <span
             :class="{
-              paid: item.status === 'paid',
-              overdue: item.status === 'overdue',
-              due: item.status === 'due'
+              paid: item.status === 'Paid' || item.status === 'paid',
+              overdue: item.status === 'Overdue' || item.status === 'overdue',
+              due: item.status === 'Due' || item.status === 'due'
             }"
             >{{ item.status }}</span
           >
