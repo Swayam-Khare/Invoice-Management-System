@@ -62,6 +62,12 @@ const productStore = useProductStore()
 
 const emit = defineEmits(['close', 'selectExistingProduct'])
 
+const props = defineProps(
+  {
+    selectedProducts: Object
+  }
+)
+
 const headers = ref([
   { title: 'Product', value: 'name', sortable: true },
   { title: 'Stock', value: 'stock' },
@@ -75,6 +81,9 @@ let search = ref(undefined)
 let options = ref({})
 const selectedItems = ref([]);
 
+watch(()=>props.selectedProducts, (newProducts) => {
+  selectedItems.value = newProducts.map(t=>t.id);
+})
 
 async function loadItems(event) {
   console.log(event)

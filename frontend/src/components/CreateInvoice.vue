@@ -238,6 +238,7 @@
                 prepend-icon="close"
                 variant="outlined"
                 class="text-capitalize ml-6 my-3"
+                v-if="showBtn"
                 >Clear</v-btn
               >
             </td>
@@ -306,6 +307,7 @@
       v-model="showSelectProduct"
       @close="showSelectProduct = false"
       @select-existing-product="handleProduct"
+      :selectedProducts = "orderData"
     />
   </div>
 </template>
@@ -321,7 +323,7 @@ import { useProductStore } from '@/stores/productStore'
 const productStore = useProductStore()
 
 const showDuePicker = ref(false)
-const statusValue = ref('')
+const statusValue = ref(null)
 const notes = ref('')
 const showPurchasePicker = ref(false)
 const actualDueDate = ref(null)
@@ -337,6 +339,13 @@ const totalTax = ref(0)
 const totalDiscount = ref(0)
 const subtotalValue = ref(0)
 const totalValue = ref(0)
+const showBtn = ref(false)
+
+
+watch(selected.value, () => {
+  console.log(Object.keys(selected.value).length);
+  showBtn.value = Object.keys(selected.value).length > 0 ? true : false
+})
 
 const required = (v) => !!v || 'This field is Required'
 
@@ -387,11 +396,15 @@ const fetchStateFromPincode = async (pincode) => {
 
 const checkProduct = (item) => {
   if (selected.value[item.id]) {
-    selected.value[item.id] = false
+    delete selected.value[item.id];
   } else {
     selected.value[item.id] = true
   }
+  console.log(selected.value);
 }
+
+
+
 
 watch(
   () => existingCustomerDetails.value.pincode,
@@ -405,10 +418,9 @@ watch(
 )
 
 const clearProducts = () => {
-  for (let id of selected.value) {
-    orderData.value = orderData.value.filter((item) => !selected.value[item.id])
-  }
-  selected.value = []
+  orderData.value = orderData.value.filter((item) => !selected.value[item.id])
+  
+  selected.value.length = 0
 }
 
 const quantityChange = (item) => {
