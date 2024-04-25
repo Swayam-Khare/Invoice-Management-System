@@ -1,6 +1,7 @@
 import axios from './axios'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { toast } from 'vue3-toastify'
 export const useInvoiceStore = defineStore('invoiceStore', () => {
   let loading = ref(false)
   let invoices = ref([]);
@@ -30,5 +31,27 @@ export const useInvoiceStore = defineStore('invoiceStore', () => {
     }
   }
 
-  return { getAllInvoices, invoices, rowsCount, loading}
+  const createInvoice = async (data) => {
+    try {
+      loading.value = true;
+      const config = { headers: { 'Content-Type': 'application/json' }, withCredentials: true }
+      const res = await axios.post('/invoices', data, config);
+      toast.success(res.data.message, {
+        autoClose: 2000,
+        pauseOnHover: false,
+        type: 'success',
+        position: 'bottom-center',
+        transition: 'zoom',
+        dangerouslyHTMLString: true
+      })
+      console.log(res.data);
+
+    } catch (error) {
+      console.log(error.message);
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  return { getAllInvoices, invoices, rowsCount, loading, createInvoice}
 })
