@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios from './axios'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { toast } from 'vue3-toastify'
@@ -7,6 +7,7 @@ export const useProductStore = defineStore('productStore', () => {
   let loading = ref(false)
   let products = ref([]);
   let rowsCount = ref(null);
+  let selectedProducts = ref([]);
 
   const getAllProducts = async (options) => {
     let queryStr = ''
@@ -19,7 +20,7 @@ export const useProductStore = defineStore('productStore', () => {
     // console.log(queryStr);
     try {
       loading.value = true
-      const res = await axios.get(`http://localhost:3500/api/v1/products?${queryStr}`, {
+      const res = await axios.get(`/products?${queryStr}`, {
         withCredentials: true
       })
       console.log(res.data.data)
@@ -32,11 +33,31 @@ export const useProductStore = defineStore('productStore', () => {
     }
   }
 
+  const getSelectedProducts = async (ids) => {
+    try {
+      loading.value = true;
+      const data = {
+        ids
+      }
+      const res = await axios.post("/products/findByIds",
+        data,
+        {
+        withCredentials:true
+        })
+      selectedProducts.value = res.data.data.myProducts
+      
+    } catch (err) {
+      console.log(err);
+    } finally {
+      loading.value = false;
+    }
+  }
+
   const updateProduct = async (data) => {
     try {
       loading.value = true
       console.log('line 38',data.id)
-      const res = await axios.patch(`http://localhost:3500/api/v1/products/${data.id}`,
+      const res = await axios.patch(`/products/${data.id}`,
         data,
         {
         withCredentials: true
@@ -71,7 +92,7 @@ export const useProductStore = defineStore('productStore', () => {
   const deleteProduct = async (id)=>{
     try {
       loading.value = true;
-      await axios.delete(`http://localhost:3500/api/v1/products/${id}`,{withCredentials:true})    
+      await axios.delete(`/products/${id}`,{withCredentials:true})    
     } catch (err) {
       toast.error(err.message, {
         autoClose: 2000,
@@ -86,5 +107,5 @@ export const useProductStore = defineStore('productStore', () => {
     }
   }
 
-  return { getAllProducts, products, rowsCount, loading, updateProduct, deleteProduct }
+  return { getAllProducts, products, rowsCount, loading, updateProduct, deleteProduct, getSelectedProducts, selectedProducts }
 })

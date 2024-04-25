@@ -41,7 +41,7 @@
           <template v-slot:item.actions="{ item }">
             <v-btn
               color="#112d4e"
-              class="text-body-2 text-capitalize"
+              class="text-body-2 text-capitalize text-white"
               density="compact"
               @click="handleAction(item)"
               >Select</v-btn
@@ -60,7 +60,7 @@ import { useCustomerStore } from '@/stores/customerStore'
 
 const customerStore = useCustomerStore()
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(['close','selectedCustomerData'])
 
 const headers = ref([
   { title: 'Name', value: 'firstName', sortable: true },
@@ -115,6 +115,11 @@ const itemsPerPageOption = ref([
 function closeDialog() {
   emit('close')
 }
+
+function handleAction(custData) {
+  emit('selectedCustomerData', custData);
+  emit('close');
+}
 </script>
 
 <style scoped>
@@ -125,7 +130,7 @@ function closeDialog() {
 }
 
 .custom-data-table >>> .v-data-table__th {
-  background-color: #112d4ef1;
+  background-color: #112d4e;
   color: white;
 }
 

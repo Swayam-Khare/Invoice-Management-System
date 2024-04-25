@@ -5,7 +5,7 @@
         class="d-flex justify-space-between align-center"
         style="background-color: #112d4ef1"
       >
-        <p style="color: #f5f5f5" class="text-h5 pl-5">New Product</p>
+        <p style="color: #f5f5f5" class="text-h5 pl-5">Update Product</p>
         <v-btn icon="close" variant="text" color="#f5f5f5" @click="closeDialog"></v-btn>
       </v-card-title>
       <v-card-text>
@@ -41,6 +41,7 @@
           ></v-text-field>
           <v-text-field
             label="Price"
+            class="mt-1"
             v-model="details.price"
             variant="outlined"
             color="#112d4e"
@@ -49,6 +50,7 @@
           ></v-text-field>
           <v-text-field
             label="Discount"
+            class="mt-1"
             v-model="details.discount"
             variant="outlined"
             color="#112d4e"
@@ -57,7 +59,7 @@
           ></v-text-field>
 
           <v-btn type="submit" class="mt-1 mb-3 txt-button" color="#112d4e" @click="validate" block
-            >Create</v-btn
+            >Update</v-btn
           >
         </v-form>
       </v-card-text>

@@ -1,16 +1,22 @@
 <template>
-  <div style="background-color: #112d4e14">
+  <div style="background-color: #112d4e14;" class="remove-scrollbar h-screen overflow-auto">
     <div class="d-flex flex-md-row flex-column justify-space-between align-end">
       <div class="mobile-search align-center mt-1 pt-4 px-2 px-sm-10 px-md-14 px-lg-16 ml-xxl-16">
-        <v-text-field variant="outlined" color="#112d4e" density="compact" :disabled="true"
+        <!-- <v-text-field variant="outlined" color="#112d4e" density="compact" :disabled="true"
           >#</v-text-field
-        >
-        <input
-          type="text"
-          placeholder="Search invoice no."
-          class="elevation-6 pa-3 search bg-white"
-          v-model="search"
-        />
+        > -->
+        <!-- <v-text-field variant="outlined" color="#112d4e" density="compact" v-model="search" placeholder="Search" class="bg-white"
+          >#</v-text-field
+        > -->
+        <div class="search-wrapper">
+          <label class="label">#</label>
+          <input
+            type="text"
+            placeholder="Search invoice no."
+            class="elevation-6 py-3 px-6 search bg-white"
+            v-model="search"
+          />
+          </div>
       </div>
     </div>
     <div class="list px-2 px-sm-0 overflow-auto">
@@ -89,24 +95,15 @@
         <template v-slot:item.status="{ item }">
           <span
             :class="{
-              paid: item.status === 'paid',
-              overdue: item.status === 'overdue',
-              due: item.status === 'due'
+              paid: item.status === 'Paid' || item.status === 'paid',
+              overdue: item.status === 'Overdue' || item.status === 'overdue',
+              due: item.status === 'Due' || item.status === 'due'
             }"
             >{{ item.status }}</span
           >
         </template>
       </v-data-table-server>
     </div>
-    <v-pagination
-      v-model="page"
-      :length="10"
-      next-icon="arrow_forward_ios"
-      prev-icon="arrow_back_ios"
-      class="pagination mx-auto mt-0"
-      :total-visible="4"
-      size="x-small"
-    ></v-pagination>
   </div>
 </template>
 
@@ -203,6 +200,22 @@ const statusMenu = ref([{ title: 'paid' }, { title: 'overdue' }, { title: 'due' 
   .pagination {
     width: 70% !important;
   }
+}
+
+.remove-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.search-wrapper{
+  position:relative;
+}
+
+.label{
+  position:absolute;
+  top: 10px;
+  left:8px;
+  font-size:18px;
+  z-index:10;
 }
 
 .custom-data-table >>> .v-data-table__th {
