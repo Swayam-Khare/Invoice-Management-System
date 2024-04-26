@@ -8,7 +8,7 @@ const password = process.env.DB_PASSWORD;
 // const connectDB = new Sequelize(database, user, password, {
 //   host: "localhost",
 //   dialect: "postgres",
-//   logging: false,s
+//   logging: false,
 // });
 
 // ==== TO CONNECT TO REMOTE DATABASE ====

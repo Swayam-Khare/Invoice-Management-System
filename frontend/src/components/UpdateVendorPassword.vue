@@ -1,66 +1,115 @@
 <template>
-  <v-container fluid style="height: fit-content" v-model="isOpen">
-    <v-row justify="center" align="center" class="text-center">
-      <v-col cols="12" md="4">
-        <v-card style="border-radius: 10px">
-          <v-card-title class="text-center mb-10 text-white" style="background-color: #112d4ecc"
-            >Update Password</v-card-title
+  <v-dialog max-width="400" centered persistent>
+    <v-card>
+      <v-card-title
+        class="d-flex justify-space-between align-center"
+        style="background-color: #112d4ef1"
+      >
+        <p style="color: #f5f5f5" class="text-h5 pl-2">Update Password</p>
+        <v-btn icon="close" variant="text" color="#f5f5f5" @click="$emit('close')"></v-btn>
+      </v-card-title>
+
+      <v-card-text>
+        <v-form ref="form" @submit.prevent="submitForm">
+          <v-text-field
+            v-model="currentPassword"
+            label="Current Password"
+            :rules="passwordRules"
+            variant="outlined"
+            color="#112d4e"
+            class="mt-1"
+            density="compact"
+            :append-inner-icon="!currentVisible ? 'visibility_off' : 'visibility'"
+            :type="currentVisible ? 'text' : 'password'"
+            @click:appendInner="currentVisible = !currentVisible"
           >
-
-          <v-card-text class="w-100 mx-auto px-10">
-            <v-text-field
-              v-model="currentPassword"
-              label="Current Password"
-              variant="outlined"
-              density="compact"
-            ></v-text-field>
-
-            <v-text-field
-              v-model="newPassword"
-              label="New Password"
-              variant="outlined"
-              density="compact"
-            ></v-text-field>
-
-            <v-text-field
-              v-model="confirmPassword"
-              label="Confirm Password"
-              variant="outlined"
-              density="compact"
-            ></v-text-field>
-          </v-card-text>
-          <v-card-actions class="d-flex justify-center mb-4">
-            <v-btn style="background-color: #112d4e" class="text-white mx-6" @click="updateProfile"
-              >Update</v-btn
-            >
-            <v-btn style="background-color: #112d4e" class="text-white mx-6" @click="closeForm"
-              >Close</v-btn
-            >
+          </v-text-field>
+          <v-text-field
+            v-model="newPassword"
+            label="New Password"
+            :rules="passwordRules"
+            variant="outlined"
+            color="#112d4e"
+            class="mt-1"
+            density="compact"
+            :append-inner-icon="!newVisible ? 'visibility_off' : 'visibility'"
+            :type="newVisible ? 'text' : 'password'"
+            @click:appendInner="newVisible = !newVisible"
+          >
+          </v-text-field>
+          <v-text-field
+            v-model="confirmPassword"
+            label="Confirm Password"
+            :rules="passwordRules"
+            variant="outlined"
+            color="#112d4e"
+            class="mt-1"
+            density="compact"
+            :append-inner-icon="!confirmVisible ? 'visibility_off' : 'visibility'"
+            :type="confirmVisible ? 'text' : 'password'"
+            @click:appendInner="confirmVisible = !confirmVisible"
+          >
+          </v-text-field>
+          <v-card-actions class="pl-6 pt-0 pr-6">
+            <v-btn color="#112D4E" type="submit" variant="elevated" block>Update</v-btn>
           </v-card-actions>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+        </v-form>
+      </v-card-text>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { toast } from 'vue3-toastify'
+import { ref, computed } from 'vue'
 
-const isOpen = ref(true)
-const emit = defineEmits(['close'])
+import { useVendorStore } from '../stores/vendorStore'
 
+// import router from '@/router';
+
+const vendorStore = useVendorStore()
 const currentPassword = ref('')
 const newPassword = ref('')
 const confirmPassword = ref('')
 
-const closeForm = () => {
-  emit('close')
+const currentVisible = ref(false)
+const newVisible = ref(false)
+const confirmVisible = ref(false)
+let form = ref(undefined)
+
+const emit = defineEmits(['close', 'update'])
+
+const passwordRules = computed(() => [(v) => !!v || 'Password is required'])
+
+const submitForm = async () => {
+  const check = await validate()
+  const password = {
+    currentPassword: currentPassword.value,
+    newPassword: newPassword.value,
+    confirmPassword: confirmPassword.value
+  }
+  if (check.valid) {
+    await vendorStore.updatePassword(password)
+    emit('close')
+    if (vendorStore.updatePasswordStatus === 200) {
+      emit('update')
+    }
+  } else {
+    toast.error('Something went Wrong!.', {
+      autoClose: 1000,
+      type: 'error',
+      position: 'bottom-center',
+      transition: 'zoom',
+      dangerouslyHTMLString: true
+    })
+    return
+  }
+  currentPassword.value = null
+  newPassword.value = null
+  confirmPassword.value = null
+}
+
+function validate() {
+  return form.value.validate()
 }
 </script>
-
-<style>
-.heading {
-  font-size: 32px;
-  margin-top: 100px;
-}
-</style>
