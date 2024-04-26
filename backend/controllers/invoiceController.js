@@ -286,11 +286,12 @@ exports.addInvoice = asyncErrorHandler(async (req, res, next) => {
     });
   } catch (err) {
     const error = new CustomError(err.message, 400);
-    next(error);
+    return next(error);
   }
 
   return res.status(201).json({
     status: "success",
+    message:"Invoice has been created successfully with ID: "+invoice_no,
     data: {
       invoice_no,
     },

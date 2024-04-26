@@ -69,6 +69,7 @@
           v-model="statusValue"
           density="compact"
           :items="status"
+          class="text-capitalize"
         ></v-select>
       </div>
     </div>
@@ -197,25 +198,25 @@
               <label :for="item.name" class="cursor-pointer">{{ item.name }}</label>
             </td>
             <td>
-              <v-icon
-                color="grey-darken-2"
-                size="small"
-                @click="decreaseQty(item)"
-                style="border: 2px solid grey"
-                class="cursor-pointer mr-1 rounded-circle text-center pb-1"
-                >-</v-icon
-              >
-              <input
-                type="text"
-                class="pa-2 text-center"
-                style="width: 50px"
-                @change="quantityChange(item)"
-                inputmode="numeric"
-                v-model="item.quantity"
-              />
-              <v-icon color="grey-darken-1" class="ml-3 cursor-pointer" @click="increaseQty(item)"
-                >add_circle_outlined</v-icon
-              >
+              <div class="d-flex align-center">
+                <v-icon
+                  color="red"
+                  @click="decreaseQty(item)"
+                  class="cursor-pointer mr-1 rounded-circle text-center"
+                  >do_not_disturb_on</v-icon
+                >
+                <input
+                  type="text"
+                  class="pa-2 text-center"
+                  style="width: 50px"
+                  @change="quantityChange(item)"
+                  inputmode="numeric"
+                  v-model="item.quantity"
+                />
+                <v-icon color="green" class="ml-2 cursor-pointer" @click="increaseQty(item)"
+                  >add_circle</v-icon
+                >
+              </div>
             </td>
             <td>{{ item.price }}</td>
             <td>{{ item.discount }}</td>
@@ -238,7 +239,8 @@
                 prepend-icon="close"
                 variant="outlined"
                 class="text-capitalize ml-6 my-3"
-                >Clear</v-btn
+                v-if="showBtn"
+                >Delete</v-btn
               >
             </td>
           </tr>
@@ -247,8 +249,8 @@
     </div>
 
     <!-- Addtional Notes -->
-    <div class="d-flex flex-wrap mr-5 justify-space-between">
-      <div class="custom-notes mr-3 mr-sm-0">
+    <div class="d-flex flex-column flex-md-row mr-5 ga-4 justify-space-between">
+      <div class="custom-notes mr-3 mr-sm-0 w-100">
         <textarea
           style="resize: none"
           class="rounded-lg text-capitalize mx-4 pt-3 pl-4 bg-white elevation-3 w-100"
@@ -259,7 +261,7 @@
         ></textarea>
       </div>
 
-      <div class="custom-total mr-sm-5 mr-md-0 text-h6 ml-5 mt-2 mt-sm-n2">
+      <div class="custom-total mr-sm-5 mr-md-0 text-h6 ml-5 mt-2 mt-sm-n2 w-100">
         <div class="d-flex justify-space-between w-100">
           <span>Subtotal(₹): </span> <span>{{ subtotalFinal() }}</span>
         </div>
@@ -269,7 +271,7 @@
             type="text"
             style="width: 70px"
             v-model="totalDiscount"
-            class="bg-white border-md px-2"
+            class="bg-white border-md px-2 text-right"
             inputmode="numeric"
           />
         </div>
@@ -279,7 +281,7 @@
             v-model="totalTax"
             type="text"
             style="width: 70px"
-            class="bg-white border-md px-2"
+            class="bg-white border-md px-2 text-right"
             inputmode="numeric"
           />
         </div>
@@ -306,6 +308,7 @@
       v-model="showSelectProduct"
       @close="showSelectProduct = false"
       @select-existing-product="handleProduct"
+      :selectedProducts="orderData"
     />
   </div>
 </template>
@@ -317,18 +320,20 @@ import SelectProduct from './SelectProduct.vue'
 import axios from 'axios'
 import { toast } from 'vue3-toastify'
 import { useProductStore } from '@/stores/productStore'
+import { useInvoiceStore } from '@/stores/invoiceStore'
 
 const productStore = useProductStore()
+const invoiceStore = useInvoiceStore();
 
 const showDuePicker = ref(false)
-const statusValue = ref('')
+const statusValue = ref(null)
 const notes = ref('')
 const showPurchasePicker = ref(false)
 const actualDueDate = ref(null)
 const actualPurchaseDate = ref(null)
 const showSelectCustomer = ref(false)
 const showSelectProduct = ref(false)
-const status = ['Paid', 'Due', 'Overdue']
+const status = ['paid', 'due', 'overdue']
 const readOnly = ref(false)
 const fatchedState = ref('')
 const existingCustomerDetails = ref({})
@@ -337,6 +342,12 @@ const totalTax = ref(0)
 const totalDiscount = ref(0)
 const subtotalValue = ref(0)
 const totalValue = ref(0)
+const showBtn = ref(false)
+
+watch(selected.value, () => {
+  console.log(Object.keys(selected.value).length)
+  showBtn.value = Object.keys(selected.value).length > 0 ? true : false
+})
 
 const required = (v) => !!v || 'This field is Required'
 
@@ -387,10 +398,11 @@ const fetchStateFromPincode = async (pincode) => {
 
 const checkProduct = (item) => {
   if (selected.value[item.id]) {
-    selected.value[item.id] = false
+    delete selected.value[item.id]
   } else {
     selected.value[item.id] = true
   }
+  console.log(selected.value)
 }
 
 watch(
@@ -405,10 +417,9 @@ watch(
 )
 
 const clearProducts = () => {
-  for (let id of selected.value) {
-    orderData.value = orderData.value.filter((item) => !selected.value[item.id])
-  }
-  selected.value = []
+  orderData.value = orderData.value.filter((item) => !selected.value[item.id])
+
+  selected.value.length = 0
 }
 
 const quantityChange = (item) => {
@@ -448,7 +459,7 @@ const increaseQty = (item) => {
     return
   }
   item.quantity++
-} 
+}
 
 const decreaseQty = (item) => {
   if (item.quantity === 1) {
@@ -463,10 +474,6 @@ const decreaseQty = (item) => {
     return
   }
   item.quantity--
-}
-
-const checkDueDate = (date) => {
-  return date >= actualPurchaseDate.value
 }
 
 function handleClear() {
@@ -497,8 +504,8 @@ async function handleProduct(prodData) {
 async function createInvoice() {
   const invoiceData = {
     customer_details: {
-      first_name: existingCustomerDetails.value.firstName,
-      last_name: existingCustomerDetails.value.lastName,
+      firstName: existingCustomerDetails.value.firstName,
+      lastName: existingCustomerDetails.value.lastName,
       email: existingCustomerDetails.value.email,
       contact: existingCustomerDetails.value.contact
     },
@@ -513,7 +520,7 @@ async function createInvoice() {
     due_date: actualDueDate.value,
     purchase_date: actualPurchaseDate.value,
     tax: +totalTax.value,
-    delivery_charge: 0,  // TODO: fix this
+    delivery_charge: 0, // TODO: fix this
     status: statusValue.value,
     subtotal: subtotalValue.value,
     total: totalValue.value,
@@ -522,10 +529,18 @@ async function createInvoice() {
     discount: +totalDiscount.value,
     order_details: {
       productId: orderData.value.map((item) => item.id),
-      quantity: orderData.value.map((item) => item.quantity),
+      quantity: orderData.value.map((item) => item.quantity)
     }
   }
-  console.log(invoiceData)
+  // console.log(invoiceData)
+  await invoiceStore.createInvoice(invoiceData);
+  existingCustomerDetails.value = {};
+  actualPurchaseDate.value=null;
+  actualDueDate.value = null;
+  statusValue.value = null
+  orderData.value = [];
+  totalDiscount.value = 0;
+  totalTax.value = 0;
 }
 
 const dueDate = computed(() => {
@@ -553,11 +568,12 @@ const purchaseDate = computed(() => {
 }
 
 .custom-notes {
-  width: 100%;
+  /* width: 100%; */
+  width: 96% !important;
 }
 
 .custom-total {
-  width: 100%;
+  width: 96% !important;
 }
 
 @media only screen and (min-width: 600px) {
@@ -566,17 +582,27 @@ const purchaseDate = computed(() => {
   }
 
   .custom-notes {
-    width: 50% !important;
+    width: 98% !important;
   }
 
   .custom-total {
-    width: 25% !important;
+    align-self: center;
+    width: 40% !important;
   }
 }
 
 @media only screen and (min-width: 900px) {
   .custom-total {
-    width: 15% !important;
+    width: 35% !important;
+  }
+
+  .custom-notes {
+    width: 50% !important;
+  }
+}
+@media only screen and (min-width: 1439px) {
+  .custom-total {
+    width: 25% !important;
   }
 }
 
