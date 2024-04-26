@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Admin from '@/views/Admin.vue'
 import Home from '@/views/Home.vue'
 import Vendor from '@/views/Vendor.vue'
+import PdfTemplate from '@/components/PdfTemplate.vue'
 // import Profile from '@/components/Profile.vue'
 // import CustomerDetails from '@/components/customerDetails.vue'
 // import EditCustomer from '@/components/EditCustomer.vue'
@@ -19,10 +20,20 @@ const router = createRouter({
       path: '/admin',
       name: 'admin',
       component: Admin
-    }, {
+    },
+    {
       path: '/vendor',
       name: 'vendor',
       component: Vendor
+    },
+    {
+      path: '/invoice',
+      name: 'pdfTemplate',
+      component: PdfTemplate,
+      props: {
+        default: true,
+        PdfTemplate: true
+      }
     }
   ]
 })
