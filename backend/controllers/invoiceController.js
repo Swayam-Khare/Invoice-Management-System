@@ -64,6 +64,10 @@ exports.getInvoices = asyncErrorHandler(async (req, res, next) => {
       {
         model: Customer,
         paranoid:false,
+        include:[{
+          model:Address,
+          as:"Address_Details",
+        }],
         order: orderByCustomer
       },
     ],
