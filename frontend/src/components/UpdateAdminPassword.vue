@@ -60,18 +60,21 @@
 </template>
 
 <script setup>
+import { onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import { ref, computed } from 'vue'
-
+import { useAdminStore } from '../stores/admin'
 import { useVendorStore } from '../stores/vendorStore'
 
 // import router from '@/router';
-
+const router = useRouter()
+const adminStore = useAdminStore()
 const vendorStore = useVendorStore()
 const currentPassword = ref('')
 const newPassword = ref('')
 const confirmPassword = ref('')
-
+const isFocused = ref(false)
 const currentVisible = ref(false)
 const newVisible = ref(false)
 const confirmVisible = ref(false)
@@ -89,9 +92,9 @@ const submitForm = async () => {
     confirmPassword: confirmPassword.value
   }
   if (check.valid) {
-    await vendorStore.updatePassword(password)
+    await adminStore.updatePassword(password)
     emit('close')
-    if (vendorStore.updatePasswordStatus === 200) {
+    if (adminStore.updatePasswordStatus === 200) {
       emit('update')
     }
   } else {

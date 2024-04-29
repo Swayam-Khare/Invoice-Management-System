@@ -1,20 +1,23 @@
 <!-- eslint-disable vue/valid-v-slot -->
 <template>
-  <div style="background-color: #112d4e14">
+  <div style="background-color: #112d4e14" class="remove-scrollbar h-screen overflow-auto">
     <div class="d-flex flex-md-row flex-column justify-space-between align-end">
       <div class="mobile-search align-center mt-1 pt-4 px-2 px-sm-10 px-md-14 px-lg-16 ml-xxl-16">
-        <v-text-field
-          variant="outlined" 
-          color="#112d4e"
-          density="compact"
-          :disabled="true"
-        >#</v-text-field>
-        <input
-          type="text"
-          placeholder="Search invoice no."
-          class="elevation-6 pa-3 search bg-white"
-          v-model="search"
-        />
+        <!-- <v-text-field variant="outlined" color="#112d4e" density="compact" :disabled="true"
+          >#</v-text-field
+        > -->
+        <!-- <v-text-field variant="outlined" color="#112d4e" density="compact" v-model="search" placeholder="Search" class="bg-white"
+          >#</v-text-field
+        > -->
+        <div class="search-wrapper">
+          <label class="label">#</label>
+          <input
+            type="text"
+            placeholder="Search invoice no."
+            class="elevation-6 py-3 px-6 search bg-white"
+            v-model="search"
+          />
+        </div>
       </div>
     </div>
     <div class="list px-2 px-sm-0 overflow-auto">
@@ -84,8 +87,13 @@
             src="https://img.icons8.com/color/48/gmail--v1.png"
             alt="gmail--v1"
           />
-
-          <v-icon icon="download" color="#1565c0" class="hover-scale pb-4" size="25"></v-icon>
+          <v-icon
+            icon="download"
+            @click="openInvoice(item)"
+            color="#1565c0"
+            class="hover-scale pb-4"
+            size="25"
+          ></v-icon>
 
           <img src="../assets/delete.svg" class="hover-scale" style="width: 25px; height: 25px" />
         </template>
@@ -93,33 +101,26 @@
         <template v-slot:item.status="{ item }">
           <span
             :class="{
-              paid: item.status === 'paid',
-              overdue: item.status === 'overdue',
-              due: item.status === 'due'
+              paid: item.status === 'Paid' || item.status === 'paid',
+              overdue: item.status === 'Overdue' || item.status === 'overdue',
+              due: item.status === 'Due' || item.status === 'due'
             }"
             >{{ item.status }}</span
           >
         </template>
       </v-data-table-server>
     </div>
-    <v-pagination
-      v-model="page"
-      :length="10"
-      next-icon="arrow_forward_ios"
-      prev-icon="arrow_back_ios"
-      class="pagination mx-auto mt-0"
-      :total-visible="4"
-      size="x-small"
-    ></v-pagination>
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import PdfTemplate from './PdfTemplate.vue'
 import { useInvoiceStore } from '@/stores/invoiceStore'
+const router = useRouter()
 const invoiceStore = useInvoiceStore()
 const page = ref(1)
-let statusFilter = ref(null)
 let filterMenu = ref(false)
 const menuTop = ref('0px')
 const menuLeft = ref('0px')
@@ -130,7 +131,6 @@ let options = ref({})
 let search = ref(undefined)
 
 async function loadItems(event) {
-  console.log(event)
   const { page, itemsPerPage, sortBy, search, status } = event
   let sortingStr = ''
   if (sortBy.length) {
@@ -143,19 +143,15 @@ async function loadItems(event) {
     })
   }
   sortingStr = sortingStr.slice(0, sortingStr.length - 1)
-  console.log(sortingStr)
   const queryStr = {}
   queryStr.page = page
   queryStr.limit = itemsPerPage
   queryStr.sort = sortingStr
   queryStr.search = search
   queryStr.status = status
-  console.log(queryStr)
 
   await invoiceStore.getAllInvoices(queryStr)
   invoiceData.value = invoiceStore.invoices
-  console.log(invoiceData.value)
-  
 
   for (let d of invoiceData.value) {
     d.Customer.firstName = d.Customer.firstName + ' ' + d.Customer.lastName
@@ -164,9 +160,7 @@ async function loadItems(event) {
   for (let d of invoiceData.value) {
     d.purchase_date = formatDate(d.purchase_date)
     d.due_date = formatDate(d.due_date)
-    console.log(d.due_date)
   }
-  
 }
 
 const formatDate = (date) => {
@@ -182,22 +176,12 @@ const itemsPerPageOption = ref([
   { title: '100', value: 100 }
 ])
 
-// const filteredItems = computed(() => {
-//   if (!statusFilter.value) return vendors.value
-//   return vendors.value.filter((item) => item.status === statusFilter.value)
-// })
-
 function toggleFilterMenu(event) {
   filterMenu.value = !filterMenu.value
   const iconPos = event.target.getBoundingClientRect()
   menuTop.value = iconPos.bottom + window.scrollY + 'px'
   menuLeft.value = iconPos.left + 'px'
 }
-
-// function setStatusFilter(status) {
-//   statusFilter.value = status.title
-//   filterMenu.value = false // Close the menu after selection
-// }
 
 function clearStatusFilter() {
   // statusFilter.value = null
@@ -218,6 +202,10 @@ const headers = [
 ]
 
 const statusMenu = ref([{ title: 'paid' }, { title: 'overdue' }, { title: 'due' }])
+
+function openInvoice(item) {
+  router.push({ name: 'pdfTemplate', query: { ids: item.id } })
+}
 </script>
 
 <style scoped>
@@ -225,6 +213,22 @@ const statusMenu = ref([{ title: 'paid' }, { title: 'overdue' }, { title: 'due' 
   .pagination {
     width: 70% !important;
   }
+}
+
+.remove-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.search-wrapper {
+  position: relative;
+}
+
+.label {
+  position: absolute;
+  top: 10px;
+  left: 8px;
+  font-size: 18px;
+  z-index: 10;
 }
 
 .custom-data-table >>> .v-data-table__th {

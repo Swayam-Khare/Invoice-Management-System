@@ -41,7 +41,6 @@ exports.updateAdmin = asyncErrorHandler(async (req, res, next) => {
 // ============ update Admin Password================
 exports.updatePassword = asyncErrorHandler(async (req, res, next) => {
   try {
-
     const { currentPassword, newPassword, confirmPassword } = req.body;
     const admin = req.admin;
 
@@ -58,7 +57,7 @@ exports.updatePassword = asyncErrorHandler(async (req, res, next) => {
 
 
     if (newPassword !== confirmPassword) {
-      const error = new CustomError("New password and confirm password do not match", 400);
+      const error = new CustomError("New password and confirm password does not match", 400);
       return next(error);
     }
 
