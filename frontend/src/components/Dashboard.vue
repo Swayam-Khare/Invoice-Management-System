@@ -140,7 +140,6 @@ const paidInvoices = ref(0)
 const dueInvoices = ref(0)
 const overdueInvoices = ref(0)
 const totalClients = ref(0)
-const outOfStockItems = ref(0)
 const totalRevenue = ref(0)
 const recentInvoices = ref([])
 const loading = ref(true)
@@ -198,12 +197,13 @@ const fetchInvoiceData = async () => {
     // Fetch invoice data from the server
     await dashboardStore.TotalIncome()
     await dashboardStore.TotalInvoice()
+    await dashboardStore.getAllCustomers()
     totalInvoices.value = dashboardStore.totalInvoices
     paidInvoices.value = dashboardStore.paidInvoices
     dueInvoices.value = dashboardStore.dueInvoices
     overdueInvoices.value = dashboardStore.overdueInvoices
-    totalClients.value = 50
-    outOfStockItems.value = 20
+    totalClients.value = dashboardStore.totalClient
+
     totalRevenue.value = dashboardStore.grandTotal
 
     recentInvoices.value = [
