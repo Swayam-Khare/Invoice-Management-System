@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/valid-v-slot -->
 <template>
-  <div style="background-color: #112d4e14;" class="remove-scrollbar h-screen overflow-auto">
+  <div style="background-color: #112d4e14" class="remove-scrollbar h-screen overflow-auto">
     <div class="d-flex flex-md-row flex-column justify-space-between align-end">
       <div class="mobile-search align-center mt-1 pt-4 px-2 px-sm-10 px-md-14 px-lg-16 ml-xxl-16">
         <!-- <v-text-field variant="outlined" color="#112d4e" density="compact" :disabled="true"
@@ -17,7 +17,7 @@
             class="elevation-6 py-3 px-6 search bg-white"
             v-model="search"
           />
-          </div>
+        </div>
       </div>
     </div>
     <div class="list px-2 px-sm-0 overflow-auto">
@@ -87,8 +87,13 @@
             src="https://img.icons8.com/color/48/gmail--v1.png"
             alt="gmail--v1"
           />
-
-          <v-icon icon="download" color="#1565c0" class="hover-scale pb-4" size="25"></v-icon>
+          <v-icon
+            icon="download"
+            @click="openInvoice(item)"
+            color="#1565c0"
+            class="hover-scale pb-4"
+            size="25"
+          ></v-icon>
 
           <img src="../assets/delete.svg" class="hover-scale" style="width: 25px; height: 25px" />
         </template>
@@ -110,7 +115,10 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import PdfTemplate from './PdfTemplate.vue'
 import { useInvoiceStore } from '@/stores/invoiceStore'
+const router = useRouter()
 const invoiceStore = useInvoiceStore()
 const page = ref(1)
 let filterMenu = ref(false)
@@ -194,6 +202,10 @@ const headers = [
 ]
 
 const statusMenu = ref([{ title: 'paid' }, { title: 'overdue' }, { title: 'due' }])
+
+function openInvoice(item) {
+  router.push({ name: 'pdfTemplate', query: { ids: item.id } })
+}
 </script>
 
 <style scoped>
@@ -207,16 +219,16 @@ const statusMenu = ref([{ title: 'paid' }, { title: 'overdue' }, { title: 'due' 
   display: none;
 }
 
-.search-wrapper{
-  position:relative;
+.search-wrapper {
+  position: relative;
 }
 
-.label{
-  position:absolute;
+.label {
+  position: absolute;
   top: 10px;
-  left:8px;
-  font-size:18px;
-  z-index:10;
+  left: 8px;
+  font-size: 18px;
+  z-index: 10;
 }
 
 .custom-data-table >>> .v-data-table__th {
