@@ -27,7 +27,7 @@ const router = createRouter({
       component: Vendor
     },
     {
-      path: '/invoice',
+      path: '/invoice/:id',
       name: 'pdfTemplate',
       component: PdfTemplate,
       props: {

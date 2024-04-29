@@ -203,7 +203,8 @@ const headers = [
 const statusMenu = ref([{ title: 'paid' }, { title: 'overdue' }, { title: 'due' }])
 
 function openInvoice(item) {
-  router.push({ name: 'pdfTemplate', query: { ids: item.id } })
+  router.push({ name: 'pdfTemplate', params: {id: item.id} })
+
 }
 </script>
 

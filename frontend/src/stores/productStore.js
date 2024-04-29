@@ -107,5 +107,7 @@ export const useProductStore = defineStore('productStore', () => {
     }
   }
 
+  
+
   return { getAllProducts, products, rowsCount, loading, updateProduct, deleteProduct, getSelectedProducts, selectedProducts }
 })
