@@ -5,74 +5,87 @@
       <v-divider class="mb-4"></v-divider>
     </div>
 
-    <div style="width: fit-content" class="d-flex flex-wrap ga-md-6 ml-auto mr-4">
-      <!-- Purchase Date -->
-      <div style="width: 300px">
-        <v-menu v-model="showPurchasePicker" :close-on-content-click="false">
-          <template v-slot:activator="{ props }">
-            <div class="d-flex justify-space-around align-center">
-              <v-icon color="#112D4E" class="mb-7 mr-4 ml-4 ml-md-0" icon="calendar_month"></v-icon>
-              <v-text-field
-                variant="outlined"
-                density="compact"
-                @click="showPurchasePicker = !showPurchasePicker"
-                v-model="purchaseDate"
-                label="Purchase Date"
-                readonly
-                v-bind="props"
-              ></v-text-field>
-            </div>
-          </template>
-          <v-date-picker
-            v-model="actualPurchaseDate"
-            date-format="MMM d, yyyy"
-            :max="new Date(Date.now())"
-            @input="showPurchasePicker = false"
-          ></v-date-picker>
-        </v-menu>
-      </div>
+    <v-form ref="dateForm" >
+      <div style="width: fit-content" class="d-flex flex-wrap ga-md-6 ml-auto mr-4">
+        <!-- Purchase Date -->
+        <div style="width: 300px">
+          <v-menu v-model="showPurchasePicker" :close-on-content-click="false">
+            <template v-slot:activator="{ props }">
+              <div class="d-flex justify-space-around align-center">
+                <v-icon
+                  color="#112D4E"
+                  class="mb-7 mr-4 ml-4 ml-md-0"
+                  icon="calendar_month"
+                ></v-icon>
+                <v-text-field
+                  variant="outlined"
+                  density="compact"
+                  :rules="[required]"
+                  @click="showPurchasePicker = !showPurchasePicker"
+                  v-model="purchaseDate"
+                  label="Purchase Date"
+                  readonly
+                  v-bind="props"
+                ></v-text-field>
+              </div>
+            </template>
+            <v-date-picker
+              v-model="actualPurchaseDate"
+              date-format="MMM d, yyyy"
+              :max="new Date(Date.now())"
+              @input="showPurchasePicker = false"
+            ></v-date-picker>
+          </v-menu>
+        </div>
 
-      <!-- Due Date -->
-      <div style="width: 300px">
-        <v-menu v-model="showDuePicker" :close-on-content-click="false">
-          <template v-slot:activator="{ props }">
-            <div class="d-flex justify-space-around align-center">
-              <v-icon color="#112D4E" class="mb-7 mr-4 ml-4 ml-md-0" icon="calendar_month"></v-icon>
-              <v-text-field
-                color="#112d4e"
-                density="compact"
-                variant="outlined"
-                @click="showDuePicker = !showDuePicker"
-                v-model="dueDate"
-                label="Due Date"
-                readonly
-                v-bind="props"
-              ></v-text-field>
-            </div>
-          </template>
-          <v-date-picker
-            :min="actualPurchaseDate ? actualPurchaseDate : new Date(Date.now())"
-            v-model="actualDueDate"
-            date-format="MMM d, yyyy"
-            @input="showDuePicker = false"
-          ></v-date-picker>
-        </v-menu>
-      </div>
+        <!-- Due Date -->
+        <div style="width: 300px">
+          <v-menu v-model="showDuePicker" :close-on-content-click="false">
+            <template v-slot:activator="{ props }">
+              <div class="d-flex justify-space-around align-center">
+                <v-icon
+                  color="#112D4E"
+                  class="mb-7 mr-4 ml-4 ml-md-0"
+                  icon="calendar_month"
+                ></v-icon>
+                <v-text-field
+                  color="#112d4e"
+                  density="compact"
+                  :rules="[required]"
+                  variant="outlined"
+                  @click="showDuePicker = !showDuePicker"
+                  v-model="dueDate"
+                  label="Due Date"
+                  readonly
+                  v-bind="props"
+                ></v-text-field>
+              </div>
+            </template>
+            <v-date-picker
+              :min="actualPurchaseDate ? actualPurchaseDate : new Date(Date.now())"
+              v-model="actualDueDate"
+              date-format="MMM d, yyyy"
+              @input="showDuePicker = false"
+            ></v-date-picker>
+          </v-menu>
+        </div>
 
-      <!-- Status Select -->
-      <div style="width: 300px" class="d-flex align-center">
-        <v-icon color="#112D4E" class="mb-7 mr-4 ml-4 ml-md-0" icon="pending_actions"></v-icon>
-        <v-select
-          variant="outlined"
-          color="#112D4E"
-          label="Status"
-          v-model="statusValue"
-          density="compact"
-          :items="status"
-          class="text-capitalize"
-        ></v-select>
+        <!-- Status Select -->
+        <div style="width: 300px" class="d-flex align-center">
+          <v-icon color="#112D4E" class="mb-7 mr-4 ml-4 ml-md-0" icon="pending_actions"></v-icon>
+          <v-select
+            variant="outlined"
+            color="#112D4E"
+            label="Status"
+            :rules="[required]"
+            v-model="statusValue"
+            density="compact"
+            :items="status"
+            class="text-capitalize"
+          ></v-select>
+        </div>
       </div>
-    </div>
+    </v-form>
 
     <!-- Customer Info -->
     <div class="bg-white rounded-lg mx-4 elevation-3 mb-7">
@@ -95,88 +108,96 @@
         </div>
       </div>
       <v-divider class="mb-4 mx-4"></v-divider>
-      <div class="d-flex flex-wrap flex-column flex-sm-row px-sm-2 justify-space-around">
-        <div class="d-flex flex-wrap flex-column px-4 px-sm-0 custom-info">
-          <v-text-field
-            density="compact"
-            variant="outlined"
-            label="First Name"
-            color="#112D4E"
-            v-model="existingCustomerDetails.firstName"
-            :readOnly="readOnly"
-          ></v-text-field>
-          <v-text-field
-            density="compact"
-            variant="outlined"
-            label="Last Name"
-            color="#112D4E"
-            v-model="existingCustomerDetails.lastName"
-            :readOnly="readOnly"
-          ></v-text-field>
-          <v-text-field
-            density="compact"
-            variant="outlined"
-            label="Email"
-            color="#112D4E"
-            v-model="existingCustomerDetails.email"
-            :readOnly="readOnly"
-          ></v-text-field>
-          <v-text-field
-            density="compact"
-            variant="outlined"
-            label="Contact"
-            color="#112D4E"
-            v-model="existingCustomerDetails.contact"
-            :readOnly="readOnly"
-          ></v-text-field>
-        </div>
-        <div class="d-flex flex-wrap flex-column px-4 px-sm-0 custom-info">
-          <v-text-field
-            density="compact"
-            variant="outlined"
-            label="Address Lane 1"
-            color="#112D4E"
-            v-model="existingCustomerDetails.address_lane1"
-            :readOnly="readOnly"
-          ></v-text-field>
-          <v-text-field
-            density="compact"
-            variant="outlined"
-            label="Address Lane 2"
-            color="#112D4E"
-            v-model="existingCustomerDetails.address_lane1"
-            :readOnly="readOnly"
-          ></v-text-field>
-          <v-text-field
-            density="compact"
-            variant="outlined"
-            label="Landmark"
-            color="#112D4E"
-            v-model="existingCustomerDetails.landmark"
-            :readOnly="readOnly"
-          ></v-text-field>
-          <div class="d-flex ga-2">
+      <v-form ref="customerForm" @submit="console.log('submitted')" >
+        <div class="d-flex flex-wrap flex-column flex-sm-row px-sm-2 justify-space-around">
+          <div class="d-flex flex-wrap flex-column px-4 px-sm-0 custom-info">
             <v-text-field
-              label="Pincode"
-              v-model="existingCustomerDetails.pincode"
-              :readOnly="readOnly"
-              :rules="pincodeRules"
-              variant="outlined"
-              color="#112d4e"
               density="compact"
+              variant="outlined"
+              :rules="[required]"
+              label="First Name"
+              color="#112D4E"
+              v-model="existingCustomerDetails.firstName"
+              :readOnly="readOnly"
             ></v-text-field>
             <v-text-field
-              label="State"
-              v-model="fatchedState"
-              :rules="[required]"
-              variant="outlined"
-              color="#112d4e"
               density="compact"
-              :readOnly="true"
+              variant="outlined"
+              label="Last Name"
+              color="#112D4E"
+              v-model="existingCustomerDetails.lastName"
+              :readOnly="readOnly"
+            ></v-text-field>
+            <v-text-field
+              density="compact"
+              variant="outlined"
+              :rules="[required]"
+              label="Email"
+              color="#112D4E"
+              v-model="existingCustomerDetails.email"
+              :readOnly="readOnly"
+            ></v-text-field>
+            <v-text-field
+              density="compact"
+              variant="outlined"
+              validate-on="input | lazy submit"
+              :rules="[required]"
+              label="Contact"
+              color="#112D4E"
+              v-model="existingCustomerDetails.contact"
+              :readOnly="readOnly"
             ></v-text-field>
           </div>
+          <div class="d-flex flex-wrap flex-column px-4 px-sm-0 custom-info">
+            <v-text-field
+              density="compact"
+              variant="outlined"
+              label="Address Lane 1"
+              :rules="[required]"
+              color="#112D4E"
+              v-model="existingCustomerDetails.address_lane1"
+              :readOnly="readOnly"
+            ></v-text-field>
+            <v-text-field
+              density="compact"
+              variant="outlined"
+              label="Address Lane 2"
+              color="#112D4E"
+              v-model="existingCustomerDetails.address_lane2"
+              :readOnly="readOnly"
+            ></v-text-field>
+            <v-text-field
+              density="compact"
+              variant="outlined"
+              :rules="[required]"
+              label="Landmark"
+              color="#112D4E"
+              v-model="existingCustomerDetails.landmark"
+              :readOnly="readOnly"
+            ></v-text-field>
+            <div class="d-flex ga-2">
+              <v-text-field
+                label="Pincode"
+                v-model="existingCustomerDetails.pincode"
+                :readOnly="readOnly"
+                :rules="pincodeRules"
+                variant="outlined"
+                color="#112d4e"
+                density="compact"
+              ></v-text-field>
+              <v-text-field
+                label="State"
+                v-model="fatchedState"
+                :rules="[required]"
+                variant="outlined"
+                color="#112d4e"
+                density="compact"
+                :readOnly="true"
+              ></v-text-field>
+            </div>
+          </div>
         </div>
-      </div>
+      </v-form>
     </div>
 
     <!-- Product Info -->
@@ -206,7 +227,7 @@
                   >do_not_disturb_on</v-icon
                 >
                 <input
-                  type="text"
+                  type="number"
                   class="pa-2 text-center"
                   style="width: 50px"
                   @change="quantityChange(item)"
@@ -268,7 +289,7 @@
         <div class="d-flex justify-space-between w-100">
           <span>Discount(%): </span>
           <input
-            type="text"
+            type="number"
             style="width: 70px"
             v-model="totalDiscount"
             class="bg-white border-md px-2 text-right"
@@ -279,7 +300,7 @@
           <span>Tax(%): </span>
           <input
             v-model="totalTax"
-            type="text"
+            type="number"
             style="width: 70px"
             class="bg-white border-md px-2 text-right"
             inputmode="numeric"
@@ -289,7 +310,7 @@
           <span>Total(₹): </span> <span>{{ total() }}</span>
         </div>
         <div class="mt-5 d-flex justify-center">
-          <v-btn color="#006c53" @click="createInvoice" class="text-capitalize"
+          <v-btn color="#006c53" type="submit" @click="createInvoice" class="text-capitalize"
             >Create Invoice</v-btn
           >
         </div>
@@ -317,13 +338,13 @@
 import { ref, computed, watch } from 'vue'
 import SelectCustomer from './SelectCustomer.vue'
 import SelectProduct from './SelectProduct.vue'
-import axios from 'axios'
+import axios, { formToJSON } from 'axios'
 import { toast } from 'vue3-toastify'
 import { useProductStore } from '@/stores/productStore'
 import { useInvoiceStore } from '@/stores/invoiceStore'
 
 const productStore = useProductStore()
-const invoiceStore = useInvoiceStore();
+const invoiceStore = useInvoiceStore()
 
 const showDuePicker = ref(false)
 const statusValue = ref(null)
@@ -338,11 +359,14 @@ const readOnly = ref(false)
 const fatchedState = ref('')
 const existingCustomerDetails = ref({})
 const selected = ref([])
-const totalTax = ref(0)
-const totalDiscount = ref(0)
+const totalTax = ref(null)
+const totalDiscount = ref(null)
 const subtotalValue = ref(0)
 const totalValue = ref(0)
 const showBtn = ref(false)
+
+const dateForm = ref(null)
+const customerForm = ref(null)
 
 watch(selected.value, () => {
   console.log(Object.keys(selected.value).length)
@@ -501,7 +525,8 @@ async function handleProduct(prodData) {
   }
 }
 
-async function createInvoice() {
+async function createInvoice(e) {
+  e.preventDefault()
   const invoiceData = {
     customer_details: {
       firstName: existingCustomerDetails.value.firstName,
@@ -532,18 +557,36 @@ async function createInvoice() {
       quantity: orderData.value.map((item) => item.quantity)
     }
   }
+
+  const check = await validate()
+  // console.log(check.valid)
+  if (check) {
+    await invoiceStore.createInvoice(invoiceData)
+    console.log(dateForm.value);
+    // existingCustomerDetails.value = {}
+    // actualPurchaseDate.value = undefined
+    // actualDueDate.value = null
+    // statusValue.value = null
+    readOnly.value = false
+    dueDate = null
+    purchaseDate = null
+    orderData.value = []
+    notes.value = ''
+    totalDiscount.value = 0
+    totalTax.value = 0
+    dateForm.value.reset()
+    customerForm.value.reset()
+  }
   // console.log(invoiceData)
-  await invoiceStore.createInvoice(invoiceData);
-  existingCustomerDetails.value = {};
-  actualPurchaseDate.value=null;
-  actualDueDate.value = null;
-  statusValue.value = null
-  orderData.value = [];
-  totalDiscount.value = 0;
-  totalTax.value = 0;
 }
 
-const dueDate = computed(() => {
+async function validate() {
+   const isDateValid = await dateForm.value.validate()
+   const isCustomerValid = await customerForm.value.validate()
+   return isDateValid.valid && isCustomerValid.valid
+}
+
+let dueDate = computed(() => {
   if (actualDueDate.value) {
     const options = { year: 'numeric', month: 'short', day: 'numeric' }
     return actualDueDate.value.toLocaleDateString('en-IN', options)
@@ -551,7 +594,7 @@ const dueDate = computed(() => {
   return ''
 })
 
-const purchaseDate = computed(() => {
+let purchaseDate = computed(() => {
   actualDueDate.value = null
   const options = { year: 'numeric', month: 'short', day: 'numeric' }
   if (actualPurchaseDate.value) {
@@ -629,5 +672,10 @@ tr:nth-child(even) {
 
 input[type='checkbox'] {
   accent-color: #112d4e;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  display: none;
 }
 </style>

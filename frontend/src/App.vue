@@ -1,5 +1,6 @@
 <template>
   <RouterView />
+  <!-- <PdfTemplate/> -->
   <!-- <Admin /> -->
   <Vendor />
   <!-- <Product /> -->
@@ -9,6 +10,7 @@
 
 <script setup>
 import { RouterView } from 'vue-router'
+// import PdfTemplate from './components/PdfTemplate.vue';
 // import { RouterLink, } from 'vue-router'
 // import Home from './views/Home.vue'
 // import Admin from './views/Admin.vue'
