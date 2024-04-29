@@ -34,6 +34,7 @@
             color="#112d4ef1"
             title="Dashboard"
             value="dashboard"
+            @click="isActiveTab=Dashboard"
           ></v-list-item>
 
           <v-list-group value="Products">
@@ -116,6 +117,7 @@ import CreateProduct from '../components/CreateProduct.vue'
 import CreateInvoice from '../components/CreateInvoice.vue'
 import AllInvoice from '../components/AllInvoice.vue'
 import Profile from '../components/Profile.vue'
+import Dashboard from '@/components/Dashboard.vue'
 import { useVendorStore } from '@/stores/vendorStore'
 
 const router = useRouter()

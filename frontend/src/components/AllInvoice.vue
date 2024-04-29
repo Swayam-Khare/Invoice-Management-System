@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/valid-v-slot -->
 <template>
   <div style="background-color: #112d4e14" class="remove-scrollbar h-screen overflow-auto">
     <div class="d-flex flex-md-row flex-column justify-space-between align-end">
@@ -197,7 +198,7 @@ const headers = [
   { title: 'Purchase Date', value: 'purchase_date' },
   { title: 'Due Date', value: 'due_date' },
   { title: 'Status', value: 'status' },
-  { title: 'Actions', value: 'action' }
+  { title: 'Actions', value: 'actions' }
 ]
 
 const statusMenu = ref([{ title: 'paid' }, { title: 'overdue' }, { title: 'due' }])
