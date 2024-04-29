@@ -4,20 +4,21 @@ import { ref } from 'vue'
 import { toast } from 'vue3-toastify'
 export const usedashboardStore = defineStore('dashboardStore', () => {
   let loading = ref(false)
-  let paidInvoices = ref(null);
-  let grandTotal = ref(null);
+  let paidInvoices = ref(null)
+  let grandTotal = ref(null)
+  let totalInvoices = ref(null)
+  let dueInvoices = ref(null)
+  let overdueInvoices = ref(null)
 
-  const TotalIncome = async (options) => {
-    
+  const TotalIncome = async () => {
     try {
       loading.value = true
-      const res = await axios.get(`/dashboard/totalIncome`, {
+      const res = await axios.get('/dashboard/totalIncome', {
         withCredentials: true
       })
-      console.log(res.data.data.paidInvoices);
-      console.log(res.data.data.grandTotal)
-      paidInvoices.value = res.data.data.paidInvoices;
-      grandTotal.value = res.data.data.grandTotal;
+
+      paidInvoices.value = res.data.data.paidInvoices
+      grandTotal.value = res.data.data.grandTotal
     } catch (error) {
       console.log(error.message)
     } finally {
@@ -25,27 +26,32 @@ export const usedashboardStore = defineStore('dashboardStore', () => {
     }
   }
 
-  const createInvoice = async (data) => {
+  const TotalInvoice = async () => {
     try {
-      loading.value = true;
-      const config = { headers: { 'Content-Type': 'application/json' }, withCredentials: true }
-      const res = await axios.post('/invoices', data, config);
-      toast.success(res.data.message, {
-        autoClose: 2000,
-        pauseOnHover: false,
-        type: 'success',
-        position: 'bottom-center',
-        transition: 'zoom',
-        dangerouslyHTMLString: true
+      loading.value = true
+      const res = await axios.get('/dashboard/totalInvoices', {
+        withCredentials: true
       })
-      console.log(res.data);
-
+      console.log(res.data.data.totalInvoices)
+      // console.log(res.data.data.grandTotal)
+      totalInvoices.value = res.data.data.totalInvoices
+      dueInvoices.value = res.data.data.dueInvoices
+      overdueInvoices.value = res.data.data.overdueInvoices
     } catch (error) {
-      console.log(error.message);
+      console.log(error.message)
     } finally {
-      loading.value = false;
+      loading.value = false
     }
   }
 
-  return { TotalIncome, paidInvoices, grandTotal, loading, createInvoice}
+  return {
+    TotalIncome,
+    paidInvoices,
+    TotalInvoice,
+    totalInvoices,
+    overdueInvoices,
+    dueInvoices,
+    grandTotal,
+    loading
+  }
 })
