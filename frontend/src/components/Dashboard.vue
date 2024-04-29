@@ -114,6 +114,9 @@ import {
   PointElement,
   LineElement
 } from 'chart.js'
+import { usedashboardStore } from '@/stores/dashboardStore'
+
+const dashboardStore = usedashboardStore();
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale, PointElement, LineElement)
 
@@ -190,7 +193,7 @@ export default {
         totalProducts.value = 500
         totalClients.value = 50
         outOfStockItems.value = 20
-        totalRevenue.value = 150000.0
+        totalRevenue.value = dashboardStore.grandTotal
         recentInvoices.value = [
           {
             id: 1234,
