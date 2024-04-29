@@ -394,8 +394,12 @@ function total() {
   let discount = (total * totalDiscount.value) / 100
   total = total + tax - discount
   totalValue.value = total
-  return total.toFixed(2)
+  const finalTotal = total.toFixed(2)
+  return finalTotal
 }
+
+
+ 
 
 const pincodeRules = computed(() => [
   (v) => !!v || 'Pincode is required.',
