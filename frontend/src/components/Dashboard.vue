@@ -4,50 +4,54 @@
       <v-container>
         <v-row>
           <v-col cols="12" sm="4">
-            <v-card elevation="5" height="100px" color="grey-darken-4" dark rounded-xl>
-              <v-card-title>Total Invoices</v-card-title>
-              <v-card-text class="text-h4 font-weight-bold">{{ totalInvoices }}</v-card-text>
-            </v-card>
+            <v-btn text elevation="5" height="100px" color="grey-darken-3" dark rounded block>
+              <v-card elevation="0" height="100%" color="grey-darken-3" dark rounded block>
+                <v-card-title>Total Invoices</v-card-title>
+                <v-card-text class="text-h4 font-weight-bold">{{ totalInvoices }}</v-card-text>
+              </v-card>
+            </v-btn>
           </v-col>
           <v-col cols="12" sm="4">
-            <v-card elevation="5" color="green accent-2" height="100px" dark rounded>
-              <v-card-title>Paid Invoices</v-card-title>
-              <v-card-text class="text-h4 font-weight-bold">{{ paidInvoices }}</v-card-text>
-            </v-card>
+            <v-btn text elevation="5" color="green accent-2" height="100px" dark rounded block>
+              <v-card elevation="0" height="100%" color="green accent-2" dark rounded>
+                <v-card-title>Paid Invoices</v-card-title>
+                <v-card-text class="text-h4 font-weight-bold">{{ paidInvoices }}</v-card-text>
+              </v-card>
+            </v-btn>
           </v-col>
           <v-col cols="12" sm="4">
-            <v-card elevation="5" color="blue" height="100px" dark rounded-lg>
-              <v-card-title>Due Invoices</v-card-title>
-              <v-card-text class="text-h4 font-weight-bold">{{ dueInvoices }}</v-card-text>
-            </v-card>
+            <v-btn text elevation="5" color="blue" height="100px" dark rounded block>
+              <v-card elevation="0" height="100%" color="blue" dark rounded>
+                <v-card-title>Due Invoices</v-card-title>
+                <v-card-text class="text-h4 font-weight-bold">{{ dueInvoices }}</v-card-text>
+              </v-card>
+            </v-btn>
           </v-col>
         </v-row>
-
         <v-row>
           <v-col cols="12" sm="4">
-            <v-card
-              elevation="5"
-              color="red accent-2"
-              text-color="white"
-              height="100px"
-              dark
-              rounded
-            >
-              <v-card-title>Overdue Invoices</v-card-title>
-              <v-card-text class="text-h4 font-weight-bold">{{ overdueInvoices }}</v-card-text>
-            </v-card>
+            <v-btn text elevation="5" color="red accent-2" text-color="white" height="100px" dark rounded block>
+              <v-card elevation="0" height="100%" color="red accent-2" dark rounded>
+                <v-card-title>Overdue Invoices</v-card-title>
+                <v-card-text class="text-h4 font-weight-bold">{{ overdueInvoices }}</v-card-text>
+              </v-card>
+            </v-btn>
           </v-col>
           <v-col cols="12" sm="4">
-            <v-card elevation="5" color="indigo" text-color="white" height="100px" rounded>
-              <v-card-title>Total Clients</v-card-title>
-              <v-card-text class="text-h4 font-weight-bold">{{ totalClients }}</v-card-text>
-            </v-card>
+            <v-btn text elevation="5" color="indigo" text-color="white" height="100px" rounded block>
+              <v-card elevation="0" height="100%" color="indigo" text-color="white" rounded>
+                <v-card-title>Total Clients</v-card-title>
+                <v-card-text class="text-h4 font-weight-bold">{{ totalClients }}</v-card-text>
+              </v-card>
+            </v-btn>
           </v-col>
           <v-col cols="12" sm="4">
-            <v-card elevation="5" color="teal darken-9" height="100px" rounded>
-              <v-card-title>Total Revenue</v-card-title>
-              <v-card-text class="text-h4 font-weight-bold">{{ totalRevenue }}</v-card-text>
-            </v-card>
+            <v-btn text elevation="5" color="teal darken-9" height="100px" rounded block>
+              <v-card elevation="0" height="100%" color="teal darken-9" dark rounded>
+                <v-card-title>Total Revenue</v-card-title>
+                <v-card-text class="text-h4 font-weight-bold">{{ totalRevenue }}</v-card-text>
+              </v-card>
+            </v-btn>
           </v-col>
         </v-row>
         <v-row>
@@ -106,7 +110,6 @@
     </v-main>
   </v-app>
 </template>
-
 <script setup>
 import { ref, onBeforeMount, computed } from 'vue'
 import { Pie, Line } from 'vue-chartjs'
