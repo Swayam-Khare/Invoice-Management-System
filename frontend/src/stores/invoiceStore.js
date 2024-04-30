@@ -78,5 +78,26 @@ export const useInvoiceStore = defineStore('invoiceStore', () => {
     }
   }
 
-  return { getAllInvoices, deleteInvoice, invoices, rowsCount, loading, createInvoice, specificInvoice }
+  const updateInvoice = async (id, status) => {
+    try {
+      loading.value = true
+      const res = await axios.patch(`/invoices/${id}`, { status }, {
+        withCredentials: true
+      })
+      toast.success("Status updated successfully", {
+        autoClose: 2000,
+        pauseOnHover: false,
+        type: 'success',
+        position: 'bottom-center',
+        transition: 'zoom',
+        dangerouslyHTMLString: true
+      })
+    } catch (error) {
+      console.log(error.message)
+    } finally {
+      loading.value = false
+    }
+  }
+
+  return { getAllInvoices, updateInvoice, deleteInvoice, invoices, rowsCount, loading, createInvoice, specificInvoice }
 })
