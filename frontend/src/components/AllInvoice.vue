@@ -77,6 +77,7 @@
             class="hover-scale mr-2"
             src="https://img.icons8.com/color/48/edit-file.png"
             alt="edit-file"
+            @click="(showUpdateDialog = true), (selectedInvoice = item)"
           />
 
           <img
@@ -109,6 +110,8 @@
         </template>
       </v-data-table-server>
     </div>
+
+    <UpdateInvoice @close="(showUpdateDialog = false, (loadItems(options)))" v-model="showUpdateDialog" :item="selectedInvoice" />
   </div>
 </template>
 
@@ -117,12 +120,15 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import PdfTemplate from './PdfTemplate.vue'
 import { useInvoiceStore } from '@/stores/invoiceStore'
+import UpdateInvoice from './UpdateInvoice.vue'
 const router = useRouter()
 const invoiceStore = useInvoiceStore()
 const page = ref(1)
 let filterMenu = ref(false)
 const menuTop = ref('0px')
 const menuLeft = ref('0px')
+const showUpdateDialog = ref(false)
+const selectedInvoice = ref(null)
 
 let invoiceData = ref([])
 let paymentStatus = ref(undefined)
