@@ -4,6 +4,7 @@ import Admin from '@/views/Admin.vue'
 import Home from '@/views/Home.vue'
 import Vendor from '@/views/Vendor.vue'
 import PdfTemplate from '@/components/PdfTemplate.vue'
+import ResetPassword from '@/components/ResetPassword.vue';
 // import Profile from '@/components/Profile.vue'
 // import CustomerDetails from '@/components/customerDetails.vue'
 // import EditCustomer from '@/components/EditCustomer.vue'
@@ -30,6 +31,15 @@ const router = createRouter({
       path: '/invoice/:id',
       name: 'pdfTemplate',
       component: PdfTemplate,
+      props: {
+        default: true,
+        PdfTemplate: true
+      }
+    },
+    {
+      path: '/resetPassword/:token',
+      name: 'resetPassword',
+      component: ResetPassword,
       props: {
         default: true,
         PdfTemplate: true

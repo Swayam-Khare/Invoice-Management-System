@@ -170,7 +170,7 @@ exports.forgotPassword = asyncErrorHandler(async (req, res, next) => {
   await vendor.save({ validateBeforeSave: false });
 
   // 3. SEND THE TOKEN BACK TO VENDOR'S EMAIL
-  const resetUrl = `${req.protocol}://${req.get("host")}/api/v1/auth/resetPassword/${resetToken}`;
+  const resetUrl = `${req.protocol}://localhost:5173/resetPassword/${resetToken}`;
   const message = `We have recieved a password reset request. Please use below link to reset your password.\n\n${resetUrl}\n\nThis reset password link will expire in 10 minutes`;
 
   try {
@@ -219,15 +219,16 @@ exports.resetPassword = asyncErrorHandler(async (req, res, next) => {
   // login the user
   const loginToken = signToken(vendor.id);
 
-  res.cookie("jwt", loginToken, {
-    maxAge: process.env.LOGIN_EXPIRES,
-    // secure:true,
-    httpOnly: true,
-  });
+  // res.cookie("jwtAuth", loginToken, {
+  //   maxAge: process.env.LOGIN_EXPIRES,
+  //   // secure:true,
+  //   httpOnly: true,
+  // });
 
   res.status(200).json({
     status: "Success",
     token: loginToken,
+    message:"Password has been reset successfully"
   });
 });
 
