@@ -94,7 +94,7 @@
             size="25"
           ></v-icon>
 
-          <img src="../assets/delete.svg" class="hover-scale" style="width: 25px; height: 25px" />
+          <img src="../assets/delete.svg" @click="deleteInvoice(item.id)" class="hover-scale" style="width: 25px; height: 25px" />
         </template>
 
         <template v-slot:item.status="{ item }">
@@ -165,6 +165,11 @@ async function loadItems(event) {
 const formatDate = (date) => {
   const options = { year: 'numeric', month: 'short', day: 'numeric' }
   return new Date(date).toLocaleDateString('en-US', options)
+}
+
+async function deleteInvoice(id) {
+  await invoiceStore.deleteInvoice(id)
+  loadItems(options.value)
 }
 
 const itemsPerPageOption = ref([
