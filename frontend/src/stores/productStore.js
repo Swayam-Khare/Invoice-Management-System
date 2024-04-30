@@ -53,10 +53,30 @@ export const useProductStore = defineStore('productStore', () => {
     }
   }
 
+  const createProduct = async (data) => {
+    try {
+      loading.value = true
+      const res = await axios.post('/products', data, {
+        withCredentials: true
+        })
+      toast.success(res.data.status, {
+        autoClose: 2000,
+        pauseOnHover: false,
+        type: 'success',
+        position: 'bottom-center',
+        transition: 'zoom',
+        dangerouslyHTMLString: true
+      })
+    } catch (error) {
+      console.log(error)
+    } finally {
+      loading.value = false
+    }
+  }
+
   const updateProduct = async (data) => {
     try {
       loading.value = true
-      console.log('line 38',data.id)
       const res = await axios.patch(`/products/${data.id}`,
         data,
         {
@@ -109,5 +129,5 @@ export const useProductStore = defineStore('productStore', () => {
 
   
 
-  return { getAllProducts, products, rowsCount, loading, updateProduct, deleteProduct, getSelectedProducts, selectedProducts }
+  return { getAllProducts, products, rowsCount, loading, createProduct, updateProduct, deleteProduct, getSelectedProducts, selectedProducts }
 })
