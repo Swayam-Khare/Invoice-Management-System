@@ -34,6 +34,14 @@
             @click:appendInner="visible = !visible"
           >
           </v-text-field>
+          <div class="d-flex mb-3 justify-end">
+            <span
+              class="text-subtitle-2 forgot-link"
+              :class="{ 'd-none': myTitle === 'Admin Login' }"
+              @click="emit('forgot'), emit('close')"
+              >Forgot Password?</span
+            >
+          </div>
           <v-card-actions class="pl-6 pt-0 pr-6">
             <v-btn color="#112D4E" type="submit" variant="elevated" block :disabled="!isFormValid"
               >Login</v-btn
@@ -83,7 +91,7 @@ const password = ref('')
 const isFocused = ref(false)
 const visible = ref(false)
 
-const emit = defineEmits(['close', 'signup', 'vendor'])
+const emit = defineEmits(['close', 'signup', 'vendor','forgot'])
 
 const { myTitle } = defineProps({
   myTitle: {
@@ -159,3 +167,12 @@ const submitForm = async () => {
   }
 }
 </script>
+
+<style scoped>
+.forgot-link:hover {
+  color: #112d4e;
+  text-decoration: underline;
+  cursor: pointer;
+  transition: 0.2s;
+}
+</style>

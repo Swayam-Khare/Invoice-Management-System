@@ -187,17 +187,72 @@ export const useVendorStore = defineStore('vendorStore', () => {
     }
   }
 
-  //   const vendors = computed(async () => {
-  //         try {
-  //             const res =  await axios.get('/vendors', { withCredentials: true });
-  //             const resData = await res.data.data.vendors;
-  //             return  resData;
-  //         } catch (error) {
-  //             console.log(error.message);
-  //         } finally {
-  //             loading = false;
-  //         }
-  //     });
+  async function forgotPassword(email) {
+    try {
+      loading.value = true
+      const config = {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        withCredentials: true
+      }
+      const data = {
+        email,
+      }
+      const res = await axios.post('/auth/forgotPassword', data, config);
+      console.log(res.data);
+      toast.success(res.data.message, {
+        autoClose: 1000,
+        type: 'success',
+        position: 'bottom-center',
+        transition: 'zoom',
+        dangerouslyHTMLString: true
+      })
+      
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response.data.message, {
+        autoClose: 1000,
+        type: 'error',
+        position: 'bottom-center',
+        transition: 'zoom',
+        dangerouslyHTMLString: true
+      })
+
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function resetPassword(data,token) {
+    try {
+      loading.value = true;
+      const config = {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        withCredentials: true
+      }
+      const res = await axios.patch(`auth/resetPassword/${token}`, data, config);
+      toast.success(res.data.message, {
+        autoClose: 1000,
+        type: 'success',
+        position: 'bottom-center',
+        transition: 'zoom',
+        dangerouslyHTMLString: true
+      })
+    } catch (error) {
+      toast.error(error.response.data.message, {
+        autoClose: 1000,
+        type: 'error',
+        position: 'bottom-center',
+        transition: 'zoom',
+        dangerouslyHTMLString: true
+      })
+    } finally {
+      loading.value = false;
+    }
+  }
 
   return {
     vendors,
@@ -215,6 +270,8 @@ export const useVendorStore = defineStore('vendorStore', () => {
     approveVendor,
     logoutVendor,
     updatePassword,
-    getAVendor
+    getAVendor,
+    forgotPassword,
+    resetPassword,
   }
 })

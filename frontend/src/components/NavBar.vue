@@ -123,6 +123,7 @@
           @close="showLoginDialog = false"
           @vendor=";(titleValue = 'Vendor Login'), (showLoginDialog = true)"
           @signup="showSignupDialog = true"
+          @forgot = "forgotDialog = true"
           :myTitle="titleValue"
         />
 
@@ -183,12 +184,15 @@
       style="color: #112d4e"
     ></v-btn>
   </v-slide-y-reverse-transition>
+
+  <ForgotPassword v-model="forgotDialog" @close="forgotDialog=false"/>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import Signup from './signUp.vue'
 import Login from './LoginComponent.vue'
+import ForgotPassword from './ForgotPassword.vue';
 import { useAdminStore } from '../stores/admin';
 import { computed } from 'vue'
 import { onMounted } from 'vue'
@@ -201,6 +205,7 @@ const showSignupDialog = ref(false)
 const itemVariant = ref('none')
 const scrollPosition = ref(0)
 const titleValue = ref('Vendor Login')
+const forgotDialog = ref(false)
 
 // const changeSelection = (event) => {
 //  selected.value = event.currentTarget.id
