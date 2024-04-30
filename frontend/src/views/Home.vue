@@ -17,6 +17,7 @@
         <v-btn class="w-0 px-11 text-capitalize" color="#112D4E" @click="dialog = true">
           Sign Up
         </v-btn>
+        
       </div>
       <div class="image-content">
         <img src="../assets/home.svg" alt="" class="mt-13 img" srcset="" />

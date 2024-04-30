@@ -51,7 +51,7 @@ exports.getTotalInvoice_dueAndOvedueInvoices = asyncErrorHandler(async (req, res
             },
         });
         let filterdue = ["due"];
-        dueInvocies = await Invoice.findAll({
+        dueInvoices = await Invoice.findAll({
             where: {
                 status: {
                   [Op.in]: filterdue,
@@ -60,7 +60,7 @@ exports.getTotalInvoice_dueAndOvedueInvoices = asyncErrorHandler(async (req, res
               },
         });
         let filteroverdue = ["overdue"];
-        overdueInvocies = await Invoice.findAll({
+        overdueInvoices = await Invoice.findAll({
             where: {
                 status: {
                   [Op.in]: filteroverdue,
@@ -76,9 +76,9 @@ exports.getTotalInvoice_dueAndOvedueInvoices = asyncErrorHandler(async (req, res
     res.status(200).json({
       status: "success",
       data: {
-        totalInvocies : totalInvoices.length,
-        dueInvocies: dueInvocies.length,
-        overdueInvocies : overdueInvocies.length
+        totalInvoices : totalInvoices.length,
+        dueInvoices: dueInvoices.length,
+        overdueInvoices : overdueInvoices.length
       },
     });
 });
