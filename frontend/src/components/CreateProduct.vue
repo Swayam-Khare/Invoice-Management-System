@@ -6,7 +6,7 @@
                 <v-btn icon="close" variant="text" color="#f5f5f5" @click="closeDialog"></v-btn>
             </v-card-title>
             <v-card-text>
-                <v-form class="px-3" ref="form" @submit.prevent="submitForm">
+                <v-form class="px-3" ref="form" @submit.prevent="createInvoice">
                     <v-text-field label="Name" v-model="productName" variant="outlined" color="#112d4e" class="mt-1"
                         density="compact" :rules="[required]"></v-text-field>
 
@@ -19,7 +19,7 @@
                     <v-text-field label="Discount" v-model="discount" variant="outlined" color="#112d4e"
                         density="compact" :rules="[required, numberOnly]"></v-text-field>
 
-                    <v-btn type="submit" class="mt-1 mb-3 txt-button" color="#112d4e" @click="validate" block>Create</v-btn>
+                    <v-btn type="submit" class="mt-1 mb-3 txt-button" color="#112d4e" block>Create</v-btn>
 
                 </v-form>
             </v-card-text>
@@ -29,6 +29,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useProductStore } from '@/stores/productStore'
 
 const emit = defineEmits(['close', 'login'])
 
@@ -40,6 +41,7 @@ const discount = ref(null);
 const required = ((v) => (!!v || 'This field is Required'));
 const numberOnly = ((v) => (v && /^\d*\.?\d+$/.test(Number(v))) || 'This field contains only digits.')
 const form = ref(null) // If you need a ref to the form for validation
+const productStore = useProductStore()
 
 async function submitForm() {
     const check = await validate();
@@ -48,6 +50,25 @@ async function submitForm() {
         resetForm()
         emit('close')
     }
+}
+
+async function createInvoice() {
+
+    const formData = {
+    name: productName.value,
+    description: description.value,
+    stock: stock.value,
+    price: price.value,
+    discount: discount.value
+  }
+
+  const check = await validate()
+  if (check.valid) {
+    await productStore.createProduct(formData)
+
+    resetForm()
+    emit('close')
+  }
 }
 
 function validate() {
