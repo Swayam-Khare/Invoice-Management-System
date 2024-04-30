@@ -132,20 +132,32 @@ exports.approveVendor = asyncErrorHandler(async (req, res, next) => {
   res.status(200).json({
     status: "Success",
     message: "Vendor has been Approved",
-  })
+  });
+});
 
+exports.sendMail = asyncErrorHandler(async (req, res, next) => {
+  let { firstName, lastName, contact, email, message } = req.body;
+  if (!email || !message || !firstName || !contact) {
+    const error = new CustomError("Please provide all the required details", 400);
+    return next(error);
+  }
+  try {
 
+    message = `From: ${email}\nContact no.: ${contact}\n\n${message}`
 
-  // console.log(rows , updatedVendor);
-  // res.status(200).json({
-  //   status : "success",
-  //   data : {
-  //     message : "Status approved"
-  //   }
-
-
-  // })
-
-
-
+    await sendEmail({
+      email: "admin@gmail.com",
+      subject: `Message from ${firstName} ${lastName}`,
+      message,
+    });
+    res.status(200).json({
+      status: "Success",
+      message: "Email has been sent successfully",
+    });
+  } catch (err) {
+    return res.status(400).json({
+      status: "Fail",
+      message: err.message
+    })
+  }
 });
