@@ -56,5 +56,27 @@ export const useInvoiceStore = defineStore('invoiceStore', () => {
     const currentInvoiceDetails = invoices.value.find((item)=>item.id === id);
     return  currentInvoiceDetails;
   }
-  return { getAllInvoices, invoices, rowsCount, loading, createInvoice, specificInvoice }
+
+  const deleteInvoice = async (id) => {
+    try {
+      loading.value = true
+      const res = await axios.delete(`/invoices/${id}`, {
+        withCredentials: true
+      })
+      toast.success("Invoice deleted successfully", {
+        autoClose: 2000,
+        pauseOnHover: false,
+        type: 'success',
+        position: 'bottom-center',
+        transition: 'zoom',
+        dangerouslyHTMLString: true
+      })
+    } catch (error) {
+      console.log(error.message)
+    } finally {
+      loading.value = false
+    }
+  }
+
+  return { getAllInvoices, deleteInvoice, invoices, rowsCount, loading, createInvoice, specificInvoice }
 })
