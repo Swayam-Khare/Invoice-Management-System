@@ -1,5 +1,5 @@
 <template>
-  <div style="background-color: #112d4e14" class="remove-scrollbar h-screen overflow-auto">
+  <div style="background-color: #112d4e14" class="remove-scrollbar h-screen overflow-auto" id="allInvoice">
     <div class="d-flex flex-md-row flex-column justify-space-between align-end">
       <div class="mobile-search align-center mt-1 pt-4 px-2 px-sm-10 px-md-14 px-lg-16 ml-xxl-16">
         <!-- <v-text-field variant="outlined" color="#112d4e" density="compact" :disabled="true"
@@ -121,6 +121,10 @@ import { useRouter } from 'vue-router'
 import PdfTemplate from './PdfTemplate.vue'
 import { useInvoiceStore } from '@/stores/invoiceStore'
 import UpdateInvoice from './UpdateInvoice.vue'
+import html2pdf  from 'html2pdf.js'
+
+
+
 const router = useRouter()
 const invoiceStore = useInvoiceStore()
 const page = ref(1)
@@ -214,8 +218,9 @@ const headers = [
 const statusMenu = ref([{ title: 'paid' }, { title: 'overdue' }, { title: 'due' }])
 
 function openInvoice(item) {
-  router.push({ name: 'pdfTemplate', params: {id: item.id} })
-
+  html2pdf(document.getElementById('allInvoice'));
+  // router.push({ name: 'pdfTemplate', params: { id: item.id } })
+  
 }
 </script>
 
