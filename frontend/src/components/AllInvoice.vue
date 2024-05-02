@@ -1,5 +1,5 @@
 <template>
-  <div style="background-color: #112d4e14" class="remove-scrollbar h-screen overflow-auto" id="allInvoice">
+  <div style="background-color: #112d4e14" class="remove-scrollbar h-screen overflow-auto">
     <div class="d-flex flex-md-row flex-column justify-space-between align-end">
       <div class="mobile-search align-center mt-1 pt-4 px-2 px-sm-10 px-md-14 px-lg-16 ml-xxl-16">
         <div class="search-wrapper">
