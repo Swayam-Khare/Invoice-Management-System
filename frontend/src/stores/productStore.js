@@ -36,6 +36,7 @@ export const useProductStore = defineStore('productStore', () => {
   const getSelectedProducts = async (ids) => {
     try {
       loading.value = true;
+      console.log(ids);
       const data = {
         ids
       }

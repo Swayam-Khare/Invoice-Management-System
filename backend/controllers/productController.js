@@ -213,6 +213,7 @@ exports.readProductsByIds = asyncErrorHandler(async (req, res, next) => {
     attributes: {
       exclude: ["VendorId"],
     },
+    paranoid:false
   });
 
   if (!vendorProducts.length) {
@@ -227,12 +228,14 @@ exports.readProductsByIds = asyncErrorHandler(async (req, res, next) => {
     where: {
       id: req.body.ids
     },
+    paranoid:false
   })
-
+  
   const myProducts = products.map((product) => {
     const vendorProduct = vendorProducts.find(
       (vp) => vp.ProductId === product.id
     );
+
     return {
       id: product.id,
       name: product.name,

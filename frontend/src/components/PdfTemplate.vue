@@ -1,4 +1,5 @@
 <template>
+  <div id="pdf">
   <div class="w-100 d-flex justify-center my-4" style="background-color: #112d4e">
     <span class="text-uppercase px-1 text-h3 bg-white" style="letter-spacing: 2px !important"
       >Invoice</span
@@ -86,49 +87,29 @@
     </div>
   </div>
 
-  <div class="d-flex justify-center">
-  <v-btn color="#112d4e" class="text-capitalize" id="printButton" @click="printpage">  print</v-btn>
-  </div>
 
+</div>
 </template>
 
 <script setup>
-import { useRoute } from 'vue-router'
-import { useInvoiceStore } from '@/stores/invoiceStore'
-import { useVendorStore } from '@/stores/vendorStore'
-import { useProductStore } from '@/stores/productStore'
-import { onBeforeMount, ref } from 'vue'
-const productStore = useProductStore()
-const vendorStore = useVendorStore()
-const invoiceStore = useInvoiceStore()
-const route = useRoute()
-const id = +route.params.id
-let invoiceInfo = ref({})
-let vendorInfo = ref({})
+import { ref, watch } from 'vue'
+
+let invoiceInfo = ref({Order_Details:{},Customer:{Address_Details:{}}})
 let orders = ref([])
 
-onBeforeMount(async () => {
-  invoiceInfo.value = invoiceStore.specificInvoice(id)
-  console.log(invoiceInfo.value)
-  vendorInfo.value = vendorStore.loggedVendor
-  console.log(vendorInfo.value)
-  await productStore.getSelectedProducts(invoiceInfo.value.Order_Details.productId)
-  orders.value = productStore.selectedProducts
-  console.log(orders.value)
+const props = defineProps({
+  orderData: Object,
+  vendorInfo: Object,
+  specificInvoiceData:Object
 })
 
-function printpage() {
-  window.print();
-}
+watch(() => props.orderData, (newData) => {
+  orders.value = newData;
+})
 
-// console.log(props)
+
+watch(() => props.specificInvoiceData, (newData) => {
+  invoiceInfo.value = newData;
+})
+
 </script>
-
-<style scoped>
-
-@media print {
-  #printButton {
-    display: none;
-  }
-}
-</style>
