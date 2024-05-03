@@ -1,5 +1,5 @@
 <template>
-  <div id="pdf">
+  <div id="pdf" class="pa-4">
   <div class="w-100 d-flex justify-center my-4" style="background-color: #112d4e">
     <span class="text-uppercase px-1 text-h3 bg-white" style="letter-spacing: 2px !important"
       >Invoice</span
@@ -44,8 +44,21 @@
       <v-divider></v-divider>
       <div class="text-subtitle-1 text-grey-darken-2" style="line-height: 1.2">Invoice No: {{ invoiceInfo.invoice_no }}</div>
       <div class="text-subtitle-1 text-grey-darken-2" style="line-height: 1.2">Purchase Date: {{ invoiceInfo.purchase_date }}</div>
-      <div class="text-subtitle-1 text-grey-darken-2" style="line-height: 1.2">Due Date: {{ invoiceInfo.due_date }}</div>
+      <div
+          class="text-subtitle-1 text-grey-darken-2"
+          :class="{ 'd-none': invoiceInfo.status === 'paid' }"
+          style="line-height: 1.2"
+        >
+          Due Date: {{ invoiceInfo.due_date }}
+        </div>
       <div class="text-subtitle-1 text-grey-darken-2 text-capitalize" style="line-height: 1.2">Status: {{ invoiceInfo.status }}</div>
+      <div
+          class="text-subtitle-1 text-grey-darken-2 text-capitalize"
+          :class="{ 'd-none': invoiceInfo.status != 'paid' }"
+          style="line-height: 1.2"
+        >
+          TransactionId:<br> {{ invoiceInfo.transaction_no }}
+        </div>
     </div>
   </div>
 
