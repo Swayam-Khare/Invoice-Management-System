@@ -70,9 +70,17 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
     httpOnly: true,
   });
 
+  res.cookie("loggedRole", req.params.role, {
+    maxAge: process.env.LOGIN_EXPIRES * 24 * 60 * 60 * 1000,
+    // secure:true,
+    httpOnly: true,
+  });
+
+
   res.status(200).json({
     status: "Success",
     token,
+    role:req.params.role,
   });
 });
 

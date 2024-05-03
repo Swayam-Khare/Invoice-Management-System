@@ -4,7 +4,12 @@ import Admin from '@/views/Admin.vue'
 import Home from '@/views/Home.vue'
 import Vendor from '@/views/Vendor.vue'
 import PdfTemplate from '@/components/PdfTemplate.vue'
-import ResetPassword from '@/components/ResetPassword.vue';
+import ResetPassword from '@/components/ResetPassword.vue'
+import { useAdminStore } from '@/stores/admin'
+import { useVendorStore } from '@/stores/vendorStore'
+import VueCookies from 'vue-cookies'
+// import {cookie} from 'vue'
+// const vendorStore = useVendorStore();
 // import Profile from '@/components/Profile.vue'
 // import CustomerDetails from '@/components/customerDetails.vue'
 // import EditCustomer from '@/components/EditCustomer.vue'
@@ -14,13 +19,29 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: Home
+      component: Home,
+      beforeEnter:(to,from)=>{
+
+      }
+
     },
 
     {
       path: '/admin',
       name: 'admin',
-      component: Admin
+      component: Admin,
+      beforeEnter: (to, from) => {
+        let arr = [];
+        console.log(to);
+        console.log(from);
+        const adminStore = useAdminStore()
+       arr = VueCookies.get();
+       console.log(arr)
+        if (!adminStore.token || adminStore.loggedRole != 'admin') {
+          // return { name: 'home' }
+          return from
+        }
+      }
     },
     {
       path: '/vendor',
