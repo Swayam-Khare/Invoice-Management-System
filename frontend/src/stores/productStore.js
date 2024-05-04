@@ -24,8 +24,8 @@ export const useProductStore = defineStore('productStore', () => {
         withCredentials: true
       })
       console.log(res.data.data)
-      products.value = res.data.data.myProducts;
-      rowsCount.value = res.data.data.totalRows.count;
+      products.value = res.data.data.myProducts
+      rowsCount.value = res.data.data.totalRows.count
     } catch (error) {
       console.log(error.message)
     } finally {
@@ -75,10 +75,51 @@ export const useProductStore = defineStore('productStore', () => {
     }
   }
 
+  const createProduct = async (data) => {
+    try {
+      loading.value = true
+      const res = await axios.post('/products', data, {
+        withCredentials: true
+      })
+      toast.success(res.data.status, {
+        autoClose: 2000,
+        pauseOnHover: false,
+        type: 'success',
+        position: 'bottom-center',
+        transition: 'zoom',
+        dangerouslyHTMLString: true
+      })
+    } catch (error) {
+      console.log(error)
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const createProduct = async (data) => {
+    try {
+      loading.value = true
+      const res = await axios.post('/products', data, {
+        withCredentials: true
+      })
+      toast.success(res.data.status, {
+        autoClose: 2000,
+        pauseOnHover: false,
+        type: 'success',
+        position: 'bottom-center',
+        transition: 'zoom',
+        dangerouslyHTMLString: true
+      })
+    } catch (error) {
+      console.log(error)
+    } finally {
+      loading.value = false
+    }
+  }
+
   const updateProduct = async (data) => {
     try {
       loading.value = true
-      console.log('line 38', data.id)
       const res = await axios.patch(`/products/${data.id}`, data, {
         withCredentials: true
       })
@@ -128,6 +169,7 @@ export const useProductStore = defineStore('productStore', () => {
     products,
     rowsCount,
     loading,
+    createProduct,
     updateProduct,
     deleteProduct,
     getSelectedProducts,

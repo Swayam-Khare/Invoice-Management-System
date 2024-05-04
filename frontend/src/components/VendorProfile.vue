@@ -73,7 +73,6 @@ const props = defineProps({
   data: Object
 })
 
-console.log(props.data);
 const emit = defineEmits(['close','reload'])
 const show = ref(false)
 

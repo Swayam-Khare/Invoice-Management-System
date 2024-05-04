@@ -26,7 +26,7 @@
                     <v-text-field
                       label="First Name"
                       v-model="firstName"
-                      :rules="[alphabetOnlyRule,required]"
+                      :rules="[alphabetOnlyRule, required]"
                       variant="outlined"
                       color="#112d4e"
                       density="compact"
@@ -84,8 +84,13 @@
                 </v-row>
                 <v-row justify="center">
                   <v-col cols="12" sm="6" md="4">
-                    <v-btn type="submit" class="mt-1 txt-button" color="#112d4e" @click="validate" block
-                      >Send Message</v-btn
+                    <v-btn
+                      type="submit"
+                      class="mt-1 txt-button"
+                      color="#112d4e"
+                      @click="sendMail"
+                      block
+                      >{{ buttonText }}</v-btn
                     >
                   </v-col>
                 </v-row>
@@ -100,14 +105,16 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import axios from '../stores/axios'
+import { toast } from 'vue3-toastify'
 const firstName = ref('')
 const lastName = ref('')
 const email = ref('')
 const contactNo = ref('')
 const messageUs = ref('')
+const buttonText = ref('Send Message')
 
-
-const required = ((v) => (!!v || 'This field is Required'));
+const required = (v) => !!v || 'This field is Required'
 
 const alphabetOnlyRule = (v) => /^[A-Za-z\s]*$/.test(v) || 'Alphabets only.'
 const emailRule = (v) => /.+@.+\..+/.test(v) || 'Invalid email address.'
@@ -119,21 +126,65 @@ const contactNoRules = computed(() => [
 ])
 const form = ref(null) // If you need a ref to the form for validation
 async function submitForm() {
-  const check = await validate();
+  const check = await validate()
   // console.log(check.valid);
   if (check.valid) {
     resetForm()
   }
 }
- function validate() {
-  return  form.value.validate()
+function validate() {
+  return form.value.validate()
 }
 function resetForm() {
-  firstName.value = null;
-  lastName.value = null;
-  email.value = null;
-  contactNo.value = null;
-  messageUs.value = null;
+  firstName.value = null
+  lastName.value = null
+  email.value = null
+  contactNo.value = null
+  messageUs.value = null
+}
+
+async function sendMail() {
+  buttonText.value = 'Sending...'
+  const check = await validate()
+
+  if (check.valid) {
+    const res = await axios.post('/admin/mail', {
+      firstName: firstName.value,
+      lastName: lastName.value,
+      email: email.value,
+      contact: contactNo.value,
+      message: messageUs.value
+    })
+    if (res.status === 200) {
+      toast.success(res.data.message, {
+        autoClose: 2000,
+        pauseOnHover: false,
+        type: 'success',
+        position: 'bottom-center',
+        transition: 'zoom',
+        dangerouslyHTMLString: true
+      })
+    } else {
+      toast.error(res.data.message, {
+        autoClose: 2000,
+        pauseOnHover: false,
+        type: 'error',
+        position: 'bottom-center',
+        transition: 'zoom',
+        dangerouslyHTMLString: true
+      })
+    }
+  } else {
+    toast.error('Please fill all the fields correctly', {
+      autoClose: 2000,
+      pauseOnHover: false,
+      type: 'error',
+      position: 'bottom-center',
+      transition: 'zoom',
+      dangerouslyHTMLString: true
+    })
+  }
+  buttonText.value = 'Send Message'
 }
 </script>
 

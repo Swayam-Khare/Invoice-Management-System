@@ -3,12 +3,6 @@
   <div style="background-color: #112d4e14" class="remove-scrollbar h-screen overflow-auto">
     <div class="d-flex flex-md-row flex-column justify-space-between align-end">
       <div class="mobile-search align-center mt-1 pt-4 px-2 px-sm-10 px-md-14 px-lg-16 ml-xxl-16">
-        <!-- <v-text-field variant="outlined" color="#112d4e" density="compact" :disabled="true"
-          >#</v-text-field
-        > -->
-        <!-- <v-text-field variant="outlined" color="#112d4e" density="compact" v-model="search" placeholder="Search" class="bg-white"
-          >#</v-text-field
-        > -->
         <div class="search-wrapper">
           <label class="label">#</label>
           <input
@@ -36,7 +30,7 @@
         style="width: 90%"
         class="mx-auto my-5 my-sm-5 rounded-lg elevation-5 custom-data-table"
       >
-        <template v-slot:header.status="{ header }">
+        <template v-slot:header.status>
           <v-tooltip bottom>
             <template v-slot:activator="{ on }">
               <span v-on="on">Status</span>
@@ -78,6 +72,7 @@
             class="hover-scale mr-2"
             src="https://img.icons8.com/color/48/edit-file.png"
             alt="edit-file"
+            @click="(showUpdateDialog = true), (selectedInvoice = item)"
           />
 
           <img
@@ -95,7 +90,7 @@
             size="25"
           ></v-icon>
 
-          <img src="../assets/delete.svg" class="hover-scale" style="width: 25px; height: 25px" />
+          <img src="../assets/delete.svg" @click="deleteInvoice(item.id)" class="hover-scale" style="width: 25px; height: 25px" />
         </template>
 
         <template v-slot:item.status="{ item }">
@@ -110,26 +105,43 @@
         </template>
       </v-data-table-server>
     </div>
+
+    <UpdateInvoice @close="(showUpdateDialog = false, (loadItems(options)))" v-model="showUpdateDialog" :item="selectedInvoice" />
+    <div v-show="false">
+      <PdfTemplate :orderData="orderData" :specificInvoiceData="specificInvoiceData" :vendorInfo="vendorData"/>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref } from 'vue'
 import PdfTemplate from './PdfTemplate.vue'
 import { useInvoiceStore } from '@/stores/invoiceStore'
-const router = useRouter()
+import UpdateInvoice from './UpdateInvoice.vue'
+import html2pdf from 'html2pdf.js'
+import { useProductStore } from '@/stores/productStore'
+
+
+
 const invoiceStore = useInvoiceStore()
-const page = ref(1)
+const productStore = useProductStore()
 let filterMenu = ref(false)
 const menuTop = ref('0px')
 const menuLeft = ref('0px')
+const showUpdateDialog = ref(false)
+const selectedInvoice = ref(null)
 
 let invoiceData = ref([])
 let paymentStatus = ref(undefined)
 let options = ref({})
 let search = ref(undefined)
 
+const specificInvoiceData = ref({});
+const orderData = ref({});
+
+const props = defineProps({ profile: Object });
+
+const vendorData = ref(props.profile);
 async function loadItems(event) {
   const { page, itemsPerPage, sortBy, search, status } = event
   let sortingStr = ''
@@ -168,6 +180,11 @@ const formatDate = (date) => {
   return new Date(date).toLocaleDateString('en-US', options)
 }
 
+async function deleteInvoice(id) {
+  await invoiceStore.deleteInvoice(id)
+  loadItems(options.value)
+}
+
 const itemsPerPageOption = ref([
   { title: '10', value: 10 },
   { title: '15', value: 15 },
@@ -203,8 +220,15 @@ const headers = [
 
 const statusMenu = ref([{ title: 'paid' }, { title: 'overdue' }, { title: 'due' }])
 
-function openInvoice(item) {
-  router.push({ name: 'pdfTemplate', query: { ids: item.id } })
+async function openInvoice(item) {
+  console.log( item);
+  specificInvoiceData.value = item;
+  await productStore.getSelectedProducts(item.Order_Details.productId);
+  orderData.value = productStore.selectedProducts;
+  html2pdf(document.getElementById('pdf'), {
+    filename:`${item.Customer.firstName} - ${item.invoice_no}`
+  });
+  
 }
 </script>
 
