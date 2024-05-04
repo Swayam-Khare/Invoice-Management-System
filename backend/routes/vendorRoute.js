@@ -12,6 +12,6 @@ router
   .delete(authController.protect, vendorController.deleteVendor)
   .patch(authController.protect, authController.restrict("vendor"), vendorController.updateVendor);
 
-router.route("/updatepassword/:id").patch(authController.protect, vendorController.updatePassword);
+router.route("/updatepassword").patch(authController.protect, vendorController.updatePassword);
 
 module.exports = router;
