@@ -96,27 +96,6 @@ export const useProductStore = defineStore('productStore', () => {
     }
   }
 
-  const createProduct = async (data) => {
-    try {
-      loading.value = true
-      const res = await axios.post('/products', data, {
-        withCredentials: true
-      })
-      toast.success(res.data.status, {
-        autoClose: 2000,
-        pauseOnHover: false,
-        type: 'success',
-        position: 'bottom-center',
-        transition: 'zoom',
-        dangerouslyHTMLString: true
-      })
-    } catch (error) {
-      console.log(error)
-    } finally {
-      loading.value = false
-    }
-  }
-
   const updateProduct = async (data) => {
     try {
       loading.value = true

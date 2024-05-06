@@ -7,6 +7,7 @@ export const usedashboardStore = defineStore('dashboardStore', () => {
   let paidInvoices = ref(null)
   let grandTotal = ref(null)
   let totalInvoices = ref(null)
+  let recentInvoices = ref([])
   let dueInvoices = ref(null)
   let overdueInvoices = ref(null)
   let totalClient = ref(null)
@@ -45,6 +46,22 @@ export const usedashboardStore = defineStore('dashboardStore', () => {
     }
   }
 
+  const recentInvoice = async () => {
+    try {
+      loading.value = true
+      const res = await axios.get('/dashboard/recentInvoices', {
+        withCredentials: true
+      })
+      console.log(res.data.data.invoices)
+      // console.log(res.data.data.grandTotal)
+      recentInvoices.value = res.data.data.invoices
+    } catch (error) {
+      console.log(error.message, 'recent invoice dashboard store')
+    } finally {
+      loading.value = false
+    }
+  }
+
   const getAllCustomers = async () => {
     try {
       loading.value = true
@@ -64,7 +81,9 @@ export const usedashboardStore = defineStore('dashboardStore', () => {
     TotalIncome,
     paidInvoices,
     TotalInvoice,
+    recentInvoice,
     totalInvoices,
+    recentInvoices,
     overdueInvoices,
     dueInvoices,
     grandTotal,

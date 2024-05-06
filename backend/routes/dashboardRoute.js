@@ -2,13 +2,14 @@ const express = require("express");
 
 // const invoiceController = require("./../controllers/invoiceController");
 const dashboardController = require("./../controllers/dashboardController");
+
 const authController = require("../controllers/authController");
 
 const router = express.Router();
 
 router.route("/totalIncome").get(authController.protect, dashboardController.getTotalIncome_paidInvoices);
 router.route("/totalInvoices").get(authController.protect, dashboardController.getTotalInvoice_dueAndOvedueInvoices);
-// .post(authController.protect, authController.restrict('vendor'), invoiceController.addInvoice);
+router.route("/recentInvoices").get(authController.protect, dashboardController.getRecentInvoices);
 
 // router
 //   .route("/:invoice_id")

@@ -145,10 +145,10 @@ const recentInvoices = ref([])
 const loading = ref(true)
 
 const invoiceHeaders = [
-  { title: 'Invoice #', value: 'id' },
-  { title: 'Client', value: 'client.name' },
-  { title: 'Amount', value: 'amount' },
-  { title: 'Due Date', value: 'dueDate' },
+  { title: 'Invoice #', value: 'invoice_no' },
+  { title: 'Client', value: 'Customer.firstName' },
+  { title: 'Amount', value: 'total' },
+  { title: 'Due Date', value: 'due_date' },
   { title: 'Status', value: 'status' },
   { title: 'Actions', value: 'actions', sortable: false }
 ]
@@ -198,6 +198,7 @@ const fetchInvoiceData = async () => {
     await dashboardStore.TotalIncome()
     await dashboardStore.TotalInvoice()
     await dashboardStore.getAllCustomers()
+    await dashboardStore.recentInvoice()
     totalInvoices.value = dashboardStore.totalInvoices
     paidInvoices.value = dashboardStore.paidInvoices
     dueInvoices.value = dashboardStore.dueInvoices
@@ -206,58 +207,27 @@ const fetchInvoiceData = async () => {
 
     totalRevenue.value = dashboardStore.grandTotal
 
-    recentInvoices.value = [
-      {
-        id: 1234,
-        client: {
-          name: 'Acme Inc.'
-        },
-        amount: 1500.0,
-        dueDate: '2024-05-01',
-        status: 'paid'
-      },
-      {
-        id: 1234,
-        client: {
-          name: 'Vue Co.'
-        },
-        amount: 10900.0,
-        dueDate: '2024-05-01',
-        status: 'paid'
-      },
-      {
-        id: 1234,
-        client: {
-          name: 'Arizona Inc.'
-        },
-        amount: 15000.0,
-        dueDate: '2024-05-01',
-        status: 'unpaid'
-      },
-      {
-        id: 1234,
-        client: {
-          name: 'RelInfra Inc.'
-        },
-        amount: 10000.0,
-        dueDate: '2024-05-01',
-        status: 'unpaid'
-      },
-      {
-        id: 1234,
-        client: {
-          name: 'Arizona Inc.'
-        },
-        amount: 15000.0,
-        dueDate: '2024-05-01',
-        status: 'unpaid'
-      }
-    ]
+    recentInvoices.value = dashboardStore.recentInvoices
+    console.log('recentinvoicers', recentInvoices)
+
+    for (let d of recentInvoices.value) {
+      d.Customer.firstName = d.Customer.firstName + ' ' + d.Customer.lastName
+    }
+
+    for (let d of recentInvoices.value) {
+      d.purchase_date = formatDate(d.purchase_date)
+      d.due_date = formatDate(d.due_date)
+    }
   } catch (error) {
     console.error('Error fetching invoice data:', error)
   } finally {
     loading.value = false
   }
+}
+
+const formatDate = (date) => {
+  const options = { year: 'numeric', month: 'short', day: 'numeric' }
+  return new Date(date).toLocaleDateString('en-US', options)
 }
 
 const getStatusColor = (status) => {
