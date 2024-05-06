@@ -87,14 +87,8 @@
                 </template>
                 <template v-slot:item.actions="{ item }">
                   <div class="d-flex">
-                    <v-btn icon @click="viewInvoice(item)" class="elevation-0">
+                    <v-btn icon @click="openInvoice(item)" class="elevation-0">
                       <v-icon style="color: green">download</v-icon>
-                    </v-btn>
-                    <v-btn icon @click="editInvoice(item)" class="elevation-0">
-                      <v-icon style="color: black">edit</v-icon>
-                    </v-btn>
-                    <v-btn icon @click="deleteInvoice(item)" class="elevation-0">
-                      <v-icon style="color: red">delete</v-icon>
                     </v-btn>
                   </div>
                 </template>
@@ -105,6 +99,13 @@
       </v-container>
     </v-main>
   </v-app>
+  <div v-show="false">
+    <PdfTemplate
+      :orderData="orderData"
+      :specificInvoiceData="specificInvoiceData"
+      :vendorInformation="vendorData"
+    />
+  </div>
 </template>
 
 <script setup>
@@ -121,8 +122,13 @@ import {
   PointElement,
   LineElement
 } from 'chart.js'
+import html2pdf from 'html2pdf.js'
+import PdfTemplate from './PdfTemplate.vue'
+
 import { usedashboardStore } from '@/stores/dashboardStore'
+import { useProductStore } from '@/stores/productStore'
 const dashboardStore = usedashboardStore()
+const productStore = useProductStore()
 
 ChartJS.register(
   Title,
@@ -143,7 +149,8 @@ const totalClients = ref(0)
 const totalRevenue = ref(0)
 const recentInvoices = ref([])
 const loading = ref(true)
-
+const specificInvoiceData = ref({})
+const orderData = ref({})
 const invoiceHeaders = [
   { title: 'Invoice #', value: 'invoice_no' },
   { title: 'Client', value: 'Customer.firstName' },
@@ -152,6 +159,9 @@ const invoiceHeaders = [
   { title: 'Status', value: 'status' },
   { title: 'Actions', value: 'actions', sortable: true }
 ]
+
+const props = defineProps({ profile: Object })
+const vendorData = ref(props.profile)
 
 const chartData = computed(() => ({
   labels: ['Paid', 'Due', 'Overdue'],
@@ -270,10 +280,20 @@ const getMonthlyIncome = () => {
   })
 
   // Convert the object to an array of month-income pairs
-  const monthlyIncomeArray = Object.entries(monthlyIncome).map(([monthYear, income]) => ({
-    month: monthYear,
-    income
-  }))
+  const monthlyIncomeArray = Object.entries(monthlyIncome)
+    .map(([monthYear, income]) => ({
+      month: monthYear,
+      income
+    }))
+    .sort((a, b) => {
+      const [monthA, yearA] = a.month.split(' ')
+      const [monthB, yearB] = b.month.split(' ')
+      const monthOrder = months.indexOf(monthA) - months.indexOf(monthB)
+      if (monthOrder !== 0) {
+        return monthOrder
+      }
+      return yearA - yearB
+    })
 
   return monthlyIncomeArray
 }
@@ -292,8 +312,14 @@ const getStatusColor = (status) => {
   }
 }
 
-const viewInvoice = (invoice) => {
-  // Navigate to the invoice details page
+async function openInvoice(item) {
+  console.log(item)
+  specificInvoiceData.value = item
+  await productStore.getSelectedProducts(item.Order_Details.productId)
+  orderData.value = productStore.selectedProducts
+  html2pdf(document.getElementById('pdf'), {
+    filename: `${item.Customer.firstName} - ${item.invoice_no}`
+  })
 }
 
 const editInvoice = (invoice) => {
