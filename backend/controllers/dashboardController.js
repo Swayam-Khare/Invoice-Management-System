@@ -47,23 +47,17 @@ exports.getRecentInvoices = asyncErrorHandler(async (req, res, next) => {
 
   let orderBy;
   let orderByCustomer;
-  let limitFields = null;
-  let offset = null;
-  const limit = req.query.limit || 10;
-  let search = req.query.search || "%";
+
+  const limit = 5;
+
   if (req.query.sort) {
     orderBy = apiFeatures.sorting(req.query.sort);
   } else {
     orderBy = apiFeatures.sorting("-updatedAt");
   }
-  if (req.query.fields) {
-    limitFields = apiFeatures.limitFields(req.query.fields);
-  }
+
   if (req.query.page) {
     offset = apiFeatures.paginate(req.query.page, limit, next);
-  }
-  if (req.query.search) {
-    search = apiFeatures.search(search);
   }
 
   if (orderBy[0][0].startsWith("Customer")) {
@@ -94,14 +88,11 @@ exports.getRecentInvoices = asyncErrorHandler(async (req, res, next) => {
       status: {
         [Op.in]: status,
       },
-      invoice_no: {
-        [Op.iLike]: "#" + search,
-      },
+
       VendorId: req.vendor.id,
     },
     order: orderBy,
-    attributes: limitFields,
-    offset: offset,
+
     limit: limit,
   });
 
@@ -110,9 +101,7 @@ exports.getRecentInvoices = asyncErrorHandler(async (req, res, next) => {
       status: {
         [Op.in]: status,
       },
-      invoice_no: {
-        [Op.iLike]: "#" + search,
-      },
+
       VendorId: req.vendor.id,
     },
   });

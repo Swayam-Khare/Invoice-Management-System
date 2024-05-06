@@ -150,7 +150,7 @@ const invoiceHeaders = [
   { title: 'Amount', value: 'total' },
   { title: 'Due Date', value: 'due_date' },
   { title: 'Status', value: 'status' },
-  { title: 'Actions', value: 'actions', sortable: false }
+  { title: 'Actions', value: 'actions', sortable: true }
 ]
 
 const chartData = computed(() => ({
@@ -168,19 +168,25 @@ const chartOptions = {
   maintainAspectRatio: false
 }
 
-const lineChartData = computed(() => ({
-  labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-  datasets: [
-    {
-      label: 'Income',
-      data: [10000, 12000, 15000, 18000, 20000, 22000],
-      backgroundColor: 'grey',
-      borderColor: 'grey',
-      fill: false,
-      tension: 0.1
-    }
-  ]
-}))
+const lineChartData = computed(() => {
+  const monthlyIncomeData = getMonthlyIncome(dashboardStore.recentInvoices)
+  const labels = monthlyIncomeData.map((item) => item.month)
+  const data = monthlyIncomeData.map((item) => item.income)
+
+  return {
+    labels,
+    datasets: [
+      {
+        label: 'Income',
+        data,
+        backgroundColor: 'grey',
+        borderColor: 'grey',
+        fill: false,
+        tension: 0.1
+      }
+    ]
+  }
+})
 
 const lineChartOptions = {
   responsive: true,
@@ -229,6 +235,51 @@ const formatDate = (date) => {
   const options = { year: 'numeric', month: 'short', day: 'numeric' }
   return new Date(date).toLocaleDateString('en-US', options)
 }
+
+const getMonthlyIncome = () => {
+  const monthlyIncome = {}
+  const months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+  ]
+
+  // Loop through each invoice and calculate the monthly income
+  recentInvoices.value.forEach((invoice) => {
+    const purchaseDate = new Date(invoice.purchase_date)
+    const month = months[purchaseDate.getMonth()]
+    const year = purchaseDate.getFullYear()
+    const monthYear = `${month} ${year}` // Format: month year
+
+    if (invoice.status === 'paid') {
+      if (monthlyIncome[monthYear]) {
+        monthlyIncome[monthYear] += parseFloat(invoice.total)
+      } else {
+        monthlyIncome[monthYear] = parseFloat(invoice.total)
+      }
+    }
+  })
+
+  // Convert the object to an array of month-income pairs
+  const monthlyIncomeArray = Object.entries(monthlyIncome).map(([monthYear, income]) => ({
+    month: monthYear,
+    income
+  }))
+
+  return monthlyIncomeArray
+}
+
+const monthlyIncomeArray = getMonthlyIncome()
+console.log(monthlyIncomeArray)
 
 const getStatusColor = (status) => {
   switch (status) {
