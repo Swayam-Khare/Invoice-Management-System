@@ -6,14 +6,14 @@ import { createPinia } from 'pinia'
 import 'vue3-toastify/dist/index.css'
 import App from './App.vue'
 import router from './router'
-
+import { VSparkline } from 'vuetify/labs/VSparkline'
+import { Pie } from 'vue-chartjs'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import { createVuetify } from 'vuetify'
 import 'vuetify/styles'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import { aliases, md } from 'vuetify/iconsets/md'
-
 
 const vuetify = createVuetify({
   components,
@@ -33,5 +33,6 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(router)
 app.use(vuetify)
-
+app.component('VSparkline', VSparkline )
+app.component('Pie', Pie)
 app.mount('#app')

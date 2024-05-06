@@ -144,6 +144,7 @@ exports.readProducts = asyncErrorHandler(async (req, res, next) => {
   });
 
   if (!vendorProducts.length) {
+    console.log(vendorProducts);
     return res.status(404).json({
       status: "fail",
       message: "No products found for this vendor with the specified filters.",

@@ -10,6 +10,7 @@ const authRouter = require("./routes/authRoute");
 const invoiceRouter = require("./routes/invoiceRoute");
 const vendorRouter = require("./routes/vendorRoute");
 const adminRouter = require("./routes/adminRoute");
+const dashboardRouter = require("./routes/dashboardRoute");
 
 // USE MODULES HERE
 const app = express();
@@ -25,6 +26,7 @@ app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/invoices", invoiceRouter);
 app.use("/api/v1/products", productRouter);
 app.use("/api/v1/admin", adminRouter);
+app.use("/api/v1/dashboard", dashboardRouter);
 
 // ERROR HANDLER MUST BE DEFINED LAST
 app.use(globalErrorHandler);
