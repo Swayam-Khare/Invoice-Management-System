@@ -7,7 +7,8 @@ import PdfTemplate from '@/components/PdfTemplate.vue'
 import ResetPassword from '@/components/ResetPassword.vue'
 import { useAdminStore } from '@/stores/admin'
 import { useVendorStore } from '@/stores/vendorStore'
-import VueCookies from 'vue-cookies'
+import Cookies from 'js-cookie'
+
 // import {cookie} from 'vue'
 // const vendorStore = useVendorStore();
 // import Profile from '@/components/Profile.vue'
@@ -19,11 +20,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: Home,
-      beforeEnter:(to,from)=>{
-
-      }
-
+      component: Home
     },
 
     {
@@ -31,22 +28,38 @@ const router = createRouter({
       name: 'admin',
       component: Admin,
       beforeEnter: (to, from) => {
-        let arr = [];
-        console.log(to);
-        console.log(from);
+        const cookieRole = document.cookie.match('(^|;)\\s*' + 'loggedRole' + '\\s*=\\s*([^;]+)')
+        const cookieAuth = document.cookie.match('(^|;)\\s*' + 'jwtAuth' + '\\s*=\\s*([^;]+)')
+        let loggedRole = null
+        let auth = null
+        if (cookieAuth && cookieRole) {
+          loggedRole = cookieRole[2]
+          auth = cookieAuth[2]
+        }
         const adminStore = useAdminStore()
-       arr = VueCookies.get();
-       console.log(arr)
-        if (!adminStore.token || adminStore.loggedRole != 'admin') {
-          // return { name: 'home' }
-          return from
+        if (!auth || loggedRole != 'admin') {
+          return { name: 'home' }
         }
       }
     },
     {
       path: '/vendor',
       name: 'vendor',
-      component: Vendor
+      component: Vendor,
+      beforeEnter: (to, from) => {
+        const cookieRole = document.cookie.match('(^|;)\\s*' + 'loggedRole' + '\\s*=\\s*([^;]+)')
+        const cookieAuth = document.cookie.match('(^|;)\\s*' + 'jwtAuth' + '\\s*=\\s*([^;]+)')
+        let loggedRole = null
+        let auth = null
+        if (cookieAuth && cookieRole) {
+          loggedRole = cookieRole[2]
+          auth = cookieAuth[2]
+        }
+        const adminStore = useAdminStore()
+        if (!auth || loggedRole != 'vendor') {
+          return { name: 'home' }
+        }
+      }
     },
     {
       path: '/invoice/:id',

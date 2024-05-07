@@ -67,13 +67,13 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
   res.cookie("jwtAuth", token, {
     maxAge: process.env.LOGIN_EXPIRES * 24 * 60 * 60 * 1000,
     // secure:true,
-    httpOnly: true,
+    // httpOnly: true,
   });
 
   res.cookie("loggedRole", req.params.role, {
     maxAge: process.env.LOGIN_EXPIRES * 24 * 60 * 60 * 1000,
     // secure:true,
-    httpOnly: true,
+    // httpOnly: true,
   });
 
 
@@ -148,7 +148,11 @@ exports.logout = asyncErrorHandler(async (req, res, next) => {
     // Clear the JWT token cookie
     res.clearCookie("jwtAuth", {
       expires: new Date(Date.now()),
-      httpOnly: true,
+      // httpOnly: true,
+    });
+    res.clearCookie("loggedRole", {
+      expires: new Date(Date.now()),
+      // httpOnly: true,
     });
 
     res.status(200).json({
