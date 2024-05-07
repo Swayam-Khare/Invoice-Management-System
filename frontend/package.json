@@ -14,11 +14,14 @@
     "@meforma/vue-toaster": "^1.3.0",
     "axios": "^1.6.8",
     "html2pdf.js": "^0.10.1",
+   
     "pinia": "^2.1.7",
     "randomcolor": "^0.6.2",
     "toastify": "^2.0.1",
     "vue": "^3.4.21",
+
     "vue-chartjs": "^5.3.1",
+
     "vue-router": "^4.3.0",
     "vue3-toastify": "^0.2.1",
     "vuetify": "^3.5.13"
@@ -26,6 +29,7 @@
   "devDependencies": {
     "@mdi/font": "^7.4.47",
     "@rushstack/eslint-patch": "^1.3.3",
+    "@types/js-cookie": "^3.0.6",
     "@vitejs/plugin-vue": "^5.0.4",
     "@vitejs/plugin-vue-jsx": "^3.1.0",
     "@vue/eslint-config-prettier": "^8.0.0",

@@ -4,7 +4,13 @@ import Admin from '@/views/Admin.vue'
 import Home from '@/views/Home.vue'
 import Vendor from '@/views/Vendor.vue'
 import PdfTemplate from '@/components/PdfTemplate.vue'
-import ResetPassword from '@/components/ResetPassword.vue';
+import ResetPassword from '@/components/ResetPassword.vue'
+import { useAdminStore } from '@/stores/admin'
+import { useVendorStore } from '@/stores/vendorStore'
+import Cookies from 'js-cookie'
+
+// import {cookie} from 'vue'
+// const vendorStore = useVendorStore();
 // import Profile from '@/components/Profile.vue'
 // import CustomerDetails from '@/components/customerDetails.vue'
 // import EditCustomer from '@/components/EditCustomer.vue'
@@ -20,12 +26,40 @@ const router = createRouter({
     {
       path: '/admin',
       name: 'admin',
-      component: Admin
+      component: Admin,
+      beforeEnter: (to, from) => {
+        const cookieRole = document.cookie.match('(^|;)\\s*' + 'loggedRole' + '\\s*=\\s*([^;]+)')
+        const cookieAuth = document.cookie.match('(^|;)\\s*' + 'jwtAuth' + '\\s*=\\s*([^;]+)')
+        let loggedRole = null
+        let auth = null
+        if (cookieAuth && cookieRole) {
+          loggedRole = cookieRole[2]
+          auth = cookieAuth[2]
+        }
+        const adminStore = useAdminStore()
+        if (!auth || loggedRole != 'admin') {
+          return { name: 'home' }
+        }
+      }
     },
     {
       path: '/vendor',
       name: 'vendor',
-      component: Vendor
+      component: Vendor,
+      beforeEnter: (to, from) => {
+        const cookieRole = document.cookie.match('(^|;)\\s*' + 'loggedRole' + '\\s*=\\s*([^;]+)')
+        const cookieAuth = document.cookie.match('(^|;)\\s*' + 'jwtAuth' + '\\s*=\\s*([^;]+)')
+        let loggedRole = null
+        let auth = null
+        if (cookieAuth && cookieRole) {
+          loggedRole = cookieRole[2]
+          auth = cookieAuth[2]
+        }
+        const adminStore = useAdminStore()
+        if (!auth || loggedRole != 'vendor') {
+          return { name: 'home' }
+        }
+      }
     },
     {
       path: '/invoice/:id',
