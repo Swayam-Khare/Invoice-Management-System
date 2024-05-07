@@ -69,9 +69,10 @@
       />
     </div>
     <div class="table-border elevation-6">
-      <v-data-table-server
+      <v-data-table-server  
         v-model:expanded="expanded"
         :headers="headers"
+        class="custom-data-table"
         :items="data"
         :items-per-page="8"
         :search="search"
@@ -413,5 +414,13 @@ tr:hover {
 .table-border {
   border: 1px solid rgba(58, 56, 56, 0.134);
   border-radius: 8px;
+}
+.custom-data-table >>> .v-data-table__th {
+  background-color: #112d4e;
+  color: white;
+}
+
+.custom-data-table >>> th.v-data-table__th--sortable:hover {
+  color: white !important;
 }
 </style>

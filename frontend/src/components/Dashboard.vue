@@ -39,7 +39,7 @@
           </v-col>
           <v-col cols="12" sm="4">
             <v-card elevation="5" color="indigo" text-color="white" height="100px" rounded>
-              <v-card-title>Total Clients</v-card-title>
+              <v-card-title>Total Customers</v-card-title>
               <v-card-text class="text-h4 font-weight-bold">{{ totalClients }}</v-card-text>
             </v-card>
           </v-col>
@@ -153,7 +153,7 @@ const specificInvoiceData = ref({})
 const orderData = ref({})
 const invoiceHeaders = [
   { title: 'Invoice #', value: 'invoice_no' },
-  { title: 'Client', value: 'Customer.firstName' },
+  { title: 'Customer', value: 'Customer.firstName' },
   { title: 'Amount', value: 'total' },
   { title: 'Due Date', value: 'due_date' },
   { title: 'Status', value: 'status' },
@@ -221,7 +221,7 @@ const fetchInvoiceData = async () => {
     overdueInvoices.value = dashboardStore.overdueInvoices
     totalClients.value = dashboardStore.totalClient
 
-    totalRevenue.value = dashboardStore.grandTotal
+    totalRevenue.value = dashboardStore.grandTotal.toLocaleString('en-IN')
 
     recentInvoices.value = dashboardStore.recentInvoices
     console.log('recentinvoicers', recentInvoices)

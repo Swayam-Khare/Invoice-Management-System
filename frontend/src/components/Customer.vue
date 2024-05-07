@@ -8,6 +8,7 @@
         :headers="headers"
         :items="customerData"
         :items-per-page="10"
+        class="custom-data-table"
       :loading="customerStore.loading"
 
         loading-text="Please wait..."
@@ -116,5 +117,14 @@ const itemsPerPageOption = ref([
 .table-border {
   border: 1px solid rgba(58, 56, 56, 0.134);
   border-radius: 8px;
+}
+
+.custom-data-table >>> .v-data-table__th {
+  background-color: #112d4e;
+  color: white;
+}
+
+.custom-data-table >>> th.v-data-table__th--sortable:hover {
+  color: white !important;
 }
 </style>

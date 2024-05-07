@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-
 import Admin from '@/views/Admin.vue'
 import Home from '@/views/Home.vue'
 import Vendor from '@/views/Vendor.vue'
@@ -29,7 +28,7 @@ const router = createRouter({
           loggedRole = cookieRole[2]
           auth = cookieAuth[2]
         }
-
+        const adminStore = useAdminStore()
         if (!auth || loggedRole != 'admin') {
           return { name: 'home' }
         }
@@ -48,7 +47,7 @@ const router = createRouter({
           loggedRole = cookieRole[2]
           auth = cookieAuth[2]
         }
-
+        const adminStore = useAdminStore()
         if (!auth || loggedRole != 'vendor') {
           return { name: 'home' }
         }
