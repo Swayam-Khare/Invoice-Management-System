@@ -7,6 +7,7 @@ export const usedashboardStore = defineStore('dashboardStore', () => {
   let paidInvoices = ref(null)
   let grandTotal = ref(null)
   let totalInvoices = ref(null)
+  let totalInvoicesData = ref([])
   let recentInvoices = ref([])
   let dueInvoices = ref(null)
   let overdueInvoices = ref(null)
@@ -39,6 +40,7 @@ export const usedashboardStore = defineStore('dashboardStore', () => {
       totalInvoices.value = res.data.data.totalInvoices
       dueInvoices.value = res.data.data.dueInvoices
       overdueInvoices.value = res.data.data.overdueInvoices
+      totalInvoicesData.value = res.data.data.totalInvoicesData
     } catch (error) {
       console.log(error.message)
     } finally {
@@ -89,6 +91,7 @@ export const usedashboardStore = defineStore('dashboardStore', () => {
     grandTotal,
     getAllCustomers,
     totalClient,
-    loading
+    loading,
+    totalInvoicesData
   }
 })
