@@ -18,7 +18,7 @@
       <v-navigation-drawer v-model="drawer" :rail="rail" permanent @click="rail = false">
         <v-list-item
           prepend-avatar="https://randomuser.me/api/portraits/men/85.jpg"
-          :title="vendorData.firstName+' '+vendorData.lastName"
+          :title="vendorData.firstName + ' ' + vendorData.lastName"
           nav
         >
           <template v-slot:append>
@@ -34,6 +34,7 @@
             color="#112d4ef1"
             title="Dashboard"
             value="dashboard"
+            @click="isActiveTab = Dashboard"
           ></v-list-item>
 
           <v-list-group value="Products">
@@ -116,6 +117,7 @@ import CreateProduct from '../components/CreateProduct.vue'
 import CreateInvoice from '../components/CreateInvoice.vue'
 import AllInvoice from '../components/AllInvoice.vue'
 import Profile from '../components/Profile.vue'
+import Dashboard from '@/components/Dashboard.vue'
 import { useVendorStore } from '@/stores/vendorStore'
 
 const router = useRouter()
@@ -124,7 +126,7 @@ const vendorStore = useVendorStore()
 
 const drawer = ref(true)
 const rail = ref(true)
-const isActiveTab = ref('')
+const isActiveTab = ref(Dashboard)
 const showProductDialog = ref(false)
 const product = ref([
   ['All Products', 'local_mall', Product, false],
@@ -135,11 +137,11 @@ const invoice = ref([
   ['Create Invoice', 'add_circle', CreateInvoice]
 ])
 
-const vendorData = ref({});
+const vendorData = ref({})
 
 onMounted(async () => {
-  await vendorStore.getAVendor();
-  vendorData.value = vendorStore.loggedVendor;
+  await vendorStore.getAVendor()
+  vendorData.value = vendorStore.loggedVendor
 })
 
 async function logoutVendor() {

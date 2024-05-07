@@ -89,7 +89,12 @@
             size="25"
           ></v-icon>
 
-          <img src="../assets/delete.svg" @click="deleteInvoice(item.id)" class="hover-scale" style="width: 25px; height: 25px" />
+          <img
+            src="../assets/delete.svg"
+            @click="deleteInvoice(item.id)"
+            class="hover-scale"
+            style="width: 25px; height: 25px"
+          />
         </template>
 
         <template v-slot:item.status="{ item }">
@@ -105,9 +110,17 @@
       </v-data-table-server>
     </div>
 
-    <UpdateInvoice @close="(showUpdateDialog = false, (loadItems(options)))" v-model="showUpdateDialog" :item="selectedInvoice" />
+    <UpdateInvoice
+      @close="(showUpdateDialog = false), loadItems(options)"
+      v-model="showUpdateDialog"
+      :item="selectedInvoice"
+    />
     <div v-show="false">
-      <PdfTemplate :orderData="orderData" :specificInvoiceData="specificInvoiceData" :vendorInfo="vendorData"/>
+      <PdfTemplate
+        :orderData="orderData"
+        :specificInvoiceData="specificInvoiceData"
+        :vendorInformation="vendorData"
+      />
     </div>
   </div>
 </template>
@@ -119,8 +132,6 @@ import { useInvoiceStore } from '@/stores/invoiceStore'
 import UpdateInvoice from './UpdateInvoice.vue'
 import html2pdf from 'html2pdf.js'
 import { useProductStore } from '@/stores/productStore'
-
-
 
 const invoiceStore = useInvoiceStore()
 const productStore = useProductStore()
@@ -135,12 +146,12 @@ let paymentStatus = ref(undefined)
 let options = ref({})
 let search = ref(undefined)
 
-const specificInvoiceData = ref({});
-const orderData = ref({});
+const specificInvoiceData = ref({})
+const orderData = ref({})
 
-const props = defineProps({ profile: Object });
+const props = defineProps({ profile: Object })
 
-const vendorData = ref(props.profile);
+const vendorData = ref(props.profile)
 async function loadItems(event) {
   const { page, itemsPerPage, sortBy, search, status } = event
   let sortingStr = ''
@@ -220,14 +231,13 @@ const headers = [
 const statusMenu = ref([{ title: 'paid' }, { title: 'overdue' }, { title: 'due' }])
 
 async function openInvoice(item) {
-  console.log( item);
-  specificInvoiceData.value = item;
-  await productStore.getSelectedProducts(item.Order_Details.productId);
-  orderData.value = productStore.selectedProducts;
+  console.log(item)
+  specificInvoiceData.value = item
+  await productStore.getSelectedProducts(item.Order_Details.productId)
+  orderData.value = productStore.selectedProducts
   html2pdf(document.getElementById('pdf'), {
-    filename:`${item.Customer.firstName} - ${item.invoice_no}`
-  });
-  
+    filename: `${item.Customer.firstName} - ${item.invoice_no}`
+  })
 }
 </script>
 

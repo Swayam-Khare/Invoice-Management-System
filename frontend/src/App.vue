@@ -2,7 +2,7 @@
   <RouterView />
   <!-- <PdfTemplate/> -->
   <!-- <Admin /> -->
-  <!-- <Vendor /> -->
+  <Vendor />
   <!-- <Product /> -->
   <!-- <CreateInvoice /> -->
   <!-- <SelectCustomer /> -->

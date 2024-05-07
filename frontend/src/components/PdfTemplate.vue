@@ -74,7 +74,10 @@
           :class="{ 'd-none': invoiceInfo.status != 'paid' }"
           style="line-height: 1.2"
         >
-          TransactionId:<br> {{ invoiceInfo.transaction_no }}
+
+          TransactionId:<br />
+          {{ invoiceInfo.transaction_no }}
+
         </div>
       </div>
     </div>
@@ -131,7 +134,9 @@ let orders = ref([])
 
 const props = defineProps({
   orderData: Object,
-  vendorInfo: Object,
+
+  vendorInformation: Object,
+
   specificInvoiceData: Object
 })
 
@@ -148,4 +153,13 @@ watch(
     invoiceInfo.value = newData
   }
 )
+
+const vendorInfo = ref({ Address_Details: {} })
+watch(
+  () => props.vendorInformation,
+  (newData) => {
+    vendorInfo.value = newData
+  }
+)
+
 </script>
