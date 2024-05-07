@@ -5,6 +5,7 @@ import Home from '@/views/Home.vue'
 import Vendor from '@/views/Vendor.vue'
 import PdfTemplate from '@/components/PdfTemplate.vue'
 import ResetPassword from '@/components/ResetPassword.vue'
+import NotFoundPage from '@/components/NotFoundPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -70,6 +71,11 @@ const router = createRouter({
         default: true,
         PdfTemplate: true
       }
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'NotFoundPage',
+      component: NotFoundPage
     }
   ]
 })
