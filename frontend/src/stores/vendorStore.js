@@ -8,6 +8,7 @@ export const useVendorStore = defineStore('vendorStore', () => {
   let rowCount = ref({ count: 0 })
   let loading = ref(false)
   let token = ref(null)
+  let loggedRole = ref(null);
   const updatePasswordStatus = ref(null)
 
   let loggedVendor = ref({})
@@ -44,6 +45,8 @@ export const useVendorStore = defineStore('vendorStore', () => {
       console.log(res)
       token.value = res.data.token
       console.log(token.value)
+      loggedRole.value = res.data.role;
+      console.log(res.data.role);
     } catch (error) {
       console.log(error)
     } finally {
@@ -273,5 +276,6 @@ export const useVendorStore = defineStore('vendorStore', () => {
     getAVendor,
     forgotPassword,
     resetPassword,
+    loggedRole
   }
 })

@@ -10,13 +10,19 @@ export const useAdminStore = defineStore('adminStore', () => {
   let typelogin = ref('admin')
   const stateVariable = ref(10)
   let loading = ref(false)
+  let loggedRole = ref(null);
   const updatePasswordStatus = ref(null)
+
+
+  // ------ LOGIN -----------
   async function loginAdmin(formData) {
     loading.value = true
     try {
       const config = { headers: { 'Content-Type': 'application/json' }, withCredentials: true }
       const res = await axios.post('/auth/login/admin', formData, config)
       token.value = res.data.token
+      console.log('in line 23 role is :',res.data.role);
+      loggedRole.value = res.data.role;
     } catch (error) {
       console.log(error)
     } finally {
@@ -24,6 +30,8 @@ export const useAdminStore = defineStore('adminStore', () => {
     }
   }
 
+
+  //  --------- LOGOUT -------------
   async function logoutAdmin() {
     try {
       const response = await axios.get('/auth/logout/admin', {
@@ -44,6 +52,9 @@ export const useAdminStore = defineStore('adminStore', () => {
       return false // Logout failed
     }
   }
+
+
+  // -------- UPDATE PASSWORD ------------
 
   async function updatePassword(password) {
     try {
@@ -86,6 +97,7 @@ export const useAdminStore = defineStore('adminStore', () => {
     typelogin,
     loading,
     updatePassword,
-    updatePasswordStatus
+    updatePasswordStatus,
+    loggedRole
   }
 })
