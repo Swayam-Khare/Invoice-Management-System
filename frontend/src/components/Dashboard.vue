@@ -109,7 +109,7 @@
 </template>
 
 <script setup>
-import { ref, onBeforeMount, computed } from 'vue'
+import { ref, onBeforeMount, computed, watch } from 'vue'
 import { Pie, Line } from 'vue-chartjs'
 import {
   Chart as ChartJS,
@@ -162,6 +162,11 @@ const invoiceHeaders = [
 
 const props = defineProps({ profile: Object })
 const vendorData = ref(props.profile)
+
+watch(() => props.profile, (newData) => {
+  vendorData.value = newData;
+})
+
 
 const chartData = computed(() => ({
   labels: ['Paid', 'Due', 'Overdue'],
@@ -225,6 +230,7 @@ const fetchInvoiceData = async () => {
 
     recentInvoices.value = dashboardStore.recentInvoices
     console.log('recentinvoicers', recentInvoices.value)
+    console.log('line 230', vendorData.value)
 
     for (let d of recentInvoices.value) {
       d.Customer.firstName = d.Customer.firstName + ' ' + d.Customer.lastName

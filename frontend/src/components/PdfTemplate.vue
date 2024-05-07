@@ -154,10 +154,11 @@ watch(
   }
 )
 
-const vendorInfo = ref({ Address_Details: {} })
+const vendorInfo = ref(props.vendorInformation)
 watch(
   () => props.vendorInformation,
   (newData) => {
+    console.log('line 161',newData);
     vendorInfo.value = newData
   }
 )
