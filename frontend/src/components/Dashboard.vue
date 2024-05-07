@@ -109,7 +109,7 @@
 </template>
 
 <script setup>
-import { ref, onBeforeMount, computed } from 'vue'
+import { ref, onBeforeMount, computed, watch } from 'vue'
 import { Pie, Line } from 'vue-chartjs'
 import {
   Chart as ChartJS,
@@ -163,6 +163,11 @@ const invoiceHeaders = [
 const props = defineProps({ profile: Object })
 const vendorData = ref(props.profile)
 
+watch(() => props.profile, (newData) => {
+  vendorData.value = newData;
+})
+
+
 const chartData = computed(() => ({
   labels: ['Paid', 'Due', 'Overdue'],
   datasets: [
@@ -179,7 +184,7 @@ const chartOptions = {
 }
 
 const lineChartData = computed(() => {
-  const monthlyIncomeData = getMonthlyIncome(dashboardStore.recentInvoices)
+  const monthlyIncomeData = getMonthlyIncome(dashboardStore.totalInvoicesData)
   const labels = monthlyIncomeData.map((item) => item.month)
   const data = monthlyIncomeData.map((item) => item.income)
 
@@ -189,8 +194,8 @@ const lineChartData = computed(() => {
       {
         label: 'Income',
         data,
-        backgroundColor: 'grey',
-        borderColor: 'grey',
+        backgroundColor: '#4793AF',
+        borderColor: '#4793AF',
         fill: false,
         tension: 0.1
       }
@@ -224,7 +229,8 @@ const fetchInvoiceData = async () => {
     totalRevenue.value = dashboardStore.grandTotal.toLocaleString('en-IN')
 
     recentInvoices.value = dashboardStore.recentInvoices
-    console.log('recentinvoicers', recentInvoices)
+    console.log('recentinvoicers', recentInvoices.value)
+    console.log('line 230', vendorData.value)
 
     for (let d of recentInvoices.value) {
       d.Customer.firstName = d.Customer.firstName + ' ' + d.Customer.lastName
@@ -264,7 +270,7 @@ const getMonthlyIncome = () => {
   ]
 
   // Loop through each invoice and calculate the monthly income
-  recentInvoices.value.forEach((invoice) => {
+  dashboardStore.totalInvoicesData.forEach((invoice) => {
     const purchaseDate = new Date(invoice.purchase_date)
     const month = months[purchaseDate.getMonth()]
     const year = purchaseDate.getFullYear()
@@ -308,7 +314,7 @@ const getStatusColor = (status) => {
     case 'unpaid':
       return 'red accent-2'
     default:
-      return 'grey'
+      return 'yellow-darken-3 accent-2'
   }
 }
 

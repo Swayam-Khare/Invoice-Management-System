@@ -156,6 +156,7 @@ exports.getTotalInvoice_dueAndOvedueInvoices = asyncErrorHandler(async (req, res
       totalInvoices: totalInvoices.length,
       dueInvoices: dueInvoices.length,
       overdueInvoices: overdueInvoices.length,
+      totalInvoicesData:totalInvoices
     },
   });
 });

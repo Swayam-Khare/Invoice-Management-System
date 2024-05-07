@@ -132,6 +132,7 @@ import { useInvoiceStore } from '@/stores/invoiceStore'
 import UpdateInvoice from './UpdateInvoice.vue'
 import html2pdf from 'html2pdf.js'
 import { useProductStore } from '@/stores/productStore'
+import { watch } from 'vue'
 
 const invoiceStore = useInvoiceStore()
 const productStore = useProductStore()
@@ -152,6 +153,7 @@ const orderData = ref({})
 const props = defineProps({ profile: Object })
 
 const vendorData = ref(props.profile)
+
 async function loadItems(event) {
   const { page, itemsPerPage, sortBy, search, status } = event
   let sortingStr = ''

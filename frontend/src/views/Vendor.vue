@@ -137,7 +137,7 @@ const invoice = ref([
   ['Create Invoice', 'add_circle', CreateInvoice]
 ])
 
-const vendorData = ref({})
+const vendorData = ref({Address_Details:{}})
 
 onMounted(async () => {
   await vendorStore.getAVendor()
