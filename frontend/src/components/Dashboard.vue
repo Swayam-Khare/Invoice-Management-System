@@ -157,7 +157,7 @@ const invoiceHeaders = [
   { title: 'Amount', value: 'total' },
   { title: 'Due Date', value: 'due_date' },
   { title: 'Status', value: 'status' },
-  { title: 'Actions', value: 'actions', sortable: true }
+  { title: 'Actions', value: 'actions' }
 ]
 
 const props = defineProps({ profile: Object })
@@ -230,7 +230,6 @@ const fetchInvoiceData = async () => {
 
     recentInvoices.value = dashboardStore.recentInvoices
     console.log('recentinvoicers', recentInvoices.value)
-    console.log('line 230', vendorData.value)
 
     for (let d of recentInvoices.value) {
       d.Customer.firstName = d.Customer.firstName + ' ' + d.Customer.lastName
