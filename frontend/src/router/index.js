@@ -1,19 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
-// import App from '../App.vue'
 import Admin from '@/views/Admin.vue'
 import Home from '@/views/Home.vue'
 import Vendor from '@/views/Vendor.vue'
 import PdfTemplate from '@/components/PdfTemplate.vue'
 import ResetPassword from '@/components/ResetPassword.vue'
-import { useAdminStore } from '@/stores/admin'
-import { useVendorStore } from '@/stores/vendorStore'
-import Cookies from 'js-cookie'
 
-// import {cookie} from 'vue'
-// const vendorStore = useVendorStore();
-// import Profile from '@/components/Profile.vue'
-// import CustomerDetails from '@/components/customerDetails.vue'
-// import EditCustomer from '@/components/EditCustomer.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -36,7 +27,6 @@ const router = createRouter({
           loggedRole = cookieRole[2]
           auth = cookieAuth[2]
         }
-        const adminStore = useAdminStore()
         if (!auth || loggedRole != 'admin') {
           return { name: 'home' }
         }
@@ -55,7 +45,6 @@ const router = createRouter({
           loggedRole = cookieRole[2]
           auth = cookieAuth[2]
         }
-        const adminStore = useAdminStore()
         if (!auth || loggedRole != 'vendor') {
           return { name: 'home' }
         }
