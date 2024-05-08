@@ -12,7 +12,23 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: Home
+      component: Home,
+      beforeEnter: (to, from) => {
+        const cookieRole = document.cookie.match('(^|;)\\s*' + 'loggedRole' + '\\s*=\\s*([^;]+)')
+        const cookieAuth = document.cookie.match('(^|;)\\s*' + 'jwtAuth' + '\\s*=\\s*([^;]+)')
+        let loggedRole = null
+        let auth = null
+        if (cookieAuth && cookieRole) {
+          loggedRole = cookieRole[2]
+          auth = cookieAuth[2]
+        }
+
+        if (auth && loggedRole === 'admin') {
+          return { name: 'admin' }
+        } else if (auth && loggedRole === 'vendor') {
+          return {name : 'vendor'}
+        }
+      }
     },
 
     {
@@ -63,13 +79,14 @@ const router = createRouter({
       }
     },
     {
-      path: '/resetPassword/:token',
+      path: '/resetPassword/:token([a-z0-9]{64})',
       name: 'resetPassword',
       component: ResetPassword,
       props: {
         default: true,
         PdfTemplate: true
-      }
+      },
+      
     },
     {
       path: '/:pathMatch(.*)*',

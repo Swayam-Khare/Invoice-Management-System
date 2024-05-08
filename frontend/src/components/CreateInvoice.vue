@@ -274,7 +274,7 @@
       <div class="custom-notes mr-3 mr-sm-0 w-100">
         <textarea
           style="resize: none"
-          class="rounded-lg text-capitalize mx-4 pt-3 pl-4 bg-white elevation-3 w-100"
+          class="rounded-lg mx-4 pt-3 pl-4 bg-white elevation-3 w-100"
           placeholder="Addtional Notes"
           rows="5"
           v-model="notes"

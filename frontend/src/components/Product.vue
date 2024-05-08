@@ -112,6 +112,18 @@
         <template v-slot:item.actions="{ item }">
           <v-icon @click="alertMe(item.id)">info_outlined</v-icon>
         </template>
+        <template v-slot:item.stock="{ item }">
+          <div v-if="item.stock!=0">
+            <span class="pl-3">
+              {{item.stock}}
+            </span>
+          </div>
+          <div v-else>
+            <span class="out-of-stock">
+              Out of Stock
+            </span>
+          </div>
+        </template>
       </v-data-table-server>
     </div>
   </div>
@@ -223,5 +235,12 @@ const itemsPerPageOption = ref([
 .table-border {
   border: 1px solid rgba(58, 56, 56, 0.134);
   border-radius: 8px;
+}
+
+.out-of-stock {
+  background-color: rgba(255, 0, 0, 0.066);
+  color: red;
+  border-radius: 20px;
+  padding: 5px 10px 5px 10px ;
 }
 </style>
