@@ -3,7 +3,7 @@ const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const CustomError = require("../utils/customError");
 const getInvoice = require("./../utils/getInvoiceNumber");
 const getTransaction = require("./../utils/getTransactionId");
-const { Op } = require("sequelize");
+const { Op, where } = require("sequelize");
 const apiFeatures = require("../utils/apiFeatures");
 
 const {
@@ -16,6 +16,7 @@ const {
   Address,
   Product,
   VendorCustomer,
+  VendorProduct,
 } = db;
 
 // ================== FOR GETTING ALL INVOCIES ==========
@@ -259,6 +260,30 @@ exports.addInvoice = asyncErrorHandler(async (req, res, next) => {
         }
         customer = { id: existingCustomer.id };
       }
+      
+      const oldStock = await VendorProduct.findAll({
+        where: {
+          VendorId: req.vendor.id,
+          ProductId: order_details.productId
+        }
+      })
+
+
+      for (let index = 0; index < order_details.productId.length; index++) { 
+        const indexOfQuantity =  order_details.productId.findIndex(t => t===oldStock[index].ProductId);
+        oldStock[index].stock -= order_details.quantity[indexOfQuantity];
+      } 
+
+      let updateStock;
+      for (let index = 0; index < order_details.productId.length; index++) {
+        updateStock = await VendorProduct.update({stock : oldStock[index].stock}, {
+          where: {
+            ProductId:oldStock[index].ProductId
+          },
+          transaction:t
+        })
+      }
+
 
       const invoice = await Invoice.create(
         {
