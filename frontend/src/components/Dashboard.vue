@@ -1,6 +1,7 @@
 <template>
   <v-app>
-    <v-main>
+    <v-progress-linear color="#112D4E" indeterminate v-show="loading"></v-progress-linear>
+    <v-main v-show="!loading">
       <v-container>
         <v-row>
           <v-col cols="12" sm="4">
@@ -162,11 +163,12 @@ const invoiceHeaders = [
 
 const props = defineProps({ profile: Object })
 const vendorData = ref(props.profile)
-
-watch(() => props.profile, (newData) => {
-  vendorData.value = newData;
-})
-
+watch(
+  () => props.profile,
+  (newData) => {
+   return vendorData.value = newData
+  }
+)
 
 const chartData = computed(() => ({
   labels: ['Paid', 'Due', 'Overdue'],
@@ -212,7 +214,10 @@ const lineChartOptions = {
     }
   }
 }
-
+watch(
+  () => dashboardStore.loading,
+  (newLoading) => (loading.value = newLoading)
+)
 const fetchInvoiceData = async () => {
   try {
     // Fetch invoice data from the server
