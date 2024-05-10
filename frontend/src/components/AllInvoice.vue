@@ -1,5 +1,5 @@
 <template>
-  <div style="background-color: #112d4e14" class="remove-scrollbar h-screen overflow-auto">
+  <div style="background-color: #112d4e14" class="remove-scrollbar h-screen overflow-auto">  
     <div class="d-flex flex-md-row flex-column justify-space-between align-end">
       <div class="mobile-search align-center mt-1 pt-4 px-2 px-sm-10 px-md-14 px-lg-16 ml-xxl-16">
         <div class="search-wrapper">
@@ -77,6 +77,7 @@
           <img
             width="25"
             height="25"
+            @click="sendEmail(item)"
             class="hover-scale mr-2"
             src="https://img.icons8.com/color/48/gmail--v1.png"
             alt="gmail--v1"
@@ -126,8 +127,7 @@
 </template>
 
 <script setup>
-import { jsPDF } from 'jspdf'
-import html2canvas from 'html2canvas'
+import axios from '@/stores/axios'
 import { ref } from 'vue'
 import PdfTemplate from './PdfTemplate.vue'
 import { useInvoiceStore } from '@/stores/invoiceStore'
@@ -235,16 +235,28 @@ const headers = [
 const statusMenu = ref([{ title: 'paid' }, { title: 'overdue' }, { title: 'due' }])
 
 async function openInvoice(item) {
-  console.log(item)
   specificInvoiceData.value = item
   await productStore.getSelectedProducts(item.Order_Details.productId)
   orderData.value = productStore.selectedProducts
+  html2pdf(document.getElementById('pdf'), {
+    filename: `${item.Customer.firstName} - ${item.invoice_no}`
+  })
+}
 
-  const element = document.getElementById('pdf')
-  const canvas = await html2canvas(element)
-  const pdf = new jsPDF()
-  pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0)
-  pdf.save('invoice.pdf')
+async function sendEmail(item) {
+  specificInvoiceData.value = item
+  await productStore.getSelectedProducts(item.Order_Details.productId)
+  orderData.value = productStore.selectedProducts
+  const file = html2pdf().from(document.getElementById('pdf'))
+  const blob = await file.output('blob')
+
+  const customerInfo = {
+    email: item.Customer.email,
+    name: item.Customer.firstName
+  }
+
+  await invoiceStore.sendPdf(customerInfo, blob)
+
 }
 </script>
 

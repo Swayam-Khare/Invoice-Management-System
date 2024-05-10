@@ -5,6 +5,7 @@ const getInvoice = require("./../utils/getInvoiceNumber");
 const getTransaction = require("./../utils/getTransactionId");
 const { Op, where } = require("sequelize");
 const apiFeatures = require("../utils/apiFeatures");
+const nodemailer = require("nodemailer");
 
 const {
   Invoice,
@@ -21,7 +22,6 @@ const {
 
 // ================== FOR GETTING ALL INVOCIES ==========
 exports.getInvoices = asyncErrorHandler(async (req, res, next) => {
-  
   let status = [];
   if (!req.query.status) {
     status = ["paid", "due", "overdue"];
@@ -51,8 +51,8 @@ exports.getInvoices = asyncErrorHandler(async (req, res, next) => {
   }
 
   if (orderBy[0][0].startsWith("Customer")) {
-    orderByCustomer = [['firstName', ['DESC']]]
-    orderBy = undefined
+    orderByCustomer = [["firstName", ["DESC"]]];
+    orderBy = undefined;
   }
 
   // const attributes = limitFields ? limitFields : ["id", "invoice_no", "transaction_no", "due_date", "purchase_date", "status", "total"];
@@ -64,12 +64,14 @@ exports.getInvoices = asyncErrorHandler(async (req, res, next) => {
       },
       {
         model: Customer,
-        paranoid:false,
-        include:[{
-          model:Address,
-          as:"Address_Details",
-        }],
-        order: orderByCustomer
+        paranoid: false,
+        include: [
+          {
+            model: Address,
+            as: "Address_Details",
+          },
+        ],
+        order: orderByCustomer,
       },
     ],
     where: {
@@ -227,11 +229,12 @@ exports.addInvoice = asyncErrorHandler(async (req, res, next) => {
         const venCust = await VendorCustomer.create(
           {
             VendorId: req.vendor.id,
-            CustomerId: customer.id
-          }, {
-            transaction:t
+            CustomerId: customer.id,
+          },
+          {
+            transaction: t,
           }
-        )
+        );
       } else {
         // check if deleted then restore
         if (existingCustomer.deletedAt) {
@@ -253,37 +256,40 @@ exports.addInvoice = asyncErrorHandler(async (req, res, next) => {
           await VendorCustomer.restore({
             where: {
               VendorId: req.vendor.id,
-              CustomerId:existingCustomer.id
+              CustomerId: existingCustomer.id,
             },
             transaction: t,
           });
         }
         customer = { id: existingCustomer.id };
       }
-      
+
       const oldStock = await VendorProduct.findAll({
         where: {
           VendorId: req.vendor.id,
-          ProductId: order_details.productId
-        }
-      })
+          ProductId: order_details.productId,
+        },
+      });
 
-
-      for (let index = 0; index < order_details.productId.length; index++) { 
-        const indexOfQuantity =  order_details.productId.findIndex(t => t===oldStock[index].ProductId);
+      for (let index = 0; index < order_details.productId.length; index++) {
+        const indexOfQuantity = order_details.productId.findIndex(
+          (t) => t === oldStock[index].ProductId
+        );
         oldStock[index].stock -= order_details.quantity[indexOfQuantity];
-      } 
+      }
 
       let updateStock;
       for (let index = 0; index < order_details.productId.length; index++) {
-        updateStock = await VendorProduct.update({stock : oldStock[index].stock}, {
-          where: {
-            ProductId:oldStock[index].ProductId
-          },
-          transaction:t
-        })
+        updateStock = await VendorProduct.update(
+          { stock: oldStock[index].stock },
+          {
+            where: {
+              ProductId: oldStock[index].ProductId,
+            },
+            transaction: t,
+          }
+        );
       }
-
 
       const invoice = await Invoice.create(
         {
@@ -320,7 +326,7 @@ exports.addInvoice = asyncErrorHandler(async (req, res, next) => {
 
   return res.status(201).json({
     status: "success",
-    message:"Invoice has been created successfully with ID: "+invoice_no,
+    message: "Invoice has been created successfully with ID: " + invoice_no,
     data: {
       invoice_no,
     },
@@ -386,5 +392,47 @@ exports.deleteInvoice = asyncErrorHandler(async (req, res, next) => {
   res.status(204).json({
     status: "success",
     data: null,
+  });
+});
+
+// ==================== FOR GENERATING PDF OF THE INVOICE =================
+
+exports.generatePDF = asyncErrorHandler(async (req, res, next) => {
+  const email = req.body.email;
+  const name = req.body.name;
+
+  // CREATE A TRANSPORTER
+  try {
+    const transporter = nodemailer.createTransport({
+      host: process.env.EMAIL_HOST,
+      port: process.env.EMAIL_PORT,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    });
+
+    // DEFINE EMAIL OPTIONS
+    const emailOptions = {
+      from: "IMS support<support@ims.com>",
+      to: email,
+      subject: "Invoice pdf file",
+      text: `Dear ${name}!,\n\n PFA your invoice pdf file`,
+      attachments: [
+        {
+          filename: req.file.filename,
+          path: `${__dirname}\\..\\${req.file.path}`,
+          contentType: "application/pdf",
+        },
+      ],
+    };
+    await transporter.sendMail(emailOptions);
+  } catch (error) {
+    return next(new CustomError("Email could not be sent", 500));
+  }
+
+  res.status(200).json({
+    status: "success",
+    message: "Mail sent successfully",
   });
 });

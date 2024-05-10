@@ -16,6 +16,7 @@
     "html2canvas": "^1.4.1",
     "html2pdf.js": "^0.10.1",
     "jspdf": "^2.5.1",
+    "multer": "^1.4.5-lts.1",
     "pinia": "^2.1.7",
     "randomcolor": "^0.6.2",
     "toastify": "^2.0.1",
