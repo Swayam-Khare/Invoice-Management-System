@@ -126,6 +126,8 @@
 </template>
 
 <script setup>
+import { jsPDF } from 'jspdf'
+import html2canvas from 'html2canvas'
 import { ref } from 'vue'
 import PdfTemplate from './PdfTemplate.vue'
 import { useInvoiceStore } from '@/stores/invoiceStore'
@@ -237,9 +239,12 @@ async function openInvoice(item) {
   specificInvoiceData.value = item
   await productStore.getSelectedProducts(item.Order_Details.productId)
   orderData.value = productStore.selectedProducts
-  html2pdf(document.getElementById('pdf'), {
-    filename: `${item.Customer.firstName} - ${item.invoice_no}`
-  })
+
+  const element = document.getElementById('pdf')
+  const canvas = await html2canvas(element)
+  const pdf = new jsPDF()
+  pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0)
+  pdf.save('invoice.pdf')
 }
 </script>
 
