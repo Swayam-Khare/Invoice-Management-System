@@ -32,7 +32,7 @@
           :items-per-page="10"
           :loading="productStore.loading"
           loading-text="Please wait..."
-          :items-length="productStore.rowsCount"
+          :items-length="productData.length"
           :search="search"
           :show-select="true"
           v-model="selectedItems"
