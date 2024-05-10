@@ -35,7 +35,7 @@
           :items-length="productStore.rowsCount"
           :search="search"
           :show-select="true"
-          v-model= "selectedItems"
+          v-model="selectedItems"
           @update:options="(options = $event), loadItems(options)"
           :items-per-page-options="itemsPerPageOption"
         ></v-data-table-server>
@@ -43,12 +43,11 @@
       <v-btn
         color="#112d4e"
         size="large"
-        class=" mx-auto text-h6 mb-4 w-50 text-capitalize"
+        class="mx-auto text-h6 mb-4 w-50 text-capitalize"
         @click="handleAction"
-        >
-        Select
-        </v-btn
       >
+        Select
+      </v-btn>
     </v-card>
   </v-dialog>
 </template>
@@ -62,11 +61,9 @@ const productStore = useProductStore()
 
 const emit = defineEmits(['close', 'selectExistingProduct'])
 
-const props = defineProps(
-  {
-    selectedProducts: Object
-  }
-)
+const props = defineProps({
+  selectedProducts: Object
+})
 
 const headers = ref([
   { title: 'Product', value: 'name', sortable: true },
@@ -79,11 +76,14 @@ const headers = ref([
 let productData = ref([])
 let search = ref(undefined)
 let options = ref({})
-const selectedItems = ref([]);
+const selectedItems = ref([])
 
-watch(()=>props.selectedProducts, (newProducts) => {
-  selectedItems.value = newProducts.map(t=>t.id);
-})
+watch(
+  () => props.selectedProducts,
+  (newProducts) => {
+    selectedItems.value = newProducts.map((t) => t.id)
+  }
+)
 
 async function loadItems(event) {
   console.log(event)
@@ -110,7 +110,10 @@ async function loadItems(event) {
   queryObj.sort = sortingStr
 
   await productStore.getAllProducts(queryObj)
-  productData.value = productStore.products
+  let temp = productStore.products
+  productData.value = temp.filter((product) => {
+    return product.stock > 0
+  })
 }
 
 const itemsPerPageOption = ref([
@@ -126,8 +129,8 @@ function closeDialog() {
 }
 
 function handleAction() {
-  emit('selectExistingProduct', selectedItems.value);
-  emit('close');
+  emit('selectExistingProduct', selectedItems.value)
+  emit('close')
 }
 </script>
 
