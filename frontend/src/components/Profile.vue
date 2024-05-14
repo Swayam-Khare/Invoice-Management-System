@@ -267,39 +267,6 @@
           <v-progress-circular indeterminate size="64"></v-progress-circular>
         </v-overlay>
         <!-- credentials field -->
-        <div class="py-4 px-6">
-          <h3>Credentials</h3>
-        </div>
-        <v-divider class="mb-4 mx-4"></v-divider>
-        <div class="d-flex flex-wrap flex-column flex-sm-row px-sm-2 justify-space-around">
-          <div class="d-flex flex-wrap flex-column px-4 px-sm-0" style="width: 98%">
-            <v-text-field
-              density="compact"
-              variant="outlined"
-              label="E-mail"
-              color="#112D4E"
-              v-model="vendorData.email"
-              :disabled="true"
-            ></v-text-field>
-            <v-text-field
-              density="compact"
-              variant="outlined"
-              type="password"
-              label="Password"
-              color="#112D4E"
-              v-model="password"
-            ></v-text-field>
-            <v-text-field
-              density="compact"
-              variant="outlined"
-              type="password"
-              label="Confirm Password"
-              color="#112D4E"
-              v-model="confirmPassword"
-            ></v-text-field>
-          </div>
-          <v-divider class="mb-4 mx-4"></v-divider>
-        </div>
 
         <!-- update and close buttons -->
         <div justify="center" align="center" class="pb-6 pt-6">

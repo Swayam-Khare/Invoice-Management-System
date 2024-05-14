@@ -1,109 +1,110 @@
 <template>
-    <v-dialog max-width="500" centered>
-      <v-card class="rounded-lg">
-
-        <v-card-text>
-          <div class="">
-            <div class="customer-details-wrapper d-flex justify-space-between">
-              <img
-                src="../assets/imgs/User/1.png"
-                alt="profile photo"
-                width="170px"
-                height="170px"
-              />
-              <div>
-                <div class="position-relative">
-                  <span class="text-h5 text-white"
-                    >Personal Details <i class="line personal"></i>
-                  </span>
-                </div>
-                <div>
-                  <div>
-                    <p class="text-h6 text-black">Name</p>
-                    <p class="text-grey-darken-2">{{details.firstName}}</p>
-                  </div>
-                  <div>
-                    <p class="text-h6 text-black">Email</p>
-                    <p class="text-grey-darken-2">{{details.email}}</p>
-                  </div>
-                  <div>
-                    <p class="text-h6 text-black">Contact</p>
-                    <p class="text-grey-darken-2">{{details.Address_Details.contact}}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="mt-7">
-              <div class="position-relative mb-2">
-                <span class="text-h5 text-white">Address Details <i class="line address"></i></span>
+  <v-dialog max-width="500" centered>
+    <v-card class="rounded-lg">
+      <v-card-text>
+        <div class="">
+          <div class="customer-details-wrapper d-flex justify-space-between">
+            <img src="../assets/imgs/User/1.png" alt="profile photo" width="170px" height="170px" />
+            <div>
+              <div class="position-relative">
+                <span class="text-h5 text-white"
+                  >Personal Details <i class="line personal"></i>
+                </span>
               </div>
               <div>
                 <div>
-                  <p class="text-grey-darken-2">{{ details.Address_Details.address_lane1 }}, {{ details.Address_Details.address_lane2 }}</p>
+                  <p class="text-h6 text-black">Name</p>
+                  <p class="text-grey-darken-2">{{ details.firstName }}</p>
                 </div>
                 <div>
-                  <p class="text-grey-darken-2">{{ details.Address_Details.landmark }}</p>
+                  <p class="text-h6 text-black">Email</p>
+                  <p class="text-grey-darken-2">{{ details.email }}</p>
                 </div>
                 <div>
-                  <p class="text-grey-darken-2">{{ details.Address_Details.pincode }} - {{ details.Address_Details.state }}</p>
+                  <p class="text-h6 text-black">Contact</p>
+                  <p class="text-grey-darken-2">{{ details.Address_Details.contact }}</p>
                 </div>
               </div>
             </div>
           </div>
-        </v-card-text>
-        <v-card-actions class="action-btn d-flex ga-10 mt-10 justify-center">
-            <v-btn class="edit" prepend-icon="save_as" @click="$emit('edit'),$emit('close')">Edit</v-btn>
-          <v-btn class="delete" prepend-icon="delete" @click="deleteCustomer">Delete</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+          <div class="mt-7">
+            <div class="position-relative mb-2">
+              <span class="text-h5 text-white">Address Details <i class="line address"></i></span>
+            </div>
+            <div>
+              <div>
+                <p class="text-grey-darken-2">
+                  {{ details.Address_Details.address_lane1 }},
+                  {{ details.Address_Details.address_lane2 }}
+                </p>
+              </div>
+              <div>
+                <p class="text-grey-darken-2">{{ details.Address_Details.landmark }}</p>
+              </div>
+              <div>
+                <p class="text-grey-darken-2">
+                  {{ details.Address_Details.pincode }} - {{ details.Address_Details.state }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </v-card-text>
+      <v-card-actions class="action-btn d-flex ga-10 mt-10 justify-center">
+        <v-btn class="edit" prepend-icon="save_as" @click="$emit('edit'), $emit('close')"
+          >Edit</v-btn
+        >
+        <v-btn class="delete" prepend-icon="delete" @click="deleteCustomer">Delete</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup>
-import { useCustomerStore } from '@/stores/customerStore';
+import { useCustomerStore } from '@/stores/customerStore'
 
-const customerStore = useCustomerStore();
+const customerStore = useCustomerStore()
 
 const props = defineProps(['details'])
-const emits = defineEmits(['close','edit','delete'])
+const emits = defineEmits(['close', 'edit', 'delete'])
 
-const deleteCustomer = async() => {
-  await customerStore.deleteCustomer(props.details.id);
-  emits('close');
-  emits('delete');
+const deleteCustomer = async () => {
+  await customerStore.deleteCustomer(props.details.id)
+  emits('close')
+  emits('delete')
 }
 </script>
 
 <style scoped>
-@media only screen and (max-width:520px){
-  .customer-details-wrapper{
+@media only screen and (max-width: 520px) {
+  .customer-details-wrapper {
     flex-direction: column !important;
     gap: 20px;
   }
 
-  .customer-details-wrapper img{
+  .customer-details-wrapper img {
     align-self: center;
   }
 
-  .personal{
-      transform: translateX(-30px) !important;
+  .personal {
+    transform: translateX(-30px) !important;
   }
 
-  .address{
+  .address {
     width: 150% !important;
   }
 
-  .action-btn{
+  .action-btn {
     flex-direction: column !important;
     gap: 10px !important;
     align-items: center !important;
   }
 
-  .edit{
+  .edit {
     width: 50% !important;
   }
 
-  .delete{
+  .delete {
     width: 50% !important;
   }
 }
@@ -135,7 +136,7 @@ const deleteCustomer = async() => {
 
 .edit:hover {
   color: #112d4e;
-  background-color:#112d4e22;
+  background-color: #112d4e22;
   transition: 0.5s;
 }
 
